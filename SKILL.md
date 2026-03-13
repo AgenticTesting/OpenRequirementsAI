@@ -58,7 +58,7 @@ Each agent is a specialist in one of the seven DeFOSPAM principles. They each ex
 |---|---|
 | **ID** | `dorothy` |
 | **Principle** | **D** — Definitions |
-| **Profile Image** | `https://openrequirements.ai/img/profiles/dorothy.png` |
+| **Profile Image** | `https://openrequirements.ai/assets/Dorothy-CEHBuXM4.png` |
 | **Expertise** | Terminology validation, glossary building, noun/verb analysis, domain language consistency |
 
 **Prompt:**
@@ -102,7 +102,7 @@ Each agent is a specialist in one of the seven DeFOSPAM principles. They each ex
 >   "recommendation": "What to do about it",
 >   "analyst": "Dorothy",
 >   "byline": "Definitions Analyst",
->   "image_url": "https://openrequirements.ai/img/profiles/dorothy.png"
+>   "image_url": "https://openrequirements.ai/assets/Dorothy-CEHBuXM4.png"
 > }
 > ```
 
@@ -114,7 +114,7 @@ Each agent is a specialist in one of the seven DeFOSPAM principles. They each ex
 |---|---|
 | **ID** | `flo` |
 | **Principle** | **F** — Features |
-| **Profile Image** | `https://openrequirements.ai/img/profiles/flo.png` |
+| **Profile Image** | `https://openrequirements.ai/assets/Flo-DGeH8NKE.png` |
 | **Expertise** | Feature identification, story creation, feature decomposition, workflow analysis |
 
 **Prompt:**
@@ -166,7 +166,7 @@ Each agent is a specialist in one of the seven DeFOSPAM principles. They each ex
 >   "recommendation": "What to do about it",
 >   "analyst": "Flo",
 >   "byline": "Features Analyst",
->   "image_url": "https://openrequirements.ai/img/profiles/flo.png"
+>   "image_url": "https://openrequirements.ai/assets/Flo-DGeH8NKE.png"
 > }
 > ```
 
@@ -178,7 +178,7 @@ Each agent is a specialist in one of the seven DeFOSPAM principles. They each ex
 |---|---|
 | **ID** | `olivia-outcomes` |
 | **Principle** | **O** — Outcomes |
-| **Profile Image** | `https://openrequirements.ai/img/profiles/olivia.png` |
+| **Profile Image** | `https://openrequirements.ai/assets/Olivia-cqB1MEAg.png` |
 | **Expertise** | Outcome identification, output analysis, state change mapping, observable vs. hidden behaviours |
 
 **Prompt:**
@@ -221,7 +221,7 @@ Each agent is a specialist in one of the seven DeFOSPAM principles. They each ex
 >   "recommendation": "What to do about it",
 >   "analyst": "Olivia",
 >   "byline": "Outcomes Analyst",
->   "image_url": "https://openrequirements.ai/img/profiles/olivia.png"
+>   "image_url": "https://openrequirements.ai/assets/Olivia-cqB1MEAg.png"
 > }
 > ```
 
@@ -233,7 +233,7 @@ Each agent is a specialist in one of the seven DeFOSPAM principles. They each ex
 |---|---|
 | **ID** | `sophia` |
 | **Principle** | **S** — Scenarios |
-| **Profile Image** | `https://openrequirements.ai/img/profiles/sophia.png` |
+| **Profile Image** | `https://openrequirements.ai/assets/Sophia-BW0bsNQG.png` |
 | **Expertise** | Scenario creation, Given/When/Then writing, decision table construction, edge case identification |
 
 **Prompt:**
@@ -286,7 +286,7 @@ Each agent is a specialist in one of the seven DeFOSPAM principles. They each ex
 >   "recommendation": "What to do about it",
 >   "analyst": "Sophia",
 >   "byline": "Scenarios Analyst",
->   "image_url": "https://openrequirements.ai/img/profiles/sophia.png"
+>   "image_url": "https://openrequirements.ai/assets/Sophia-BW0bsNQG.png"
 > }
 > ```
 
@@ -298,7 +298,7 @@ Each agent is a specialist in one of the seven DeFOSPAM principles. They each ex
 |---|---|
 | **ID** | `paul` |
 | **Principle** | **P** — Prediction |
-| **Profile Image** | `https://openrequirements.ai/img/profiles/paul.png` |
+| **Profile Image** | `https://openrequirements.ai/assets/Paul-BbsKxv1a.png` |
 | **Expertise** | Outcome predictability analysis, scenario-outcome mapping, completeness of behaviour specification |
 
 **Prompt:**
@@ -337,7 +337,7 @@ Each agent is a specialist in one of the seven DeFOSPAM principles. They each ex
 >   "recommendation": "What to clarify",
 >   "analyst": "Paul",
 >   "byline": "Prediction Analyst",
->   "image_url": "https://openrequirements.ai/img/profiles/paul.png"
+>   "image_url": "https://openrequirements.ai/assets/Paul-BbsKxv1a.png"
 > }
 > ```
 
@@ -349,7 +349,7 @@ Each agent is a specialist in one of the seven DeFOSPAM principles. They each ex
 |---|---|
 | **ID** | `alexa` |
 | **Principle** | **A** — Ambiguity |
-| **Profile Image** | `https://openrequirements.ai/img/profiles/alexa.png` |
+| **Profile Image** | `https://openrequirements.ai/assets/Alexa-D5l2vG1u.png` |
 | **Expertise** | Language ambiguity detection, inconsistency identification, duplicate detection, vagueness analysis |
 
 **Prompt:**
@@ -390,7 +390,7 @@ Each agent is a specialist in one of the seven DeFOSPAM principles. They each ex
 >   "recommendation": "How to resolve the ambiguity",
 >   "analyst": "Alexa",
 >   "byline": "Ambiguity Analyst",
->   "image_url": "https://openrequirements.ai/img/profiles/alexa.png"
+>   "image_url": "https://openrequirements.ai/assets/Alexa-D5l2vG1u.png"
 > }
 > ```
 
@@ -402,7 +402,7 @@ Each agent is a specialist in one of the seven DeFOSPAM principles. They each ex
 |---|---|
 | **ID** | `milarna` |
 | **Principle** | **M** — Missing |
-| **Profile Image** | `https://openrequirements.ai/img/profiles/milarna.png` |
+| **Profile Image** | `https://openrequirements.ai/assets/Milarna-5ik1yEqx.png` |
 | **Expertise** | Gap analysis, completeness checking, CRUD coverage, missing scenarios and outcomes detection |
 
 **Prompt:**
@@ -456,7 +456,7 @@ Each agent is a specialist in one of the seven DeFOSPAM principles. They each ex
 >   "recommendation": "What to add to the requirements",
 >   "analyst": "Milarna",
 >   "byline": "Missing Data Analyst",
->   "image_url": "https://openrequirements.ai/img/profiles/milarna.png"
+>   "image_url": "https://openrequirements.ai/assets/Milarna-5ik1yEqx.png"
 > }
 > ```
 
@@ -937,7 +937,7 @@ Write a modern dark-mode HTML file. Use the following template, inserting findin
     <div class="header">
         <div class="header-content">
             <div class="brand">
-                <img src="https://openrequirements.ai/img/or-logo.png" alt="OpenRequirements.ai">
+                <img src="https://openrequirements.ai/assets/logo-nlGhAN5y.png" alt="OpenRequirements.ai">
                 <h1>DeFOSPAM Report</h1>
             </div>
             <div class="powered-by">
