@@ -1,8 +1,8 @@
 ---
-name: defospam
+name: openrequirements
 description: >
-  DeFOSPAM requirements validation skill using 7 specialized AI analyst agents based on the
-  Business Story Method by Paul Gerrard and Susan Windsor. Analyzes requirements documents
+  OpenRequirements.AI DeFOSPAM requirements engineering validation skill using 7 specialized 
+  AI analyst agents based on the Business Story Method by Paul Gerrard. Analyzes requirements 
   through Definitions, Features, Outcomes, Scenarios, Prediction, Ambiguity, and Missing data
   checks. Produces business stories, scenarios, glossaries, and gap analysis reports.
   Use this skill whenever the user wants to validate requirements, check requirements quality,
@@ -56,7 +56,7 @@ Each agent is a specialist in one of the seven DeFOSPAM principles. They each ex
 
 | Field | Value |
 |---|---|
-| **ID** | `diana` |
+| **ID** | `dorothy` |
 | **Principle** | **D** — Definitions |
 | **Profile Image** | `https://openrequirements.ai/img/profiles/dorothy.png` |
 | **Expertise** | Terminology validation, glossary building, noun/verb analysis, domain language consistency |
@@ -112,7 +112,7 @@ Each agent is a specialist in one of the seven DeFOSPAM principles. They each ex
 
 | Field | Value |
 |---|---|
-| **ID** | `felix` |
+| **ID** | `flo` |
 | **Principle** | **F** — Features |
 | **Profile Image** | `https://openrequirements.ai/img/profiles/flo.png` |
 | **Expertise** | Feature identification, story creation, feature decomposition, workflow analysis |
@@ -231,7 +231,7 @@ Each agent is a specialist in one of the seven DeFOSPAM principles. They each ex
 
 | Field | Value |
 |---|---|
-| **ID** | `samuel` |
+| **ID** | `sophia` |
 | **Principle** | **S** — Scenarios |
 | **Profile Image** | `https://openrequirements.ai/img/profiles/sophia.png` |
 | **Expertise** | Scenario creation, Given/When/Then writing, decision table construction, edge case identification |
@@ -296,7 +296,7 @@ Each agent is a specialist in one of the seven DeFOSPAM principles. They each ex
 
 | Field | Value |
 |---|---|
-| **ID** | `petra` |
+| **ID** | `paul` |
 | **Principle** | **P** — Prediction |
 | **Profile Image** | `https://openrequirements.ai/img/profiles/paul.png` |
 | **Expertise** | Outcome predictability analysis, scenario-outcome mapping, completeness of behaviour specification |
@@ -347,7 +347,7 @@ Each agent is a specialist in one of the seven DeFOSPAM principles. They each ex
 
 | Field | Value |
 |---|---|
-| **ID** | `amir` |
+| **ID** | `alexa` |
 | **Principle** | **A** — Ambiguity |
 | **Profile Image** | `https://openrequirements.ai/img/profiles/alexa.png` |
 | **Expertise** | Language ambiguity detection, inconsistency identification, duplicate detection, vagueness analysis |
@@ -400,7 +400,7 @@ Each agent is a specialist in one of the seven DeFOSPAM principles. They each ex
 
 | Field | Value |
 |---|---|
-| **ID** | `maya` |
+| **ID** | `milarna` |
 | **Principle** | **M** — Missing |
 | **Profile Image** | `https://openrequirements.ai/img/profiles/milarna.png` |
 | **Expertise** | Gap analysis, completeness checking, CRUD coverage, missing scenarios and outcomes detection |
@@ -553,8 +553,8 @@ If multiple analysts flag the same issue from different angles, keep the finding
 After collecting all findings, produce **three outputs**:
 
 1. **Chat output** (inline in the conversation)
-2. **Markdown file** (saved as `defospam-report.md`)
-3. **HTML file** (saved as `defospam-report.html`)
+2. **Markdown file** (saved as `openrequirements-report.md`)
+3. **HTML file** (saved as `openrequirements-report.html`)
 
 ---
 
@@ -611,7 +611,7 @@ Based on the Business Story Method by Paul Gerrard & Susan Windsor
 
 ---
 
-### Output 2: Markdown Report File (`defospam-report.md`)
+### Output 2: Markdown Report File (`openrequirments-report.md`)
 
 ```markdown
 # DeFOSPAM Requirements Validation Report
@@ -694,7 +694,7 @@ Found **X** findings across **7** DeFOSPAM analysts.
 
 ---
 
-### Output 3: HTML Report File (`defospam-report.html`)
+### Output 3: HTML Report File (`openrequirements-report.html`)
 
 Write a modern dark-mode HTML file. Use the following template, inserting findings dynamically:
 
@@ -1079,7 +1079,7 @@ Replace all `{PLACEHOLDERS}` with actual values from the analysis results. Gener
 | Letter | Principle | Analyst | Core Question |
 |---|---|---|---|
 | **D** | Definitions | Dorothy | Are all terms clearly defined and agreed? |
-| **e** | *(connector)* | — | — |
+| **e** | *(connector)* | Ethan | Extendable Markup Language (xPDL) |
 | **F** | Features | Flo | What features does the system need? |
 | **O** | Outcomes | Olivia | What are all possible outcomes per feature? |
 | **S** | Scenarios | Sophia | What scenarios trigger each outcome? |
@@ -1089,7 +1089,7 @@ Replace all `{PLACEHOLDERS}` with actual values from the analysis results. Gener
 
 ---
 
-## Tips for Best Results
+## Tips for Good Practices
 
 The quality of a DeFOSPAM analysis depends heavily on the quality and scope of the input requirements. A few notes:
 
