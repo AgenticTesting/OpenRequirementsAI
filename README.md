@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-  <a href="https://openrequirements.ai"><img src="https://img.shields.io/badge/OpenRequirements.ai-blue?style=flat-square&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZmlsbD0id2hpdGUiIGQ9Ik0xMiAyQzYuNDggMiAyIDYuNDggMiAxMnM0LjQ4IDEwIDEwIDEwIDEwLTQuNDggMTAtMTBTMTcuNTIgMiAxMiAyem0wIDE4Yy00LjQyIDAtOC0zLjU4LTgtOHMzLjU4LTggOC04IDggMy41OCA4IDgtMy41OCA4LTggOHoiLz48L3N2Zz4=" alt="OpenRequirements.ai"></a>
+  <a href="https://openrequirements.ai"><img src="https://openrequirements.ai/assets/logo-nlGhAN5y.png" alt="OpenRequirements.ai"></a>
   <img src="https://img.shields.io/badge/agents-7-purple?style=flat-square" alt="7 Agents">
   <img src="https://img.shields.io/badge/methodology-DeFOSPAM-green?style=flat-square" alt="DeFOSPAM">
   <img src="https://img.shields.io/badge/platform-Claude%20Code%20%7C%20Cowork%20%7C%20Claude.ai-orange?style=flat-square" alt="Claude Code | Cowork | Claude.ai">
@@ -76,25 +76,58 @@ Each report includes:
 
 ### Claude Code (Recommended)
 
-Add the skill to your project's `.claude/skills/` directory:
-
+**Quick install — project level:**
 ```bash
-# Clone into your project
+# Clone and install in one step
 git clone https://github.com/AgenticTesting/OpenRequirementsAI.git
-cp -r OpenRequirementsAI/defospam .claude/skills/defospam
+mkdir -p .claude/skills
+cp -r OpenRequirementsAI/defospam .claude/skills/openrequirements
+```
 
-# Or add as a git submodule
+**Or as a git submodule (keeps it updatable):**
+```bash
 git submodule add https://github.com/AgenticTesting/OpenRequirementsAI.git .claude/skills/openrequirements
 ```
 
-Once installed, Claude Code will automatically detect and use the skill when you mention requirements validation.
+**Global install (available in all your projects):**
+```bash
+mkdir -p ~/.claude/skills/openrequirements
+cp path/to/SKILL.md ~/.claude/skills/openrequirements/SKILL.md
+```
+
+Once installed, the `/openrequirements` slash command becomes available in Claude Code:
+
+```
+> /openrequirements docs/PRD.md
+```
+
+You can also just mention requirements validation naturally and Claude Code will detect and invoke the skill automatically.
+
+**Optional: Register in settings.json**
+
+For explicit control over triggering, add to `.claude/settings.json`:
+
+```json
+{
+  "skills": {
+    "openrequirements": {
+      "path": ".claude/skills/openrequirements/SKILL.md",
+      "description": "DeFOSPAM requirements validation with 7 AI analyst agents",
+      "triggers": [
+        "validate requirements", "DeFOSPAM", "business stories",
+        "requirements validation", "find ambiguity", "specification by example"
+      ]
+    }
+  }
+}
+```
 
 ### Claude Cowork
 
-Place the `defospam/` folder (containing `SKILL.md`) in your skills directory:
+Place the `openrequirements/` folder (containing `SKILL.md`) in your skills directory:
 
 ```
-~/.skills/skills/defospam/SKILL.md
+~/.skills/skills/openrequirements/SKILL.md
 ```
 
 Or add it to your project's `.skills/skills/` folder.
@@ -129,25 +162,48 @@ Find gaps in this requirements document
 
 You can also upload a `.docx`, `.pdf`, `.md`, or `.txt` requirements file and ask for a DeFOSPAM analysis.
 
+### Slash Command (Claude Code)
+
+Once installed, invoke directly in any Claude Code session:
+
+```
+> /openrequirements docs/PRD.md
+> /openrequirements                   # then paste or describe requirements
+```
+
 ### CLI Agent Mode (Claude Code)
 
-Run DeFOSPAM directly from your terminal using `claude -p`:
+Run DeFOSPAM as a headless agent from your terminal:
 
 ```bash
 # Full analysis of a requirements file
-claude -p "Analyze the requirements in docs/PRD.md using DeFOSPAM"
+claude -p "Use /openrequirements to analyze docs/PRD.md"
 
 # Targeted analysis — specific agents only
-claude -p "Run only the Ambiguity and Missing analysts on spec.md"
+claude -p "Use /openrequirements to run only the Ambiguity and Missing analysts on spec.md"
 
 # Diff mode — compare against previous analysis
-claude -p "Re-run DeFOSPAM on docs/PRD.md and compare to last run"
+claude -p "Use /openrequirements to re-analyze docs/PRD.md and diff against previous run"
 
 # Pipeline mode — JSON output for CI/CD integration
-claude -p "Run DeFOSPAM on requirements.md in pipeline mode, output only JSON"
+claude -p "Use /openrequirements in pipeline mode on requirements.md, output only JSON"
 
 # Batch analysis — multiple files
-claude -p "Analyze each .md file in ./requirements/ using DeFOSPAM, save reports to ./reports/"
+claude -p "Use /openrequirements on each .md file in ./requirements/, save reports to ./reports/"
+```
+
+### Pre-Commit Hook
+
+Automatically validate requirements before every commit:
+
+```bash
+#!/bin/bash
+# .git/hooks/pre-commit
+CHANGED_REQS=$(git diff --cached --name-only -- '*.md' 'docs/' 'requirements/')
+if [ -n "$CHANGED_REQS" ]; then
+  echo "Running DeFOSPAM validation..."
+  claude -p "Use /openrequirements in pipeline mode on: $CHANGED_REQS. Exit code 1 if critical findings."
+fi
 ```
 
 ### Targeted Analysis

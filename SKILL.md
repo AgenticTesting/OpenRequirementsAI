@@ -1345,6 +1345,129 @@ The quality of a DeFOSPAM analysis depends heavily on the quality and scope of t
 
 ---
 
+## Enabling `/openrequirements` in Claude Code
+
+### Setup as a Slash Command
+
+To register the skill as the `/openrequirements` slash command in Claude Code, place the `SKILL.md` file in one of these locations (in priority order):
+
+**1. Project-level skill (recommended for teams):**
+```bash
+# From your project root
+mkdir -p .claude/skills/openrequirements
+cp path/to/SKILL.md .claude/skills/openrequirements/SKILL.md
+```
+This makes `/openrequirements` available to anyone working in this repository. Commit to version control so the whole team has access.
+
+**2. User-level skill (available across all projects):**
+```bash
+# Global install — available in every Claude Code session
+mkdir -p ~/.claude/skills/openrequirements
+cp path/to/SKILL.md ~/.claude/skills/openrequirements/SKILL.md
+```
+
+Once installed, you can invoke the skill in Claude Code with:
+```
+/openrequirements
+```
+or by simply mentioning requirements validation in your prompt — Claude Code detects the skill automatically from context.
+
+### Configuring as a Custom Slash Command
+
+You can also register it explicitly in your project's `.claude/settings.json`:
+
+```json
+{
+  "skills": {
+    "openrequirements": {
+      "path": ".claude/skills/openrequirements/SKILL.md",
+      "description": "DeFOSPAM requirements validation with 7 AI analyst agents",
+      "triggers": [
+        "validate requirements",
+        "check requirements",
+        "DeFOSPAM",
+        "business stories",
+        "requirements validation",
+        "find ambiguity",
+        "specification by example"
+      ]
+    }
+  }
+}
+```
+
+### Running as an Autonomous Agent
+
+DeFOSPAM can run as a fully autonomous agent within Claude Code — no human interaction needed after the initial command. This is the most powerful mode:
+
+**Interactive agent mode (in a Claude Code session):**
+```
+> /openrequirements docs/PRD.md
+```
+Claude Code reads the skill, spawns the 7 analyst subagents in parallel phases, aggregates findings, and produces all three report outputs.
+
+**Headless agent mode (from the terminal):**
+```bash
+# Single file analysis
+claude -p "Use the /openrequirements skill to analyze docs/PRD.md and save reports to ./defospam-output/"
+
+# Batch analysis across a directory
+claude -p "Use the /openrequirements skill to analyze every .md file in ./requirements/ and save individual reports to ./reports/"
+
+# Pipeline mode for CI/CD — JSON only, no interactive output
+claude -p "Use /openrequirements in pipeline mode on requirements.md — output only defospam-results.json to stdout"
+
+# Targeted analysis — specific agents
+claude -p "Use /openrequirements to run only the Ambiguity and Missing analysts on spec.docx"
+
+# Diff mode — track improvement
+claude -p "Use /openrequirements to re-analyze docs/PRD.md and diff against the previous defospam-results.json"
+```
+
+**In a Claude Code hook or automation:**
+```bash
+# Pre-commit hook: validate requirements before allowing commit
+#!/bin/bash
+CHANGED_REQS=$(git diff --cached --name-only -- '*.md' 'docs/' 'requirements/')
+if [ -n "$CHANGED_REQS" ]; then
+  echo "Running DeFOSPAM validation on changed requirements..."
+  claude -p "Use /openrequirements in pipeline mode on these files: $CHANGED_REQS. If any critical findings are found, exit with code 1."
+fi
+```
+
+### Enabling Subagent Permissions
+
+For the parallel 3-phase execution to work, Claude Code needs permission to spawn subagents. Ensure your `.claude/settings.json` includes:
+
+```json
+{
+  "permissions": {
+    "allow_agent_tool": true,
+    "allow_bash": true,
+    "allow_read": true,
+    "allow_write": true
+  }
+}
+```
+
+Or when prompted by Claude Code, approve the Agent tool usage. Each DeFOSPAM run spawns up to 7 subagents across 3 phases (2 → 3 → 2), with file I/O between phases via JSON intermediary files in the output directory.
+
+### MCP Server Integration
+
+If you have MCP servers configured in Claude Code (e.g., GitHub, Jira, Confluence), DeFOSPAM can read requirements directly from external sources:
+
+```bash
+# Analyze requirements from a GitHub issue
+claude -p "Use /openrequirements to analyze the requirements described in issue #42 of this repo"
+
+# Pull requirements from Confluence and analyze
+claude -p "Use /openrequirements to analyze the PRD at [confluence URL]"
+```
+
+The skill adapts to whatever input sources are available through MCP tools.
+
+---
+
 ## Environment-Specific Instructions
 
 ### Claude Code
