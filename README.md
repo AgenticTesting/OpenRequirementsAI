@@ -12,7 +12,7 @@
   <a href="https://openrequirements.ai"><img src="https://img.shields.io/badge/OpenRequirements.ai-blue?style=flat-square&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZmlsbD0id2hpdGUiIGQ9Ik0xMiAyQzYuNDggMiAyIDYuNDggMiAxMnM0LjQ4IDEwIDEwIDEwIDEwLTQuNDggMTAtMTBTMTcuNTIgMiAxMiAyem0wIDE4Yy00LjQyIDAtOC0zLjU4LTgtOHMzLjU4LTggOC04IDggMy41OCA4IDgtMy41OCA4LTggOHoiLz48L3N2Zz4=" alt="OpenRequirements.ai"></a>
   <img src="https://img.shields.io/badge/agents-7-purple?style=flat-square" alt="7 Agents">
   <img src="https://img.shields.io/badge/methodology-DeFOSPAM-green?style=flat-square" alt="DeFOSPAM">
-  <img src="https://img.shields.io/badge/platform-Claude%20Cowork-orange?style=flat-square" alt="Claude Cowork">
+  <img src="https://img.shields.io/badge/platform-Claude%20Code%20%7C%20Cowork%20%7C%20Claude.ai-orange?style=flat-square" alt="Claude Code | Cowork | Claude.ai">
   <img src="https://img.shields.io/badge/license-open--source-brightgreen?style=flat-square" alt="Open Source">
 </p>
 
@@ -74,6 +74,21 @@ Each report includes:
 
 ## Installation
 
+### Claude Code (Recommended)
+
+Add the skill to your project's `.claude/skills/` directory:
+
+```bash
+# Clone into your project
+git clone https://github.com/AgenticTesting/OpenRequirementsAI.git
+cp -r OpenRequirementsAI/defospam .claude/skills/defospam
+
+# Or add as a git submodule
+git submodule add https://github.com/AgenticTesting/OpenRequirementsAI.git .claude/skills/openrequirements
+```
+
+Once installed, Claude Code will automatically detect and use the skill when you mention requirements validation.
+
 ### Claude Cowork
 
 Place the `defospam/` folder (containing `SKILL.md`) in your skills directory:
@@ -84,15 +99,17 @@ Place the `defospam/` folder (containing `SKILL.md`) in your skills directory:
 
 Or add it to your project's `.skills/skills/` folder.
 
-### Claude Code
+### Claude.ai (Web)
 
-Copy the `defospam/` folder into your project's skill directory and it will be available as a skill.
+Upload the `SKILL.md` file to your conversation or paste its contents when you need a DeFOSPAM analysis. The skill runs sequentially in this environment (no parallel agents).
 
 ---
 
 ## Usage
 
-Once installed, the skill triggers automatically when you mention requirements validation. Some example prompts:
+### Interactive (Claude Code / Cowork / Claude.ai)
+
+Once installed, the skill triggers automatically when you mention requirements validation:
 
 ```
 Validate these requirements using DeFOSPAM
@@ -112,44 +129,135 @@ Find gaps in this requirements document
 
 You can also upload a `.docx`, `.pdf`, `.md`, or `.txt` requirements file and ask for a DeFOSPAM analysis.
 
+### CLI Agent Mode (Claude Code)
+
+Run DeFOSPAM directly from your terminal using `claude -p`:
+
+```bash
+# Full analysis of a requirements file
+claude -p "Analyze the requirements in docs/PRD.md using DeFOSPAM"
+
+# Targeted analysis — specific agents only
+claude -p "Run only the Ambiguity and Missing analysts on spec.md"
+
+# Diff mode — compare against previous analysis
+claude -p "Re-run DeFOSPAM on docs/PRD.md and compare to last run"
+
+# Pipeline mode — JSON output for CI/CD integration
+claude -p "Run DeFOSPAM on requirements.md in pipeline mode, output only JSON"
+
+# Batch analysis — multiple files
+claude -p "Analyze each .md file in ./requirements/ using DeFOSPAM, save reports to ./reports/"
+```
+
+### Targeted Analysis
+
+You don't always need all 7 agents. Request specific analysts:
+
+| Command | Agents |
+|---|---|
+| "check definitions" / "glossary check" | Dorothy only |
+| "find features" / "create business stories" | Flo only |
+| "check ambiguity" / "find vague language" | Alexa only |
+| "what's missing" / "completeness check" | Milarna only |
+| "check scenarios and predictions" | Sophia + Paul |
+| "full analysis" (default) | All 7 agents |
+
 ---
 
-## How It Works
+## Architecture
+
+### Parallel Agent Execution (Claude Code / Cowork)
+
+When subagents are available, DeFOSPAM uses a 3-phase parallel execution strategy that significantly reduces total analysis time:
 
 ```
-┌─────────────────────────────────────────────────────┐
-│                 Your Requirements                    │
-│        (.docx, .pdf, .md, .txt, or text)            │
-└─────────────────────┬───────────────────────────────┘
-                      │
-                      ▼
-┌─────────────────────────────────────────────────────┐
-│              DeFOSPAM Analysis Pipeline              │
-│                                                      │
-│  1. Dorothy (Definitions) → Glossary                 │
-│  2. Flo (Features)        → Business Stories         │
-│  3. Olivia (Outcomes)     → Outcome Map              │
-│  4. Sophia (Scenarios)    → Given/When/Then          │
-│  5. Paul (Prediction)     → Gap Detection            │
-│  6. Alexa (Ambiguity)     → Language Analysis        │
-│  7. Milarna (Missing)     → Completeness Sweep       │
-│                                                      │
-└─────────────────────┬───────────────────────────────┘
-                      │
-                      ▼
-┌─────────────────────────────────────────────────────┐
-│                    Outputs                            │
-│                                                      │
-│  📋 Chat Summary                                     │
-│  📝 defospam-report.md                               │
-│  🌐 defospam-report.html                             │
-│                                                      │
-│  Including: Glossary, Business Stories, Scenarios,   │
-│  Findings with severity & recommendations            │
-└─────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────┐
+│                    Your Requirements                         │
+│             (.docx, .pdf, .md, .txt, or text)               │
+└───────────────────────┬─────────────────────────────────────┘
+                        │
+                        ▼
+┌─ Phase 1 ─────────────────────────────────────────────────┐
+│  ┌─────────────────┐    ┌─────────────────┐               │
+│  │    Dorothy       │    │      Flo        │   (parallel)  │
+│  │  Definitions     │    │    Features     │               │
+│  │  → Glossary      │    │  → Stories      │               │
+│  └────────┬────────┘    └────────┬────────┘               │
+└───────────┼──────────────────────┼────────────────────────┘
+            │                      │
+            ▼                      ▼
+┌─ Phase 2 ─────────────────────────────────────────────────┐
+│  ┌──────────┐  ┌──────────┐  ┌──────────┐                │
+│  │  Olivia  │  │  Sophia  │  │  Alexa   │   (parallel)   │
+│  │ Outcomes │  │ Scenarios│  │ Ambiguity│                 │
+│  └────┬─────┘  └────┬─────┘  └────┬─────┘                │
+└───────┼──────────────┼─────────────┼──────────────────────┘
+        │              │             │
+        ▼              ▼             ▼
+┌─ Phase 3 ─────────────────────────────────────────────────┐
+│  ┌─────────────────┐    ┌─────────────────┐               │
+│  │      Paul       │    │    Milarna      │   (parallel)  │
+│  │   Prediction    │    │    Missing      │               │
+│  │  → Gap Check    │    │  → Sweep        │               │
+│  └────────┬────────┘    └────────┬────────┘               │
+└───────────┼──────────────────────┼────────────────────────┘
+            │                      │
+            ▼                      ▼
+┌─ Phase 4: Aggregate ──────────────────────────────────────┐
+│                                                            │
+│  Deduplicate → Compile Stories → Generate Reports          │
+│                                                            │
+│  📋 Chat Summary          📊 defospam-results.json        │
+│  📝 openrequirements-report.md                            │
+│  🌐 openrequirements-report.html                         │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
 ```
 
-The agents run sequentially in DeFOSPAM order because later agents build on earlier findings — Dorothy's glossary informs Flo's feature identification, which feeds Sophia's scenario creation, and so on. Milarna runs last to catch anything the others missed.
+### Sequential Execution (Claude.ai)
+
+When subagents aren't available, agents run in DeFOSPAM order: Dorothy's glossary informs Flo's feature identification, which feeds Sophia's scenario creation, and so on. Milarna runs last to catch anything the others missed.
+
+### Pipeline JSON Output
+
+For CI/CD integration, DeFOSPAM can output structured JSON (`defospam-results.json`):
+
+```json
+{
+  "metadata": {
+    "tool": "OpenRequirements.ai DeFOSPAM",
+    "version": "1.0",
+    "timestamp": "2026-03-16T10:30:00Z",
+    "source_file": "docs/PRD.md"
+  },
+  "summary": {
+    "total_findings": 23,
+    "critical": 4,
+    "major": 12,
+    "minor": 7,
+    "features_identified": 8,
+    "scenarios_created": 31,
+    "glossary_terms": 45
+  },
+  "glossary": [...],
+  "features": [...],
+  "scenarios": [...],
+  "business_stories": [...],
+  "findings": [...],
+  "findings_by_principle": { "D": [], "F": [], "O": [], "S": [], "P": [], "A": [], "M": [] }
+}
+```
+
+### Diff Mode
+
+Re-run DeFOSPAM after improving requirements and compare results:
+
+```bash
+claude -p "Re-run DeFOSPAM on docs/PRD.md and diff against the last run"
+```
+
+Each finding is tagged: **New** | **Resolved** | **Recurring** | **Changed** — so you can track improvement over iterations.
 
 ---
 
@@ -202,6 +310,19 @@ For more on the Business Story Method, see the work of **Paul Gerrard** at [Gerr
 
 ---
 
+## Companion Skills
+
+DeFOSPAM integrates well with other skills in the ecosystem:
+
+| Skill | Integration |
+|---|---|
+| **OpenTestAI** | Validate requirements first with DeFOSPAM, then test the implementation against generated scenarios |
+| **docx** | Export the DeFOSPAM report as a professional Word document |
+| **pptx** | Generate a stakeholder presentation summarizing findings |
+| **xlsx** | Export glossary, features, and findings as a tracking spreadsheet |
+
+---
+
 ## Contributing
 
 Contributions are welcome! Here are some ways to help:
@@ -217,7 +338,7 @@ Contributions are welcome! Here are some ways to help:
 
 - **DeFOSPAM Methodology** — Paul Gerrard (Gerrard Consulting) & Jonathon Wright (OpenTest.AI)
 - **Skill Implementation** — [OpenRequirements.ai](https://openrequirements.ai)
-- **Platform** — Built for [Claude](https://claude.ai) by Anthropic
+- **Platforms** — Claude Code, Claude Cowork, Claude.ai by [Anthropic](https://anthropic.com)
 
 ---
 

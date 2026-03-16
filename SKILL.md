@@ -466,9 +466,254 @@ Each agent is a specialist in one of the seven DeFOSPAM principles. They each ex
 
 Run each analyst's prompt against the requirements text. All 7 analysts always run — there is no selection logic since requirements validation needs all perspectives.
 
-### Execution Order
+### Execution Mode Detection
 
-The analysts should ideally run in DeFOSPAM order because later analysts build on earlier findings:
+Detect which environment you're running in and adapt accordingly:
+
+| Environment | Detection | Agent Strategy |
+|---|---|---|
+| **Claude Code** | `Agent` tool available, subagents supported | Spawn parallel subagents for each analyst |
+| **Cowork** | `Agent` tool available, sandbox environment | Spawn parallel subagents for each analyst |
+| **Claude.ai** | No `Agent` tool, no subagents | Run analysts sequentially inline |
+
+### Claude Code Agent Mode
+
+When running in Claude Code (or any environment with the `Agent` tool / subagent support), spawn each analyst as an independent subagent for parallel execution. This dramatically reduces total analysis time.
+
+#### Phase 1: Parallel Foundation Agents (spawn simultaneously)
+
+Spawn **Dorothy** and **Flo** as subagents in the same turn — they have no dependencies on each other:
+
+**Dorothy subagent prompt:**
+```
+You are Dorothy, the Definitions Analyst for a DeFOSPAM requirements validation.
+
+Read the skill instructions at: {skill_path}/SKILL.md (Agent 1: Dorothy section)
+
+Analyze the following requirements text and produce:
+1. A complete glossary of all significant terms (JSON array)
+2. All definition-related findings (JSON array)
+
+Requirements text:
+{requirements_text}
+
+Save your glossary output to: {output_dir}/dorothy-glossary.json
+Save your findings to: {output_dir}/dorothy-findings.json
+```
+
+**Flo subagent prompt:**
+```
+You are Flo, the Features Analyst for a DeFOSPAM requirements validation.
+
+Read the skill instructions at: {skill_path}/SKILL.md (Agent 2: Flo section)
+
+Analyze the following requirements text and produce:
+1. A list of all identified features with business stories (JSON array)
+2. All feature-related findings (JSON array)
+
+Requirements text:
+{requirements_text}
+
+Save your features output to: {output_dir}/flo-features.json
+Save your findings to: {output_dir}/flo-findings.json
+```
+
+#### Phase 2: Dependent Agents (spawn after Phase 1 completes)
+
+Once Dorothy and Flo are done, spawn **Olivia**, **Sophia**, and **Alexa** simultaneously — they can work in parallel since they each read from Dorothy/Flo's output but don't depend on each other:
+
+**Olivia subagent prompt:**
+```
+You are Olivia, the Outcomes Analyst for a DeFOSPAM requirements validation.
+
+Read the skill instructions at: {skill_path}/SKILL.md (Agent 3: Olivia section)
+Read the glossary from: {output_dir}/dorothy-glossary.json
+Read the features from: {output_dir}/flo-features.json
+
+Analyze the requirements text and produce all outcome-related findings.
+
+Requirements text:
+{requirements_text}
+
+Save your findings to: {output_dir}/olivia-findings.json
+```
+
+**Sophia subagent prompt:**
+```
+You are Sophia, the Scenarios Analyst for a DeFOSPAM requirements validation.
+
+Read the skill instructions at: {skill_path}/SKILL.md (Agent 4: Sophia section)
+Read the glossary from: {output_dir}/dorothy-glossary.json
+Read the features from: {output_dir}/flo-features.json
+
+Analyze the requirements text and produce:
+1. All scenarios in Given/When/Then format (JSON array)
+2. All scenario-related findings (JSON array)
+
+Requirements text:
+{requirements_text}
+
+Save your scenarios output to: {output_dir}/sophia-scenarios.json
+Save your findings to: {output_dir}/sophia-findings.json
+```
+
+**Alexa subagent prompt:**
+```
+You are Alexa, the Ambiguity Analyst for a DeFOSPAM requirements validation.
+
+Read the skill instructions at: {skill_path}/SKILL.md (Agent 6: Alexa section)
+Read the glossary from: {output_dir}/dorothy-glossary.json
+
+Analyze the requirements text and produce all ambiguity-related findings.
+
+Requirements text:
+{requirements_text}
+
+Save your findings to: {output_dir}/alexa-findings.json
+```
+
+#### Phase 3: Prediction + Missing (spawn after Phase 2 completes)
+
+**Paul** needs scenarios and outcomes to check predictability. **Milarna** needs everything to do the completeness sweep. Spawn both simultaneously:
+
+**Paul subagent prompt:**
+```
+You are Paul, the Prediction Analyst for a DeFOSPAM requirements validation.
+
+Read the skill instructions at: {skill_path}/SKILL.md (Agent 5: Paul section)
+Read the features from: {output_dir}/flo-features.json
+Read the scenarios from: {output_dir}/sophia-scenarios.json
+Read Olivia's findings from: {output_dir}/olivia-findings.json
+
+For each scenario, determine if the outcome is predictable from the requirements alone.
+
+Requirements text:
+{requirements_text}
+
+Save your findings to: {output_dir}/paul-findings.json
+```
+
+**Milarna subagent prompt:**
+```
+You are Milarna, the Missing Data Analyst for a DeFOSPAM requirements validation.
+
+Read the skill instructions at: {skill_path}/SKILL.md (Agent 7: Milarna section)
+Read ALL previous analyst outputs from: {output_dir}/
+
+Perform a systematic completeness check across all DeFOSPAM dimensions.
+
+Requirements text:
+{requirements_text}
+
+Save your findings to: {output_dir}/milarna-findings.json
+```
+
+#### Phase 4: Aggregate and Report
+
+After all subagents complete, the main agent:
+1. Reads all `*-findings.json` files from `{output_dir}/`
+2. Reads `dorothy-glossary.json`, `flo-features.json`, and `sophia-scenarios.json`
+3. Deduplicates findings (keep highest confidence when multiple analysts flag the same issue)
+4. Compiles business stories from features + scenarios
+5. Produces the three required outputs (chat, .md, .html)
+6. Saves the combined JSON to `{output_dir}/defospam-results.json`
+
+### Claude Code CLI Invocation
+
+The skill can be invoked directly from the command line using `claude -p`:
+
+```bash
+# Analyze a requirements file
+claude -p "Read the OpenRequirements skill at ./defospam/SKILL.md, then analyze the requirements in ./requirements.md using all 7 DeFOSPAM agents. Save outputs to ./defospam-output/"
+
+# Analyze with specific focus
+claude -p "Read the OpenRequirements skill at ./defospam/SKILL.md, then run only the Ambiguity (Alexa) and Missing (Milarna) analysts on ./spec.docx"
+
+# Batch analysis of multiple files
+claude -p "Read the OpenRequirements skill at ./defospam/SKILL.md, then analyze each .md file in ./requirements/ using DeFOSPAM. Save a separate report for each file in ./reports/"
+```
+
+### Automated Pipeline Mode
+
+For CI/CD integration or batch processing, the skill supports a pipeline mode that outputs structured JSON to stdout:
+
+```bash
+# Pipeline mode — JSON output only, no interactive reports
+claude -p "Read the OpenRequirements skill at ./defospam/SKILL.md. Run a DeFOSPAM analysis on ./requirements.md in pipeline mode: output ONLY the defospam-results.json to stdout with no chat formatting, no .md file, no .html file. Include all findings, glossary, features, and scenarios in the JSON."
+```
+
+The pipeline JSON schema:
+
+```json
+{
+  "metadata": {
+    "tool": "OpenRequirements.ai DeFOSPAM",
+    "version": "1.0",
+    "timestamp": "ISO-8601",
+    "source_file": "path/to/requirements",
+    "analysts_run": ["dorothy", "flo", "olivia", "sophia", "paul", "alexa", "milarna"]
+  },
+  "summary": {
+    "total_findings": 0,
+    "critical": 0,
+    "major": 0,
+    "minor": 0,
+    "features_identified": 0,
+    "scenarios_created": 0,
+    "glossary_terms": 0
+  },
+  "glossary": [],
+  "features": [],
+  "scenarios": [],
+  "business_stories": [],
+  "findings": [],
+  "findings_by_principle": {
+    "D": [],
+    "F": [],
+    "O": [],
+    "S": [],
+    "P": [],
+    "A": [],
+    "M": []
+  }
+}
+```
+
+### Diff / Comparison Mode
+
+When the user says "compare to last run", "diff", "what changed", or "regression check":
+
+1. **Load the previous report** — read the most recent `defospam-results.json` file from the output directory (find by timestamp or filename)
+2. **Run a new DeFOSPAM analysis** on the current/updated requirements
+3. **Compare results** and categorize each finding as:
+   - **New** — finding in current run but NOT in previous
+   - **Resolved** — finding in previous run but NOT in current
+   - **Recurring** — finding in BOTH runs (match by `finding_title` similarity or same `analyst` + similar `finding_type`)
+   - **Changed** — finding exists in both but severity or confidence changed
+4. **Output a diff report** with sections for New, Resolved, Recurring, and Changed findings
+5. Add a `"diff_status"` field to each finding in the JSON output
+
+This is essential for iterative requirements improvement — it shows what got better, what's new, and what still needs attention.
+
+### Targeted Analysis Mode
+
+The user can request specific analysts instead of running all 7:
+
+| User says... | Analysts to run |
+|---|---|
+| "check definitions only" / "glossary check" | Dorothy only |
+| "find features" / "create business stories" | Flo only |
+| "check ambiguity" / "find vague language" | Alexa only |
+| "what's missing" / "completeness check" | Milarna only |
+| "run Dorothy and Flo" | Dorothy + Flo |
+| "check scenarios and predictions" | Sophia + Paul |
+| "full analysis" / "run DeFOSPAM" (default) | All 7 analysts |
+
+When running targeted analysis, skip the phased subagent strategy and just spawn the requested analyst(s) directly.
+
+### Execution Order (Sequential Fallback)
+
+When subagents are NOT available (Claude.ai or other environments without the Agent tool), run analysts sequentially in DeFOSPAM order because later analysts build on earlier findings:
 
 1. **Dorothy** (Definitions) — establishes the glossary
 2. **Flo** (Features) — identifies features and creates business stories
@@ -1097,6 +1342,62 @@ The quality of a DeFOSPAM analysis depends heavily on the quality and scope of t
 - If requirements are very brief, the Missing analyst (Milarna) will likely have the most findings, because brief requirements tend to leave a lot unstated.
 - The Prediction analyst (Paul) is most powerful when applied to requirements that describe conditional logic — if/then/else statements, business rules, validation rules.
 - Encourage the user to iterate: run DeFOSPAM, address the findings, then run it again on the improved requirements.
+
+---
+
+## Environment-Specific Instructions
+
+### Claude Code
+
+Claude Code is the primary agent environment. Key behaviours:
+
+- **Subagents**: Use the `Agent` tool to spawn analyst subagents in parallel (Phase 1 → 2 → 3 → 4 as described in STEP 3)
+- **File I/O**: Read requirements from the filesystem, write all outputs (JSON, .md, .html) to the specified output directory
+- **Working directory**: Create a `defospam-output/` directory in the project root (or user-specified location) for all outputs
+- **Git integration**: If in a git repo, the user may want to commit the reports — don't auto-commit, but mention the output files are ready
+- **Watch mode**: If the user asks to "watch" a requirements file, suggest they re-run the analysis after making changes and use diff mode to track improvements
+- **MCP tools**: If MCP tools are available (e.g., file system, GitHub), use them to read requirements from remote sources or push reports to repositories
+
+**Example Claude Code session:**
+```
+User: analyze the requirements in docs/PRD.md
+Claude: [reads SKILL.md] → [reads docs/PRD.md] → [spawns Dorothy + Flo subagents]
+        → [waits] → [spawns Olivia + Sophia + Alexa subagents]
+        → [waits] → [spawns Paul + Milarna subagents]
+        → [waits] → [aggregates all findings]
+        → [produces chat output + defospam-output/openrequirements-report.md + defospam-output/openrequirements-report.html + defospam-output/defospam-results.json]
+```
+
+### Cowork
+
+Cowork runs in a sandboxed Linux VM with access to a workspace folder.
+
+- **Subagents**: Available — use the same parallel Phase 1 → 2 → 3 → 4 strategy as Claude Code
+- **File output**: Save all reports to the workspace folder so the user can access them via `computer://` links
+- **HTML reports**: Produce the HTML report and provide a clickable link — Cowork renders these in the user's browser
+- **Uploaded files**: The user may upload requirements as `.docx`, `.pdf`, `.md`, or `.txt` — read from `/mnt/uploads/` or the workspace folder
+
+### Claude.ai (Web)
+
+No subagent support — run everything sequentially inline.
+
+- **Sequential execution**: Run all 7 analysts one by one in DeFOSPAM order
+- **Context management**: Each analyst's findings should be kept in working memory and passed to subsequent analysts
+- **File output**: If a VM/filesystem is available, save the .md and .html reports. Otherwise, output the full report in chat
+- **No diff mode**: Without persistent file storage between sessions, diff mode requires the user to paste or upload the previous JSON report
+
+---
+
+## Integration with Other Skills
+
+DeFOSPAM works well in combination with other skills:
+
+| Companion Skill | Integration |
+|---|---|
+| **OpenTestAI** | Run DeFOSPAM first to validate requirements, then use OpenTestAI to test the implemented features against the generated scenarios |
+| **docx** | Export the DeFOSPAM report as a professional Word document with branded formatting |
+| **pptx** | Generate a presentation summarizing the DeFOSPAM findings for stakeholder review |
+| **xlsx** | Export the glossary, features list, and findings as a structured spreadsheet for tracking and sign-off |
 
 ---
 
