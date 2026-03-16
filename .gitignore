@@ -6,10 +6,10 @@
 .defospam-output/flo-features.json
 .defospam-output/flo-findings.json
 .defospam-output/olivia-findings.json
-.defospam-output/milarna-findings.json
 .defospam-output/sophia-findings.json
 .defospam-output/sophia-scenarios.json
 .defospam-output/paul-findings.json
+.defospam-output/milarna-findings.json
 .defospam-output/defospam-report.md
 .defospam-output/defospam-report.html
 .openrequirements-output/dorothy-findings.json
@@ -33,6 +33,7 @@ defospam-output/olivia-findings.json
 defospam-output/sophia-scenarios.json
 defospam-output/sophia-findings.json
 defospam-output/paul-findings.json
+defospam-output/milarna-findings.json
 defospam-output/defospam-report.md
 defospam-output/defospam-report.html
 openrequirements-output/dorothy-findings.json
@@ -47,3 +48,4 @@ openrequirements-output/sophia-scenarios.json
 openrequirements-output/paul-findings.json
 openrequirements-output/openrequirements-report.md
 openrequirements-output/openrequirements-report.html
+

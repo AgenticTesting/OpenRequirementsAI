@@ -85,7 +85,7 @@ git clone https://github.com/AgenticTesting/OpenRequirementsAI.git
 
 # Copy into your project's skill directory
 mkdir -p .claude/skills/openrequirements
-cp OpenRequirementsAI/defospam/SKILL.md .claude/skills/openrequirements/SKILL.md
+cp OpenRequirementsAI/SKILL.md .claude/skills/openrequirements/SKILL.md
 
 # Commit so your whole team gets the command
 git add .claude/skills/openrequirements/SKILL.md
@@ -253,7 +253,7 @@ When subagents are available, DeFOSPAM uses a 3-phase parallel execution strateg
 │                                                            │
 │  Deduplicate → Compile Stories → Generate Reports          │
 │                                                            │
-│  📋 Chat Summary          📊 defospam-results.json        │
+│  📋 Chat Summary          📊 openrequirements-results.json        │
 │  📝 openrequirements-report.md                            │
 │  🌐 openrequirements-report.html                         │
 │                                                            │
