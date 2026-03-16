@@ -618,7 +618,7 @@ After all subagents complete, the main agent:
 3. Deduplicates findings (keep highest confidence when multiple analysts flag the same issue)
 4. Compiles business stories from features + scenarios
 5. Produces the three required outputs (chat, .md, .html)
-6. Saves the combined JSON to `{output_dir}/defospam-results.json`
+6. Saves the combined JSON to `{output_dir}/openrequirements-results.json`
 
 ### Claude Code CLI Invocation
 
@@ -626,13 +626,13 @@ The skill can be invoked directly from the command line using `claude -p`:
 
 ```bash
 # Analyze a requirements file
-claude -p "Read the OpenRequirements skill at ./defospam/SKILL.md, then analyze the requirements in ./requirements.md using all 7 DeFOSPAM agents. Save outputs to ./defospam-output/"
+claude -p "Read the OpenRequirements skill at ./openrequirements/SKILL.md, then analyze the requirements in ./requirements.md using all 7 DeFOSPAM agents. Save outputs to ./openrequirements-output/"
 
 # Analyze with specific focus
-claude -p "Read the OpenRequirements skill at ./defospam/SKILL.md, then run only the Ambiguity (Alexa) and Missing (Milarna) analysts on ./spec.docx"
+claude -p "Read the OpenRequirements skill at ./openrequirements/SKILL.md, then run only the Ambiguity (Alexa) and Missing (Milarna) analysts on ./spec.docx"
 
 # Batch analysis of multiple files
-claude -p "Read the OpenRequirements skill at ./defospam/SKILL.md, then analyze each .md file in ./requirements/ using DeFOSPAM. Save a separate report for each file in ./reports/"
+claude -p "Read the OpenRequirements skill at ./openrequirements/SKILL.md, then analyze each .md file in ./requirements/ using DeFOSPAM. Save a separate report for each file in ./reports/"
 ```
 
 ### Automated Pipeline Mode
@@ -641,7 +641,7 @@ For CI/CD integration or batch processing, the skill supports a pipeline mode th
 
 ```bash
 # Pipeline mode — JSON output only, no interactive reports
-claude -p "Read the OpenRequirements skill at ./defospam/SKILL.md. Run a DeFOSPAM analysis on ./requirements.md in pipeline mode: output ONLY the defospam-results.json to stdout with no chat formatting, no .md file, no .html file. Include all findings, glossary, features, and scenarios in the JSON."
+claude -p "Read the OpenRequirements skill at ./openrequirements/SKILL.md. Run a DeFOSPAM analysis on ./requirements.md in pipeline mode: output ONLY the openrequirements-results.json to stdout with no chat formatting, no .md file, no .html file. Include all findings, glossary, features, and scenarios in the JSON."
 ```
 
 The pipeline JSON schema:
@@ -685,7 +685,7 @@ The pipeline JSON schema:
 
 When the user says "compare to last run", "diff", "what changed", or "regression check":
 
-1. **Load the previous report** — read the most recent `defospam-results.json` file from the output directory (find by timestamp or filename)
+1. **Load the previous report** — read the most recent `openrequirements-results.json` file from the output directory (find by timestamp or filename)
 2. **Run a new DeFOSPAM analysis** on the current/updated requirements
 3. **Compare results** and categorize each finding as:
    - **New** — finding in current run but NOT in previous
@@ -709,7 +709,7 @@ The user can request specific analysts instead of running all 7:
 | "what's missing" / "completeness check" | Milarna only |
 | "run Dorothy and Flo" | Dorothy + Flo |
 | "check scenarios and predictions" | Sophia + Paul |
-| "full analysis" / "run DeFOSPAM" (default) | All 7 analysts |
+| "full analysis" / "run openrequirements" (default) | All 7 analysts |
 
 When running targeted analysis, skip the phased subagent strategy and just spawn the requested analyst(s) directly.
 
