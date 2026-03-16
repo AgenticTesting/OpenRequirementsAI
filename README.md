@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-  <a href="https://openrequirements.ai"><img src="https://openrequirements.ai/assets/logo-nlGhAN5y.png" alt="OpenRequirements.ai"></a>
+  <a href="https://openrequirements.ai"><img src="https://img.shields.io/badge/OpenRequirements.ai-blue?style=flat-square&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZmlsbD0id2hpdGUiIGQ9Ik0xMiAyQzYuNDggMiAyIDYuNDggMiAxMnM0LjQ4IDEwIDEwIDEwIDEwLTQuNDggMTAtMTBTMTcuNTIgMiAxMiAyem0wIDE4Yy00LjQyIDAtOC0zLjU4LTgtOHMzLjU4LTggOC04IDggMy41OCA4IDgtMy41OCA4LTggOHoiLz48L3N2Zz4=" alt="OpenRequirements.ai"></a>
   <img src="https://img.shields.io/badge/agents-7-purple?style=flat-square" alt="7 Agents">
   <img src="https://img.shields.io/badge/methodology-DeFOSPAM-green?style=flat-square" alt="DeFOSPAM">
   <img src="https://img.shields.io/badge/platform-Claude%20Code%20%7C%20Cowork%20%7C%20Claude.ai-orange?style=flat-square" alt="Claude Code | Cowork | Claude.ai">
