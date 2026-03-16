@@ -76,51 +76,40 @@ Each report includes:
 
 ### Claude Code (Recommended)
 
-**Quick install — project level:**
+Claude Code **auto-discovers** skills from `.claude/skills/<name>/SKILL.md` — no config file needed. The directory name becomes the `/` command.
+
+**Quick install — project level (team access):**
 ```bash
-# Clone and install in one step
+# Clone the repo
 git clone https://github.com/AgenticTesting/OpenRequirementsAI.git
-mkdir -p .claude/skills
-cp -r OpenRequirementsAI/defospam .claude/skills/openrequirements
+
+# Copy into your project's skill directory
+mkdir -p .claude/skills/openrequirements
+cp OpenRequirementsAI/defospam/SKILL.md .claude/skills/openrequirements/SKILL.md
+
+# Commit so your whole team gets the command
+git add .claude/skills/openrequirements/SKILL.md
+git commit -m "Add /openrequirements DeFOSPAM skill"
 ```
 
-**Or as a git submodule (keeps it updatable):**
-```bash
-git submodule add https://github.com/AgenticTesting/OpenRequirementsAI.git .claude/skills/openrequirements
-```
-
-**Global install (available in all your projects):**
+**Global install (available in ALL your projects):**
 ```bash
 mkdir -p ~/.claude/skills/openrequirements
 cp path/to/SKILL.md ~/.claude/skills/openrequirements/SKILL.md
 ```
 
-Once installed, the `/openrequirements` slash command becomes available in Claude Code:
-
+**Verify it works** — type `/` in Claude Code and you should see:
 ```
-> /openrequirements docs/PRD.md
+/openrequirements    OpenRequirements.AI DeFOSPAM requirements engineering validation...
+                     [requirements-file-or-text]
 ```
 
-You can also just mention requirements validation naturally and Claude Code will detect and invoke the skill automatically.
+If it doesn't appear, check that:
+1. The file is at exactly `.claude/skills/openrequirements/SKILL.md`
+2. The YAML frontmatter (`---` delimiters) is intact
+3. Try restarting Claude Code
 
-**Optional: Register in settings.json**
-
-For explicit control over triggering, add to `.claude/settings.json`:
-
-```json
-{
-  "skills": {
-    "openrequirements": {
-      "path": ".claude/skills/openrequirements/SKILL.md",
-      "description": "DeFOSPAM requirements validation with 7 AI analyst agents",
-      "triggers": [
-        "validate requirements", "DeFOSPAM", "business stories",
-        "requirements validation", "find ambiguity", "specification by example"
-      ]
-    }
-  }
-}
-```
+No `settings.json` registration is needed — placement is all that's required.
 
 ### Claude Cowork
 

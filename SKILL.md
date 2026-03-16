@@ -1,8 +1,8 @@
 ---
 name: openrequirements
 description: >
-  OpenRequirements.AI DeFOSPAM requirements engineering validation skill using 7 specialized 
-  AI analyst agents based on the Business Story Method by Paul Gerrard. Analyzes requirements 
+  OpenRequirements.AI DeFOSPAM requirements engineering validation skill using 7 specialized
+  AI analyst agents based on the Business Story Method by Paul Gerrard. Analyzes requirements
   through Definitions, Features, Outcomes, Scenarios, Prediction, Ambiguity, and Missing data
   checks. Produces business stories, scenarios, glossaries, and gap analysis reports.
   Use this skill whenever the user wants to validate requirements, check requirements quality,
@@ -10,6 +10,8 @@ description: >
   scenarios from requirements, or perform specification by example. Also trigger when the user
   mentions DeFOSPAM, business stories, requirements validation, specification by example, SBE,
   living documentation, or executable specifications — even if they don't name the skill directly.
+argument-hint: "[requirements-file-or-text]"
+allowed-tools: Read, Write, Edit, Bash, Grep, Glob, Agent
 ---
 
 # DeFOSPAM — Requirements Validation Skill
@@ -1347,54 +1349,48 @@ The quality of a DeFOSPAM analysis depends heavily on the quality and scope of t
 
 ## Enabling `/openrequirements` in Claude Code
 
-### Setup as a Slash Command
+### How Claude Code Discovers Skills
 
-To register the skill as the `/openrequirements` slash command in Claude Code, place the `SKILL.md` file in one of these locations (in priority order):
+Claude Code **automatically discovers** skills placed in the correct directory structure. No `settings.json` registration is needed — just put the files in the right place and the `/openrequirements` command appears immediately.
 
-**1. Project-level skill (recommended for teams):**
+The required structure is:
+```
+<skills-root>/openrequirements/SKILL.md
+```
+
+The directory name `openrequirements` becomes the slash command name `/openrequirements`. The `SKILL.md` file must exist inside it with valid YAML frontmatter.
+
+### Installation Paths
+
+**1. Project-level (recommended for teams) — available to everyone in this repo:**
 ```bash
 # From your project root
 mkdir -p .claude/skills/openrequirements
 cp path/to/SKILL.md .claude/skills/openrequirements/SKILL.md
 ```
-This makes `/openrequirements` available to anyone working in this repository. Commit to version control so the whole team has access.
+Commit `.claude/skills/openrequirements/SKILL.md` to version control so the whole team gets the command.
 
-**2. User-level skill (available across all projects):**
+**2. Personal / user-level — available across ALL your projects:**
 ```bash
-# Global install — available in every Claude Code session
 mkdir -p ~/.claude/skills/openrequirements
 cp path/to/SKILL.md ~/.claude/skills/openrequirements/SKILL.md
 ```
 
-Once installed, you can invoke the skill in Claude Code with:
-```
-/openrequirements
-```
-or by simply mentioning requirements validation in your prompt — Claude Code detects the skill automatically from context.
+**3. Monorepo support:**
+Claude Code also discovers skills from nested `.claude/skills/` directories. For example, if you're editing files in `packages/frontend/`, skills in `packages/frontend/.claude/skills/` are also loaded.
 
-### Configuring as a Custom Slash Command
+### Verifying It Works
 
-You can also register it explicitly in your project's `.claude/settings.json`:
-
-```json
-{
-  "skills": {
-    "openrequirements": {
-      "path": ".claude/skills/openrequirements/SKILL.md",
-      "description": "DeFOSPAM requirements validation with 7 AI analyst agents",
-      "triggers": [
-        "validate requirements",
-        "check requirements",
-        "DeFOSPAM",
-        "business stories",
-        "requirements validation",
-        "find ambiguity",
-        "specification by example"
-      ]
-    }
-  }
-}
+After placing the file, type `/` in Claude Code's input. You should see:
 ```
+/openrequirements    OpenRequirements.AI DeFOSPAM requirements engineering validation...
+                     [requirements-file-or-text]
+```
+
+If it doesn't appear:
+1. **Check the path** — the file must be at exactly `.claude/skills/openrequirements/SKILL.md` (not `.claude/skills/SKILL.md` or `.claude/commands/openrequirements.md`)
+2. **Check the frontmatter** — the `---` delimiters and `name:` field must be present
+3. **Restart Claude Code** — while live detection usually works, a restart ensures discovery
 
 ### Running as an Autonomous Agent
 
@@ -1409,19 +1405,19 @@ Claude Code reads the skill, spawns the 7 analyst subagents in parallel phases, 
 **Headless agent mode (from the terminal):**
 ```bash
 # Single file analysis
-claude -p "Use the /openrequirements skill to analyze docs/PRD.md and save reports to ./defospam-output/"
+claude -p "Use the /openrequirements skill to analyze docs/PRD.md and save reports to ./openrequirements-output/"
 
 # Batch analysis across a directory
 claude -p "Use the /openrequirements skill to analyze every .md file in ./requirements/ and save individual reports to ./reports/"
 
 # Pipeline mode for CI/CD — JSON only, no interactive output
-claude -p "Use /openrequirements in pipeline mode on requirements.md — output only defospam-results.json to stdout"
+claude -p "Use /openrequirements in pipeline mode on requirements.md — output only openrequirements-results.json to stdout"
 
 # Targeted analysis — specific agents
 claude -p "Use /openrequirements to run only the Ambiguity and Missing analysts on spec.docx"
 
 # Diff mode — track improvement
-claude -p "Use /openrequirements to re-analyze docs/PRD.md and diff against the previous defospam-results.json"
+claude -p "Use /openrequirements to re-analyze docs/PRD.md and diff against the previous openrequirements-results.json"
 ```
 
 **In a Claude Code hook or automation:**
@@ -1476,7 +1472,7 @@ Claude Code is the primary agent environment. Key behaviours:
 
 - **Subagents**: Use the `Agent` tool to spawn analyst subagents in parallel (Phase 1 → 2 → 3 → 4 as described in STEP 3)
 - **File I/O**: Read requirements from the filesystem, write all outputs (JSON, .md, .html) to the specified output directory
-- **Working directory**: Create a `defospam-output/` directory in the project root (or user-specified location) for all outputs
+- **Working directory**: Create a `openrequirements-output/` directory in the project root (or user-specified location) for all outputs
 - **Git integration**: If in a git repo, the user may want to commit the reports — don't auto-commit, but mention the output files are ready
 - **Watch mode**: If the user asks to "watch" a requirements file, suggest they re-run the analysis after making changes and use diff mode to track improvements
 - **MCP tools**: If MCP tools are available (e.g., file system, GitHub), use them to read requirements from remote sources or push reports to repositories
@@ -1488,7 +1484,7 @@ Claude: [reads SKILL.md] → [reads docs/PRD.md] → [spawns Dorothy + Flo subag
         → [waits] → [spawns Olivia + Sophia + Alexa subagents]
         → [waits] → [spawns Paul + Milarna subagents]
         → [waits] → [aggregates all findings]
-        → [produces chat output + defospam-output/openrequirements-report.md + defospam-output/openrequirements-report.html + defospam-output/defospam-results.json]
+        → [produces chat output + openrequirements-output/openrequirements-report.md + openrequirements-output/openrequirements-report.html + openrequirements-output/openrequirements-results.json]
 ```
 
 ### Cowork
