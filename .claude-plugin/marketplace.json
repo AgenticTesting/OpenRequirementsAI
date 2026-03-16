@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "name": "OpenRequirementsAI",
+  "description": "AI-powered open requirements — analyze, review and refine any requirement",
+  "owner": {
+    "name": "AgenticTesting"
+  },
+  "plugins": [
+    {
+      "name": "OpenRequirementsAI",
+      "description": "Multi-agent open requirements analysis with skill commands",
+      "version": "1.0.1",
+      "source": "./"
+    }
+  ]
+}
