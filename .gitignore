@@ -1,5 +1,7 @@
-.skills/skill/openrequirements/SKILL.md
 .claude/skills/openrequirements/SKILL.md
+.claude/skills/openrequirements/README.md
+.claude/skills/specificationbyexample/SKILL.md
+.claude/skills/specificationbyexample/README.md
 .defospam-output/dorothy-findings.json
 .defospam-output/dorothy-glossary.json
 .defospam-output/alexa-findings.json
@@ -55,3 +57,4 @@ openrequirements-output/paul-findings.json
 openrequirements-output/openrequirements-report.md
 openrequirements-output/openrequirements-report.html
 openrequirements-output/openrequirements-results.json
+
