@@ -54,7 +54,7 @@ When loading `openrequirements-results.json`, extract these key sections that fe
 | `glossary[]` | Chris (Collaborate), Rex (Refine) | Verified/unverified terms become the ubiquitous language |
 | `features[]` | Grace (Goals), Isabel (Illustrate) | Business stories become the basis for scope and examples |
 | `features[].sub_features[]` | Isabel (Illustrate), Rex (Refine) | Decomposed features get concrete examples |
-| `scenarios[]` | Isabel (Illustrate), Rex (Refine), Amber (Automate) | Given/When/Then scenarios become executable specifications |
+| `scenarios[]` | Isabel (Illustrate), Rex (Refine), angie (Automate) | Given/When/Then scenarios become executable specifications |
 | `findings[]` | All agents | Gaps, ambiguities, and missing data inform refinement |
 | `summary` | Victoria (Validate) | Severity counts drive validation priority |
 
@@ -74,7 +74,7 @@ Each agent embodies one of the seven key process patterns from Specification by 
 | **S** | Chris | Specifying collaboratively | Collaborative specification, three amigos, ubiquitous language |
 | **I** | Isabel | Illustrating using examples | Key example identification, concrete illustration, data tables |
 | **R** | Rex | Refining the specification | Specification cleanup, noise removal, domain language alignment |
-| **A** | Amber | Automating validation | Gherkin generation, automation layer design, fixture mapping |
+| **A** | Angie | Automating validation | Gherkin generation, automation layer design, fixture mapping |
 | **V** | Victoria | Validating frequently | Validation strategy, regression suite, CI/CD integration |
 | **L** | Laveena | Evolving a documentation system | Living documentation structure, organization, accessibility |
 
@@ -86,7 +86,7 @@ Each agent embodies one of the seven key process patterns from Specification by 
 |---|---|
 | **ID** | `grace` |
 | **Pattern** | **D** — Deriving scope from goals |
-| **Profile Image** | `https://openrequirements.ai/assets/Grace-SBE.png` |
+| **Profile Image** | `https://openrequirements.ai/assets/Grace-B_cQEfeU.png` |
 | **Expertise** | Business goal extraction, value stream mapping, scope-to-goal alignment, "why" and "who" analysis |
 
 **Prompt:**
@@ -138,7 +138,7 @@ Each agent embodies one of the seven key process patterns from Specification by 
 |---|---|
 | **ID** | `chris` |
 | **Pattern** | **S** — Specifying collaboratively |
-| **Profile Image** | `https://openrequirements.ai/assets/Chris-SBE.png` |
+| **Profile Image** | `https://openrequirements.ai/assets/Chris-DeYpHpua.png` |
 | **Expertise** | Collaborative specification workshops, three amigos sessions, ubiquitous language, stakeholder alignment |
 
 **Prompt:**
@@ -195,7 +195,7 @@ Each agent embodies one of the seven key process patterns from Specification by 
 |---|---|
 | **ID** | `isabel` |
 | **Pattern** | **I** — Illustrating using examples |
-| **Profile Image** | `https://openrequirements.ai/assets/Isabel-SBE.png` |
+| **Profile Image** | `https://openrequirements.ai/assets/Isabel-BjuqsE0R.png` |
 | **Expertise** | Key example identification, concrete illustration, data table construction, edge case examples |
 
 **Prompt:**
@@ -256,7 +256,7 @@ Each agent embodies one of the seven key process patterns from Specification by 
 |---|---|
 | **ID** | `rex` |
 | **Pattern** | **R** — Refining the specification |
-| **Profile Image** | `https://openrequirements.ai/assets/Rex-SBE.png` |
+| **Profile Image** | `https://openrequirements.ai/assets/Rex-Dmf-gqUI.png` |
 | **Expertise** | Specification cleanup, surplus detail removal, domain language alignment, specification quality assessment |
 
 **Prompt:**
@@ -320,18 +320,18 @@ Each agent embodies one of the seven key process patterns from Specification by 
 
 ---
 
-### Agent 5: Amber — Automation Analyst
+### Agent 5: angie — Automation Analyst
 
 | Field | Value |
 |---|---|
-| **ID** | `amber` |
+| **ID** | `angie` |
 | **Pattern** | **A** — Automating validation without changing specifications |
-| **Profile Image** | `https://openrequirements.ai/assets/Amber-SBE.png` |
+| **Profile Image** | `https://openrequirements.ai/assets/angie-SBE.png` |
 | **Expertise** | Gherkin generation, automation framework selection, fixture/step definition design, automation layer architecture |
 
 **Prompt:**
 
-> You are Amber, an Automation Analyst specializing in automating validation without changing the specification. Your core principle: the specification must remain human-readable and business-accessible after automation. Automate the validation, not the specification.
+> You are angie, an Automation Analyst specializing in automating validation without changing the specification. Your core principle: the specification must remain human-readable and business-accessible after automation. Automate the validation, not the specification.
 >
 > You receive refined specifications from Rex, key examples from Isabel, and the full DeFOSPAM context. Your task:
 >
@@ -396,7 +396,7 @@ Each agent embodies one of the seven key process patterns from Specification by 
 >   "traceability": { "defospam_feature": "...", "defospam_findings": ["..."], "business_goal": "..." },
 >   "reasoning": "Why this matters for automation",
 >   "recommendation": "What to do about it",
->   "analyst": "Amber",
+>   "analyst": "angie",
 >   "byline": "Automation Analyst",
 >   "principle": "A"
 > }
@@ -410,14 +410,14 @@ Each agent embodies one of the seven key process patterns from Specification by 
 |---|---|
 | **ID** | `victoria` |
 | **Pattern** | **V** — Validating frequently |
-| **Profile Image** | `https://openrequirements.ai/assets/Victoria-SBE.png` |
+| **Profile Image** | `https://openrequirements.ai/assets/Victoria-B17TdrBk.png` |
 | **Expertise** | Validation strategy, test suite prioritization, CI/CD integration, regression suite design, feedback loop optimization |
 
 **Prompt:**
 
 > You are Victoria, a Validation Analyst specializing in frequent validation. Your job is to design a validation strategy that ensures the executable specifications are run continuously and provide fast feedback — because executable specifications only maintain their value when they're validated against the system regularly.
 >
-> You receive Amber's Gherkin feature files, the DeFOSPAM severity data, and the full specification context. Your task:
+> You receive angie's Gherkin feature files, the DeFOSPAM severity data, and the full specification context. Your task:
 >
 > **Validation Suite Design:**
 > - Organize Gherkin scenarios into validation suites by priority:
@@ -464,7 +464,7 @@ Each agent embodies one of the seven key process patterns from Specification by 
 |---|---|
 | **ID** | `laveena` |
 | **Pattern** | **L** — Evolving a documentation system |
-| **Profile Image** | `https://openrequirements.ai/assets/Laveena-SBE.png` |
+| **Profile Image** | `https://openrequirements.ai/assets/Laveena-DeYWBejU.png` |
 | **Expertise** | Living documentation structure, document organization, accessibility, consistency, documentation evolution |
 
 **Prompt:**
@@ -589,15 +589,15 @@ Save your refined specifications to: {output_dir}/rex-refined.json
 Save your findings to: {output_dir}/rex-findings.json
 ```
 
-#### Phase 3: Automation + Validation + Documentation (spawn Amber + Victoria + Laveena after Phase 2)
+#### Phase 3: Automation + Validation + Documentation (spawn angie + Victoria + Laveena after Phase 2)
 
-Amber generates Gherkin from refined specs and examples. Victoria designs the validation strategy. Laveena structures the living documentation. All three can work in parallel since they read from Phase 2 outputs independently.
+angie generates Gherkin from refined specs and examples. Victoria designs the validation strategy. Laveena structures the living documentation. All three can work in parallel since they read from Phase 2 outputs independently.
 
-**Amber subagent prompt:**
+**Angie subagent prompt:**
 ```
-You are Amber, the Automation Analyst for a Specification by Example transformation.
+You are angie, the Automation Analyst for a Specification by Example transformation.
 
-Read the skill instructions at: {skill_path}/SKILL.md (Agent 5: Amber section)
+Read the skill instructions at: {skill_path}/SKILL.md (Agent 5: Angie section)
 Read the DeFOSPAM results from: {input_path}
 Read Rex's refined specifications from: {output_dir}/rex-refined.json
 Read Isabel's examples from: {output_dir}/isabel-examples.json
@@ -606,9 +606,9 @@ Read Grace's goals from: {output_dir}/grace-goals.json
 Generate Gherkin feature files and design the automation layer.
 
 Save your Gherkin feature files to: {output_dir}/features/
-Save your automation design to: {output_dir}/amber-automation.json
-Save your traceability matrix to: {output_dir}/amber-traceability.json
-Save your findings to: {output_dir}/amber-findings.json
+Save your automation design to: {output_dir}/angie-automation.json
+Save your traceability matrix to: {output_dir}/angie-traceability.json
+Save your findings to: {output_dir}/angie-findings.json
 ```
 
 **Victoria subagent prompt:**
@@ -617,7 +617,7 @@ You are Victoria, the Validation Analyst for a Specification by Example transfor
 
 Read the skill instructions at: {skill_path}/SKILL.md (Agent 6: Victoria section)
 Read the DeFOSPAM results from: {input_path}
-Read Amber's automation design from: {output_dir}/amber-automation.json (if available, otherwise use rex-refined.json)
+Read angie's automation design from: {output_dir}/angie-automation.json (if available, otherwise use rex-refined.json)
 
 Design the validation suite strategy and assess reliability.
 
@@ -639,13 +639,13 @@ Save your documentation structure to: {output_dir}/laveena-structure.json
 Save your findings to: {output_dir}/laveena-findings.json
 ```
 
-**Note for Victoria:** If Amber hasn't completed yet when Victoria starts, Victoria should work from Rex's refined specifications directly. Victoria's validation strategy is enriched by Amber's Gherkin but doesn't strictly require it.
+**Note for Victoria:** If Angie hasn't completed yet when Victoria starts, Victoria should work from Rex's refined specifications directly. Victoria's validation strategy is enriched by Angie's Gherkin but doesn't strictly require it.
 
 #### Phase 4: Aggregate and Report
 
 After all subagents complete, the main agent:
 1. Reads all `*-findings.json` files from `{output_dir}/`
-2. Reads `grace-goals.json`, `chris-language.json`, `isabel-examples.json`, `rex-refined.json`, `amber-automation.json`, `victoria-validation.json`, `laveena-structure.json`
+2. Reads `grace-goals.json`, `chris-language.json`, `isabel-examples.json`, `rex-refined.json`, `angie-automation.json`, `victoria-validation.json`, `laveena-structure.json`
 3. Collects all Gherkin `.feature` files from `{output_dir}/features/`
 4. Deduplicates findings (keep highest confidence when multiple agents flag the same issue)
 5. Produces the required outputs (chat, .md, .html, .feature files, sbe-results.json)
@@ -671,7 +671,7 @@ When subagents are NOT available, run agents sequentially:
 2. **Chris** (Collaborate) — builds ubiquitous language, identifies collaboration gaps
 3. **Isabel** (Illustrate) — creates concrete key examples
 4. **Rex** (Refine) — cleans up specifications, enforces domain language
-5. **Amber** (Automate) — generates Gherkin, designs automation
+5. **Angie** (Automate) — generates Gherkin, designs automation
 6. **Victoria** (Validate) — designs validation strategy and suites
 7. **Laveena** (Living Docs) — structures the documentation system
 
@@ -695,7 +695,7 @@ After all agents have run, compile everything into the final executable specific
 
 ### Gherkin Feature Files
 
-Consolidate Amber's feature files into a clean directory structure following Laveena's documentation recommendations:
+Consolidate angie's feature files into a clean directory structure following Laveena's documentation recommendations:
 
 ```
 features/
@@ -707,7 +707,7 @@ features/
 ├── user-management/
 │   └── account-provisioning.feature
 └── support/
-    └── step-definitions.md           (step definition stubs from Amber)
+    └── step-definitions.md           (step definition stubs from angie)
 ```
 
 ### Refined Business Stories
@@ -853,7 +853,7 @@ Transformed **X** DeFOSPAM findings into **Y** executable specifications across 
 | S — Collaborate | Chris | X | - | - |
 | I — Illustrate | Isabel | X | - | X |
 | R — Refine | Rex | X | X | - |
-| A — Automate | Amber | X | X | X |
+| A — Automate | Angie | X | X | X |
 | V — Validate | Victoria | X | - | - |
 | L — Living Docs | Laveena | X | - | - |
 
@@ -985,7 +985,7 @@ Save all `.feature` files to `{output_dir}/features/` following Laveena's recomm
     "timestamp": "ISO-8601",
     "source": "path/to/defospam-results.json or requirements file",
     "defospam_version": "1.0 (if DeFOSPAM input was used)",
-    "agents_run": ["grace", "chris", "isabel", "rex", "amber", "victoria", "laveena"]
+    "agents_run": ["grace", "chris", "isabel", "rex", "angie", "victoria", "laveena"]
   },
   "summary": {
     "total_findings": 0,
@@ -1072,7 +1072,7 @@ User: transform the DeFOSPAM results into executable specs
 Claude: [reads SKILL.md] → [reads defospam-output/openrequirements-results.json]
         → [spawns Grace + Chris subagents]
         → [waits] → [spawns Isabel + Rex subagents]
-        → [waits] → [spawns Amber + Victoria + Laveena subagents]
+        → [waits] → [spawns angie + Victoria + Laveena subagents]
         → [waits] → [aggregates all outputs]
         → [produces chat + sbe-output/sbe-report.md + sbe-output/sbe-report.html
            + sbe-output/features/*.feature + sbe-output/sbe-results.json]
@@ -1092,7 +1092,7 @@ Full support via the Claude Code VS Code extension:
 
 Cowork runs in a sandboxed Linux VM:
 
-- **Subagents**: Amberilable — use the same Phase 1 → 2 → 3 → 4 strategy
+- **Subagents**: angieilable — use the same Phase 1 → 2 → 3 → 4 strategy
 - **File output**: Save all reports and feature files to the workspace folder
 - **HTML reports**: Provide clickable `computer://` links for the HTML report
 - **DeFOSPAM input**: The user may upload `openrequirements-results.json` — read from `/mnt/uploads/` or the workspace folder
@@ -1101,7 +1101,7 @@ Cowork runs in a sandboxed Linux VM:
 
 No subagent support — run everything sequentially inline:
 
-- Run all 7 agents one by one in order: Grace → Chris → Isabel → Rex → Amber → Victoria → Laveena
+- Run all 7 agents one by one in order: Grace → Chris → Isabel → Rex → angie → Victoria → Laveena
 - Output the Gherkin feature files in code blocks in the conversation
 - If a VM is available, save the reports and feature files
 
