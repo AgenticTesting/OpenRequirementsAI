@@ -1184,7 +1184,6 @@ Write a modern dark-mode HTML file. Use the following template, inserting findin
     <div class="header">
         <div class="header-content">
             <div class="brand">
-                <img src="https://openrequirements.ai/assets/logo-nlGhAN5y.png" alt="OpenRequirements.ai">
                 <h1>DeFOSPAM Report</h1>
             </div>
             <div class="powered-by">
@@ -1472,7 +1471,7 @@ Claude Code is the primary agent environment. Key behaviours:
 
 - **Subagents**: Use the `Agent` tool to spawn analyst subagents in parallel (Phase 1 → 2 → 3 → 4 as described in STEP 3)
 - **File I/O**: Read requirements from the filesystem, write all outputs (JSON, .md, .html) to the specified output directory
-- **Working directory**: Create a `openrequirements-output/` directory in the project root (or user-specified location) for all outputs
+- **Working directory**: Create a `.openrequirements-output/` directory in the project root (or user-specified location) for all outputs
 - **Git integration**: If in a git repo, the user may want to commit the reports — don't auto-commit, but mention the output files are ready
 - **Watch mode**: If the user asks to "watch" a requirements file, suggest they re-run the analysis after making changes and use diff mode to track improvements
 - **MCP tools**: If MCP tools are available (e.g., file system, GitHub), use them to read requirements from remote sources or push reports to repositories

@@ -31,7 +31,7 @@ This skill implements the **7 key process patterns** as AI analyst agents that t
 
 | # | Pattern | Agent | What They Do |
 |---|---|---|---|
-| 1 | **D**eriving scope from goals | **Grace** | Extracts business goals from features, aligns scope to value |
+| 1 | Deriving scope from **G**oals | **Grace** | Extracts business goals from features, aligns scope to value |
 | 2 | **S**pecifying collaboratively | **Chris** | Builds ubiquitous language, identifies collaboration gaps, recommends workshops |
 | 3 | **I**llustrating using examples | **Isabel** | Creates concrete key examples with realistic data for each scenario |
 | 4 | **R**efining the specification | **Rex** | Strips surplus detail, enforces "what not how", ensures domain language |
@@ -43,7 +43,7 @@ This skill implements the **7 key process patterns** as AI analyst agents that t
 
 ## The Pipeline: DeFOSPAM → SBE
 
-This skill is designed as a **downstream companion** to the [DeFOSPAM skill](../defospam/). The full OpenRequirements.ai pipeline:
+This skill is designed as a **downstream companion** to the [DeFOSPAM skill](../openrequirements/). The full OpenRequirements.ai pipeline:
 
 ```
 ┌─────────────────────────┐

@@ -29,7 +29,7 @@ This skill is designed as a **downstream companion** to the DeFOSPAM skill. It c
 1. **Receive DeFOSPAM output** — load `openrequirements-results.json` (or accept raw requirements if no DeFOSPAM output exists)
 2. **Run all 7 SBE process pattern agents** against the input
 3. **Transform findings** — derive goals, refine examples, produce executable specifications, create automation-ready Gherkin, and build the living documentation structure
-4. **Output** refined specifications in three formats: chat, markdown (.md), and styled HTML (.html), plus a Gherkin `.feature` file and a `sbe-results.json` pipeline output
+4. **Output** refined specifications in three formats: chat, markdown (.md), and styled HTML (.html), plus a Gherkin `.feature` file and a `openrequirements-sbe-results.json` pipeline output
 
 ---
 
@@ -648,7 +648,7 @@ After all subagents complete, the main agent:
 2. Reads `grace-goals.json`, `chris-language.json`, `isabel-examples.json`, `rex-refined.json`, `angie-automation.json`, `victoria-validation.json`, `laveena-structure.json`
 3. Collects all Gherkin `.feature` files from `{output_dir}/features/`
 4. Deduplicates findings (keep highest confidence when multiple agents flag the same issue)
-5. Produces the required outputs (chat, .md, .html, .feature files, sbe-results.json)
+5. Produces the required outputs (chat, .md, .html, .feature files, openrequirements-sbe-results.json)
 
 ### Claude Code CLI Invocation
 
@@ -765,10 +765,10 @@ Same as DeFOSPAM: if multiple agents flag the same issue, keep the finding with 
 After collecting all findings, produce:
 
 1. **Chat output** (inline in the conversation)
-2. **Markdown file** (saved as `sbe-report.md`)
-3. **HTML file** (saved as `sbe-report.html`)
+2. **Markdown file** (saved as `openrequirements-sbe-report.md`)
+3. **HTML file** (saved as `openrequirements-sbe-report.html`)
 4. **Gherkin feature files** (saved to `features/` directory)
-5. **Pipeline JSON** (saved as `sbe-results.json`)
+5. **Pipeline JSON** (saved as `openrequirements-sbe-results.json`)
 
 ---
 
@@ -811,7 +811,7 @@ Transformed X DeFOSPAM findings into Y executable specifications.
 
 ───────────────────────────────────────
 🔍 Finding #1: {finding_title}
-   Pattern: {D/S/I/R/A/V/L} | Severity: {severity}
+   Pattern: {G/S/I/R/A/V/L} | Severity: {severity}
    Confidence: {confidence}/10
    Found by: {analyst_name} — {byline}
    Type: {finding_type}
@@ -830,7 +830,7 @@ Specification by Example methodology by Gojko Adzic
 
 ---
 
-### Output 2: Markdown Report File (`sbe-report.md`)
+### Output 2: Markdown Report File (`openrequirements-sbe-report.md`)
 
 ```markdown
 # Specification by Example Transformation Report
@@ -943,7 +943,7 @@ Transformed **X** DeFOSPAM findings into **Y** executable specifications across 
 
 ---
 
-### Output 3: HTML Report File (`sbe-report.html`)
+### Output 3: HTML Report File (`openrequirements-sbe-report.html`)
 
 Write a modern dark-mode HTML file matching the DeFOSPAM report styling. Use the same CSS framework as the DeFOSPAM HTML report with these adaptations:
 
@@ -975,7 +975,7 @@ Save all `.feature` files to `{output_dir}/features/` following Laveena's recomm
 
 ---
 
-### Output 5: Pipeline JSON (`sbe-results.json`)
+### Output 5: Pipeline JSON (`openrequirements-sbe-results.json`)
 
 ```json
 {
@@ -1062,20 +1062,20 @@ Claude Code is the primary agent environment. Key behaviours:
 
 - **Subagents**: Use the `Agent` tool to spawn SBE subagents in parallel (Phase 1 → 2 → 3 → 4 as described in STEP 3)
 - **File I/O**: Read DeFOSPAM results from the filesystem, write all outputs to the specified output directory
-- **Working directory**: Create a `sbe-output/` directory in the project root (or user-specified location) for all outputs
-- **Feature files**: Write Gherkin `.feature` files to `sbe-output/features/`
+- **Working directory**: Create a `.openrequirements-output/` directory in the project root (or user-specified location) for all outputs
+- **Feature files**: Write Gherkin `.feature` files to `.openrequirements-output/features/`
 - **DeFOSPAM integration**: If no `openrequirements-results.json` exists, suggest running DeFOSPAM first for best results
 
 **Example session:**
 ```
 User: transform the DeFOSPAM results into executable specs
-Claude: [reads SKILL.md] → [reads defospam-output/openrequirements-results.json]
+Claude: [reads SKILL.md] → [reads .-output/openrequirements-results.json]
         → [spawns Grace + Chris subagents]
         → [waits] → [spawns Isabel + Rex subagents]
         → [waits] → [spawns angie + Victoria + Laveena subagents]
         → [waits] → [aggregates all outputs]
-        → [produces chat + sbe-output/sbe-report.md + sbe-output/sbe-report.html
-           + sbe-output/features/*.feature + sbe-output/sbe-results.json]
+        → [produces chat + .openrequirements-output/openrequirements-sbe-report.md + .openrequirements-output/openrequirements-sbe-report.html
+           + .openrequirements-output/features/*.feature + .openrequirements-output/openrequirements-sbe-results.json]
 ```
 
 ### Visual Studio Code (Claude Code Extension)
@@ -1083,10 +1083,10 @@ Claude: [reads SKILL.md] → [reads defospam-output/openrequirements-results.jso
 Full support via the Claude Code VS Code extension:
 
 - Open the Claude Code panel → type `/specificationbyexample`
-- File context: reference DeFOSPAM results by path: `/specificationbyexample defospam-output/openrequirements-results.json`
+- File context: reference DeFOSPAM results by path: `/specificationbyexample .openrequirements-output/openrequirements-results.json`
 - Output files appear in the VS Code file explorer and Source Control panel
 - Gherkin feature files get syntax highlighting if you have a Gherkin/Cucumber VS Code extension installed
-- Headless mode from integrated terminal: `claude -p "Use /specificationbyexample to transform defospam-output/openrequirements-results.json"`
+- Headless mode from integrated terminal: `claude -p "Use /specificationbyexample to transform .openrequirements-output/openrequirements-results.json"`
 
 ### Cowork
 
@@ -1134,7 +1134,7 @@ Requirements Document
    [SBE Skill]  ← THIS SKILL
    7 agents transform into executable specs
         ↓
-   sbe-results.json + *.feature files
+   openrequirements-sbe-results.json + *.feature files
         ↓
    [OpenTestAI Skill]
    33+ testers validate the implementation
