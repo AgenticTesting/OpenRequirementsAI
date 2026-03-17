@@ -70,7 +70,7 @@ Each agent embodies one of the seven key process patterns from Specification by 
 
 | Pattern | Agent | Principle | Speciality |
 |---|---|---|---|
-| **D** | Grace | Deriving scope from goals | Business goal extraction, scope alignment, value mapping |
+| **G** | Grace | Deriving scope from goals | Business goal extraction, scope alignment, value mapping |
 | **S** | Chris | Specifying collaboratively | Collaborative specification, three amigos, ubiquitous language |
 | **I** | Isabel | Illustrating using examples | Key example identification, concrete illustration, data tables |
 | **R** | Rex | Refining the specification | Specification cleanup, noise removal, domain language alignment |
@@ -85,7 +85,7 @@ Each agent embodies one of the seven key process patterns from Specification by 
 | Field | Value |
 |---|---|
 | **ID** | `grace` |
-| **Pattern** | **D** — Deriving scope from goals |
+| **Pattern** | **G** — Deriving scope from Goals |
 | **Profile Image** | `https://openrequirements.ai/assets/Grace-B_cQEfeU.png` |
 | **Expertise** | Business goal extraction, value stream mapping, scope-to-goal alignment, "why" and "who" analysis |
 
@@ -126,7 +126,7 @@ Each agent embodies one of the seven key process patterns from Specification by 
 >   "recommendation": "What to do about it",
 >   "analyst": "Grace",
 >   "byline": "Goals Analyst",
->   "principle": "D"
+>   "principle": "G"
 > }
 > ```
 
@@ -786,7 +786,7 @@ Powered by the SBE Process Patterns
 Transformed X DeFOSPAM findings into Y executable specifications.
 
 📊 Summary by Process Pattern:
-  D — Goals:          X findings | Y goals derived
+  G — Goals:          X findings | Y goals derived
   S — Collaborate:    X findings | Y workshop recommendations
   I — Illustrate:     X findings | Y key examples created
   R — Refine:         X findings | Y specifications refined
@@ -849,7 +849,7 @@ Transformed **X** DeFOSPAM findings into **Y** executable specifications across 
 
 | Pattern | Agent | Findings | Specifications | Examples |
 |---|---|---|---|---|
-| D — Goals | Grace | X | X | - |
+| G — Goals | Grace | X | X | - |
 | S — Collaborate | Chris | X | - | - |
 | I — Illustrate | Isabel | X | - | X |
 | R — Refine | Rex | X | X | - |
@@ -918,7 +918,7 @@ Transformed **X** DeFOSPAM findings into **Y** executable specifications across 
 
 ## Findings by Process Pattern
 
-### D — Deriving Scope from Goals (Grace)
+### G — Deriving Scope from Goals (Grace)
 
 #### Finding 1: {finding_title}
 
@@ -949,7 +949,7 @@ Write a modern dark-mode HTML file matching the DeFOSPAM report styling. Use the
 
 - Header title: "Specification by Example Transformation Report"
 - Logo: `https://openrequirements.ai/assets/logo-nlGhAN5y.png`
-- Navigation pills: D S I R A V L (the 7 SBE patterns instead of DeFOSPAM)
+- Navigation pills: G S I R A V L (the 7 SBE patterns instead of DeFOSPAM)
 - Summary cards: Specifications, Feature Files, Key Examples, Findings, Gherkin Scenarios, Validation Suites
 - Sections: Ubiquitous Language, Business Goals, Executable Specifications (with embedded Gherkin), Validation Strategy, Living Documentation Structure, Findings by Pattern
 - Agent profile images next to each finding
@@ -1008,7 +1008,7 @@ Save all `.feature` files to `{output_dir}/features/` following Laveena's recomm
   "documentation_structure": {},
   "findings": [],
   "findings_by_pattern": {
-    "D": [],
+    "G": [],
     "S": [],
     "I": [],
     "R": [],
@@ -1092,7 +1092,7 @@ Full support via the Claude Code VS Code extension:
 
 Cowork runs in a sandboxed Linux VM:
 
-- **Subagents**: angieilable — use the same Phase 1 → 2 → 3 → 4 strategy
+- **Subagents**: Amberilable - use the same Phase 1 → 2 → 3 → 4 strategy
 - **File output**: Save all reports and feature files to the workspace folder
 - **HTML reports**: Provide clickable `computer://` links for the HTML report
 - **DeFOSPAM input**: The user may upload `openrequirements-results.json` — read from `/mnt/uploads/` or the workspace folder
