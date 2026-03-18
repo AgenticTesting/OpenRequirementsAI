@@ -86,7 +86,7 @@ Each agent embodies one of the eight characteristics of a good SRS defined in IE
 |---|---|
 | **ID** | `chelcie` |
 | **Characteristic** | **C** — Correct |
-| **Profile Image** | `https://openrequirements.ai/assets/Chelcie-SRS.png` |
+| **Profile Image** | `https://openrequirements.ai/lovable-uploads/bd0925d2-899a-4442-b3b3-a9d4802aa15a.png` |
 | **Expertise** | Requirements correctness validation, source compliance, factual accuracy, stakeholder alignment |
 
 **Prompt:**
@@ -137,7 +137,7 @@ Each agent embodies one of the eight characteristics of a good SRS defined in IE
 |---|---|
 | **ID** | `odin` |
 | **Characteristic** | **U** — Unambiguous |
-| **Profile Image** | `https://openrequirements.ai/assets/Odin-SRS.png` |
+| **Profile Image** | `https://openrequirements.ai/lovable-uploads/955cb5f8-8029-44ed-a8f4-02a288d584bb.png` |
 | **Expertise** | Natural language analysis, ambiguity detection, glossary enforcement, single-interpretation validation |
 
 **Prompt:**
@@ -192,7 +192,7 @@ Each agent embodies one of the eight characteristics of a good SRS defined in IE
 |---|---|
 | **ID** | `lucy` |
 | **Characteristic** | **C** — Complete |
-| **Profile Image** | `https://openrequirements.ai/assets/Lucy-SRS.png` |
+| **Profile Image** | `https://openrequirements.ai/lovable-uploads/eb069a7c-88f8-4a1b-9436-b3d5012cc7c7.png` |
 | **Expertise** | Requirements completeness assessment, TBD resolution, input/output coverage, IEEE 830 section coverage |
 
 **Prompt:**
@@ -246,7 +246,7 @@ Each agent embodies one of the eight characteristics of a good SRS defined in IE
 |---|---|
 | **ID** | `ophellia` |
 | **Characteristic** | **C** — Consistent |
-| **Profile Image** | `https://openrequirements.ai/assets/Ophellia-SRS.png` |
+| **Profile Image** | `https://openrequirements.ai/lovable-uploads/01b5854d-c944-4cd6-aa1c-d0bbefc4d329.png` |
 | **Expertise** | Internal consistency checking, conflict detection, logical and temporal analysis, terminology alignment |
 
 **Prompt:**
@@ -296,7 +296,7 @@ Each agent embodies one of the eight characteristics of a good SRS defined in IE
 |---|---|
 | **ID** | `natasha` |
 | **Characteristic** | **R** — Ranked for importance and/or stability |
-| **Profile Image** | `https://openrequirements.ai/assets/Natasha-SRS.png` |
+| **Profile Image** | `https://openrequirements.ai/lovable-uploads/571e34ad-8341-4b45-956e-c1c03b0e8fc2.png` |
 | **Expertise** | Requirements prioritization, necessity classification, stability assessment, MoSCoW mapping |
 
 **Prompt:**
@@ -362,7 +362,7 @@ Each agent embodies one of the eight characteristics of a good SRS defined in IE
 |---|---|
 | **ID** | `iris` |
 | **Characteristic** | **V** — Verifiable |
-| **Profile Image** | `https://openrequirements.ai/assets/Iris-SRS.png` |
+| **Profile Image** | `https://openrequirements.ai/lovable-uploads/d4b63f9d-8bee-45e3-a36f-2c35dc6bfa37.png` |
 | **Expertise** | Verifiability assessment, acceptance criteria generation, measurable requirements, testability analysis |
 
 **Prompt:**
@@ -416,7 +416,7 @@ Each agent embodies one of the eight characteristics of a good SRS defined in IE
 |---|---|
 | **ID** | `amelia` |
 | **Characteristic** | **M** — Modifiable |
-| **Profile Image** | `https://openrequirements.ai/assets/Amelia-SRS.png` |
+| **Profile Image** | `https://openrequirements.ai/lovable-uploads/43a800fb-96ca-4212-b0fe-d27b9cbf3e31.png` |
 | **Expertise** | SRS structure design, redundancy elimination, cross-referencing, organizational pattern selection |
 
 **Prompt:**
@@ -474,7 +474,7 @@ Each agent embodies one of the eight characteristics of a good SRS defined in IE
 |---|---|
 | **ID** | `lewis` |
 | **Characteristic** | **T** — Traceable |
-| **Profile Image** | `https://openrequirements.ai/assets/Lewis-SRS.png` |
+| **Profile Image** | `https://openrequirements.ai/lovable-uploads/fe49b686-7d1e-4c36-966f-45f33ca0edcd.png` |
 | **Expertise** | Forward/backward traceability, requirement origin tracking, traceability matrix generation, impact analysis |
 
 **Prompt:**
