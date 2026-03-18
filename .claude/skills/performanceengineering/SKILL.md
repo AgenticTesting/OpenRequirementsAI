@@ -88,7 +88,7 @@ The disciplines form the mnemonic **CLASS UME** — the 8 pillars of Performance
 |---|---|
 | **ID** | `ada` |
 | **Discipline** | **C** — Capacity |
-| **Profile Image** | `https://openrequirements.ai/assets/Ada-PE.png` |
+| **Profile Image** | `https://www.openperformance.ai/assets/ada-BElXIfyv.png` |
 | **Expertise** | Capacity planning, server sizing, resource modelling, growth forecasting, infrastructure cost estimation |
 
 **Prompt:**
@@ -145,7 +145,7 @@ The disciplines form the mnemonic **CLASS UME** — the 8 pillars of Performance
 |---|---|
 | **ID** | `noyce` |
 | **Discipline** | **L** — Latency |
-| **Profile Image** | `https://openrequirements.ai/assets/Noyce-PE.png` |
+| **Profile Image** | `https://www.openperformance.ai/assets/noyce-B76XlpvN.jpeg` |
 | **Expertise** | Response time budgets, component-level timing allocation, SLA definition, percentile targets |
 
 **Prompt:**
@@ -203,7 +203,7 @@ The disciplines form the mnemonic **CLASS UME** — the 8 pillars of Performance
 |---|---|
 | **ID** | `alan` |
 | **Discipline** | **A** — Availability |
-| **Profile Image** | `https://openrequirements.ai/assets/Alan-PE.png` |
+| **Profile Image** | `https://www.openperformance.ai/assets/turing-BMyIkicD.jpg` |
 | **Expertise** | Uptime targets, failover design, RTO/RPO, disaster recovery, redundancy planning |
 
 **Prompt:**
@@ -262,7 +262,7 @@ The disciplines form the mnemonic **CLASS UME** — the 8 pillars of Performance
 |---|---|
 | **ID** | `liskov` |
 | **Discipline** | **S** — Scalability |
-| **Profile Image** | `https://openrequirements.ai/assets/Liskov-PE.png` |
+| **Profile Image** | `https://www.openperformance.ai/assets/liskov-62KvhkRT.jpg` |
 | **Expertise** | Horizontal/vertical scaling, elasticity, load distribution, auto-scaling policies, cloud scaling patterns |
 
 **Prompt:**
@@ -320,7 +320,7 @@ The disciplines form the mnemonic **CLASS UME** — the 8 pillars of Performance
 |---|---|
 | **ID** | `yao` |
 | **Discipline** | **S** — Security |
-| **Profile Image** | `https://openrequirements.ai/assets/Yao-PE.png` |
+| **Profile Image** | `https://www.openperformance.ai/assets/yao-C0lfxll_.jpg` |
 | **Expertise** | Security performance impact, DoS/DDoS resilience, encryption overhead, authentication scaling, WAF performance |
 
 **Prompt:**
@@ -376,7 +376,7 @@ The disciplines form the mnemonic **CLASS UME** — the 8 pillars of Performance
 |---|---|
 | **ID** | `turing` |
 | **Discipline** | **U** — Usability |
-| **Profile Image** | `https://openrequirements.ai/assets/Turing-PE.png` |
+| **Profile Image** | `https://www.openperformance.ai/assets/todd-DW7stNZz.png` |
 | **Expertise** | User experience metrics, NPS/USS correlation, perceived performance, task completion time, error rate analysis |
 
 **Prompt:**
@@ -432,7 +432,7 @@ The disciplines form the mnemonic **CLASS UME** — the 8 pillars of Performance
 |---|---|
 | **ID** | `iverson` |
 | **Discipline** | **M** — Monitoring |
-| **Profile Image** | `https://openrequirements.ai/assets/Iverson-PE.png` |
+| **Profile Image** | `https://www.openperformance.ai/assets/torvalds-BrmK9C4z.jpg` |
 | **Expertise** | Observability strategy, synthetic/real user monitoring, alerting thresholds, telemetry design, dashboards |
 
 **Prompt:**
@@ -489,7 +489,7 @@ The disciplines form the mnemonic **CLASS UME** — the 8 pillars of Performance
 |---|---|
 | **ID** | `cerf` |
 | **Discipline** | **E** — Endurance |
-| **Profile Image** | `https://openrequirements.ai/assets/Cerf-PE.png` |
+| **Profile Image** | `https://www.openperformance.ai/assets/cerf-CCENdSwx.jpg` |
 | **Expertise** | Stress/soak testing strategy, resource leak detection, degradation profiling, performance test planning |
 
 **Prompt:**
