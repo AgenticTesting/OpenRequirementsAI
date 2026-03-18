@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DeFOSPAM Analysis — OpenRequirements.AI SKILL.md</title>
+<style>
+  :root {
+    --bg: #0d1117; --surface: #161b22; --border: #30363d;
+    --text: #e6edf3; --muted: #8b949e; --accent: #58a6ff;
+    --critical: #f85149; --major: #d29922; --minor: #3fb950;
+    --tag-bg: #21262d;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 14px; line-height: 1.6; }
+  .container { max-width: 1200px; margin: 0 auto; padding: 24px; }
+  h1 { font-size: 28px; font-weight: 700; margin-bottom: 4px; }
+  h2 { font-size: 20px; font-weight: 600; margin: 32px 0 16px; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
+  h3 { font-size: 16px; font-weight: 600; margin-bottom: 8px; }
+  .subtitle { color: var(--muted); margin-bottom: 32px; }
+
+  /* Summary Cards */
+  .summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 32px; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px; text-align: center; }
+  .card .number { font-size: 36px; font-weight: 700; line-height: 1; }
+  .card .label { color: var(--muted); font-size: 12px; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .card.critical .number { color: var(--critical); }
+  .card.major .number { color: var(--major); }
+  .card.minor .number { color: var(--minor); }
+  .card.neutral .number { color: var(--accent); }
+
+  /* Filter Bar */
+  .filter-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 24px; align-items: center; }
+  .filter-bar span { color: var(--muted); font-size: 12px; margin-right: 4px; }
+  .filter-btn { background: var(--tag-bg); border: 1px solid var(--border); color: var(--text); padding: 4px 12px; border-radius: 20px; cursor: pointer; font-size: 13px; transition: all 0.15s; }
+  .filter-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .filter-btn.active { border-color: var(--accent); background: rgba(88,166,255,0.1); color: var(--accent); }
+  .filter-btn.sev-critical.active { border-color: var(--critical); background: rgba(248,81,73,0.1); color: var(--critical); }
+  .filter-btn.sev-major.active { border-color: var(--major); background: rgba(210,153,34,0.1); color: var(--major); }
+  .filter-btn.sev-minor.active { border-color: var(--minor); background: rgba(63,185,80,0.1); color: var(--minor); }
+
+  /* Finding Cards */
+  .finding { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px; margin-bottom: 12px; border-left: 3px solid var(--border); transition: border-color 0.15s; }
+  .finding.critical { border-left-color: var(--critical); }
+  .finding.major { border-left-color: var(--major); }
+  .finding.minor { border-left-color: var(--minor); }
+  .finding-header { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 10px; }
+  .finding-avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--tag-bg); border: 1px solid var(--border); flex-shrink: 0; object-fit: cover; }
+  .finding-meta { flex: 1; }
+  .finding-title { font-weight: 600; font-size: 15px; margin-bottom: 4px; }
+  .finding-byline { color: var(--muted); font-size: 12px; }
+  .badges { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
+  .badge { padding: 2px 8px; border-radius: 20px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+  .badge.critical { background: rgba(248,81,73,0.15); color: var(--critical); border: 1px solid rgba(248,81,73,0.3); }
+  .badge.major { background: rgba(210,153,34,0.15); color: var(--major); border: 1px solid rgba(210,153,34,0.3); }
+  .badge.minor { background: rgba(63,185,80,0.15); color: var(--minor); border: 1px solid rgba(63,185,80,0.3); }
+  .badge.principle { background: rgba(88,166,255,0.1); color: var(--accent); border: 1px solid rgba(88,166,255,0.2); }
+  .badge.conf { background: var(--tag-bg); color: var(--muted); border: 1px solid var(--border); }
+  .finding-body p { color: var(--text); margin-bottom: 8px; font-size: 13px; }
+  .finding-body .rec { color: var(--accent); font-size: 13px; padding: 8px 12px; background: rgba(88,166,255,0.05); border-left: 2px solid var(--accent); border-radius: 0 4px 4px 0; margin-top: 8px; }
+  .provocation { background: rgba(210,153,34,0.05); border: 1px solid rgba(210,153,34,0.2); border-radius: 4px; padding: 8px 12px; margin-top: 8px; font-size: 12px; color: var(--muted); }
+  .provocation strong { color: var(--major); }
+
+  /* Glossary */
+  .glossary-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 10px; }
+  .glossary-item { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 12px; }
+  .glossary-term { font-weight: 600; font-size: 14px; margin-bottom: 4px; }
+  .glossary-def { color: var(--text); font-size: 13px; }
+  .glossary-status { display: inline-block; padding: 1px 6px; border-radius: 3px; font-size: 11px; margin-top: 4px; }
+  .glossary-status.verified { background: rgba(63,185,80,0.15); color: var(--minor); }
+  .glossary-status.unverified { background: rgba(248,81,73,0.15); color: #ff7b72; }
+
+  /* Features */
+  .feature-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 10px; }
+  .feature-item { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 12px; }
+  .feature-name { font-weight: 600; font-size: 13px; color: var(--accent); }
+  .feature-story { color: var(--muted); font-size: 12px; margin-top: 4px; font-style: italic; }
+
+  .hidden { display: none !important; }
+  .section-header { display: flex; align-items: center; gap: 12px; }
+  .principle-badge { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%; font-weight: 700; font-size: 16px; flex-shrink: 0; }
+  .D { background: rgba(88,166,255,0.2); color: var(--accent); }
+  .F { background: rgba(63,185,80,0.2); color: var(--minor); }
+  .O { background: rgba(210,153,34,0.2); color: var(--major); }
+  .S { background: rgba(138,180,248,0.2); color: #a8c8ff; }
+  .P { background: rgba(248,81,73,0.2); color: var(--critical); }
+  .A { background: rgba(210,73,218,0.2); color: #d264de; }
+  .M { background: rgba(255,140,0,0.2); color: #ffa040; }
+
+  footer { text-align: center; color: var(--muted); font-size: 12px; margin-top: 48px; padding-top: 16px; border-top: 1px solid var(--border); }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <h1>DeFOSPAM Analysis Report</h1>
+  <p class="subtitle">
+    <strong>Subject:</strong> OpenRequirements.AI — DeFOSPAM SKILL.md Specification &nbsp;·&nbsp;
+    <strong>Analysed:</strong> 2026-03-16 &nbsp;·&nbsp;
+    <strong>Tool:</strong> OpenRequirements.ai DeFOSPAM v1.0
+  </p>
+
+  <!-- Summary Cards -->
+  <div class="summary-grid">
+    <div class="card neutral"><div class="number">47</div><div class="label">Total Findings</div></div>
+    <div class="card critical"><div class="number">18</div><div class="label">Critical</div></div>
+    <div class="card major"><div class="number">21</div><div class="label">Major</div></div>
+    <div class="card minor"><div class="number">8</div><div class="label">Minor</div></div>
+    <div class="card neutral"><div class="number">24</div><div class="label">Features</div></div>
+    <div class="card neutral"><div class="number">35</div><div class="label">Scenarios</div></div>
+    <div class="card neutral"><div class="number">25</div><div class="label">Glossary Terms</div></div>
+  </div>
+
+  <!-- Filter Bar -->
+  <div class="filter-bar">
+    <span>Filter by:</span>
+    <button class="filter-btn active" onclick="filterAll()">All</button>
+    <button class="filter-btn sev-critical" onclick="filterSev('critical')">Critical</button>
+    <button class="filter-btn sev-major" onclick="filterSev('major')">Major</button>
+    <button class="filter-btn sev-minor" onclick="filterSev('minor')">Minor</button>
+    <span style="margin-left:8px">Principle:</span>
+    <button class="filter-btn" onclick="filterPrinciple('D')">D — Definitions</button>
+    <button class="filter-btn" onclick="filterPrinciple('F')">F — Features</button>
+    <button class="filter-btn" onclick="filterPrinciple('O')">O — Outcomes</button>
+    <button class="filter-btn" onclick="filterPrinciple('S')">S — Scenarios</button>
+    <button class="filter-btn" onclick="filterPrinciple('P')">P — Prediction</button>
+    <button class="filter-btn" onclick="filterPrinciple('A')">A — Ambiguity</button>
+    <button class="filter-btn" onclick="filterPrinciple('M')">M — Missing</button>
+  </div>
+
+  <!-- Findings -->
+  <h2>Findings</h2>
+
+  <!-- D - Definitions -->
+  <div class="section-header"><div class="principle-badge D">D</div><h3 style="margin-bottom:0">Definitions — Dorothy</h3></div>
+  <br>
+
+  <div class="finding critical" data-sev="critical" data-principle="D">
+    <div class="finding-header">
+      <img class="finding-avatar" src="https://openrequirements.ai/assets/Dorothy-CEHBuXM4.png" alt="Dorothy" onerror="this.style.display='none'">
+      <div class="finding-meta">
+        <div class="finding-title">'User Story' and 'Business Story' Share Identical Format — Distinction Undefined</div>
+        <div class="finding-byline">Dorothy · Definitions Analyst</div>
+      </div>
+    </div>
+    <div class="badges">
+      <span class="badge critical">Critical</span>
+      <span class="badge principle">D — Definitions</span>
+      <span class="badge conf">Confidence 10</span>
+    </div>
+    <div class="finding-body">
+      <p>The skill accepts 'user story' as an <em>input</em> type and produces 'business story' as an <em>output</em> artefact — both using the identical <code>As a... I want... So that...</code> syntax. No distinction is made between them anywhere in the specification.</p>
+      <div class="rec">→ Formally define 'user story' (input) and 'business story' (output). Specify what transformations elevate a user story to a business story — at minimum, a business story should include at least one Given/When/Then scenario.</div>
+    </div>
+  </div>
+
+  <div class="finding critical" data-sev="critical" data-principle="D">
+    <div class="finding-header">
+      <img class="finding-avatar" src="https://openrequirements.ai/assets/Dorothy-CEHBuXM4.png" alt="Dorothy" onerror="this.style.display='none'">
+      <div class="finding-meta">
+        <div class="finding-title">Four Outcome Types Listed but Not Defined</div>
+        <div class="finding-byline">Dorothy · Definitions Analyst (confirmed by Alexa)</div>
+      </div>
+    </div>
+    <div class="badges">
+      <span class="badge critical">Critical</span>
+      <span class="badge principle">D — Definitions</span>
+      <span class="badge conf">Confidence 10</span>
+    </div>
+    <div class="finding-body">
+      <p>Olivia is instructed to classify outcomes as <strong>Output | State Change | Communication | Null Outcome</strong> but none of these types is defined. The Output vs Communication boundary is particularly unclear — a report emailed to a user could be either.</p>
+      <div class="rec">→ Provide a one-sentence definition and one example for each of the four outcome types. Add a disambiguation note for the Output vs Communication boundary.</div>
+    </div>
+  </div>
+
+  <div class="finding critical" data-sev="critical" data-principle="D">
+    <div class="finding-header">
+      <img class="finding-avatar" src="https://openrequirements.ai/assets/Dorothy-CEHBuXM4.png" alt="Dorothy" onerror="this.style.display='none'">
+      <div class="finding-meta">
+        <div class="finding-title">Severity Mechanically Derived from Confidence — Two Orthogonal Concepts Conflated</div>
+        <div class="finding-byline">Dorothy · Definitions Analyst (amplified by Paul, confidence 10)</div>
+      </div>
+    </div>
+    <div class="badges">
+      <span class="badge critical">Critical</span>
+      <span class="badge principle">D — Definitions</span>
+      <span class="badge conf">Confidence 9</span>
+    </div>
+    <div class="finding-body">
+      <p>Severity is defined as Critical=8–10, Major=4–7, Minor=1–3 using the same numeric range as the confidence score. Since the confidence filter discards findings below 7, <strong>Minor severity findings can never appear</strong> and most Major findings (confidence 4–6) are silently discarded. The entire severity taxonomy is broken.</p>
+      <div class="rec">→ Decouple severity from confidence. Define severity independently based on business impact (e.g., "would omission prevent correct implementation?"). Retain confidence as the analyst's certainty signal.</div>
+    </div>
+  </div>
+
+  <div class="finding critical" data-sev="critical" data-principle="D">
+    <div class="finding-header">
+      <img class="finding-avatar" src="https://openrequirements.ai/assets/Dorothy-CEHBuXM4.png" alt="Dorothy" onerror="this.style.display='none'">
+      <div class="finding-meta">
+        <div class="finding-title">'Feature' Is Central to the Methodology but Never Defined</div>
+        <div class="finding-byline">Dorothy · Definitions Analyst (confirmed by Alexa)</div>
+      </div>
+    </div>
+    <div class="badges">
+      <span class="badge critical">Critical</span>
+      <span class="badge principle">D — Definitions</span>
+      <span class="badge conf">Confidence 9</span>
+    </div>
+    <div class="finding-body">
+      <p>'Feature' is the primary output unit of Flo's analysis and the basis for all business stories. No definition, size heuristic, or granularity guidance is provided. Two analysts applying the requirements could identify wildly different feature counts from the same document.</p>
+      <div class="rec">→ Define 'feature': a distinct, user-observable capability delivering business value, described by exactly one business story and one or more Given/When/Then scenarios.</div>
+    </div>
+  </div>
+
+  <div class="finding major" data-sev="major" data-principle="D">
+    <div class="finding-header">
+      <img class="finding-avatar" src="https://openrequirements.ai/assets/Dorothy-CEHBuXM4.png" alt="Dorothy" onerror="this.style.display='none'">
+      <div class="finding-meta">
+        <div class="finding-title">DeFOSPAM Acronym Never Explicitly Expanded</div>
+        <div class="finding-byline">Dorothy · Definitions Analyst</div>
+      </div>
+    </div>
+    <div class="badges">
+      <span class="badge major">Major</span>
+      <span class="badge principle">D — Definitions</span>
+      <span class="badge conf">Confidence 9</span>
+    </div>
+    <div class="finding-body">
+      <p>The document introduces DeFOSPAM as a "7-step mnemonic framework" but never decodes the mnemonic. Readers cannot verify which letter maps to which principle without external knowledge.</p>
+      <div class="rec">→ Add an explicit table or sentence mapping each letter of DeFOSPAM to its corresponding principle and analyst agent.</div>
+    </div>
+  </div>
+
+  <div class="finding major" data-sev="major" data-principle="D">
+    <div class="finding-header">
+      <img class="finding-avatar" src="https://openrequirements.ai/assets/Dorothy-CEHBuXM4.png" alt="Dorothy" onerror="this.style.display='none'">
+      <div class="finding-meta">
+        <div class="finding-title">'Agent' and 'Analyst' Used Interchangeably Without Definition</div>
+        <div class="finding-byline">Dorothy · Definitions Analyst (confirmed by Alexa)</div>
+      </div>
+    </div>
+    <div class="badges">
+      <span class="badge major">Major</span>
+      <span class="badge principle">D — Definitions</span>
+      <span class="badge conf">Confidence 9</span>
+    </div>
+    <div class="finding-body">
+      <p>In Claude Code mode 'agent' means a spawned subprocess; in Claude.ai mode the same entities run sequentially inline and cannot be 'agents' in any technical sense. Using both terms interchangeably obscures this critical architectural distinction.</p>
+      <div class="rec">→ Define 'analyst' (logical role) and 'agent' (execution unit) as distinct terms. Use them consistently throughout.</div>
+    </div>
+  </div>
+
+  <!-- F - Features -->
+  <h2><div class="section-header"><div class="principle-badge F">F</div>&nbsp;Features — Flo</div></h2>
+
+  <div class="finding critical" data-sev="critical" data-principle="F">
+    <div class="finding-header">
+      <img class="finding-avatar" src="https://openrequirements.ai/assets/Flo-DGeH8NKE.png" alt="Flo" onerror="this.style.display='none'">
+      <div class="finding-meta">
+        <div class="finding-title">Previous Run Storage Is an Implied but Entirely Undescribed Feature</div>
+        <div class="finding-byline">Flo · Features Analyst</div>
+      </div>
+    </div>
+    <div class="badges">
+      <span class="badge critical">Critical</span>
+      <span class="badge principle">F — Features</span>
+      <span class="badge conf">Confidence 9</span>
+    </div>
+    <div class="finding-body">
+      <p>Diff / Comparison Mode requires 'compare to last run' but no storage mechanism is described: no storage location, format, identifier scheme, retention policy, or retrieval syntax. Without this, Diff mode cannot function.</p>
+      <div class="rec">→ Add an explicit specification for run persistence: storage location, format (likely pipeline JSON), run identifier scheme, retention period, and retrieval interface.</div>
+    </div>
+  </div>
+
+  <div class="finding critical" data-sev="critical" data-principle="F">
+    <div class="finding-header">
+      <img class="finding-avatar" src="https://openrequirements.ai/assets/Milarna-5ik1yEqx.png" alt="Milarna" onerror="this.style.display='none'">
+      <div class="finding-meta">
+        <div class="finding-title">Step 4 (Compile Business Stories) Has No Requirements</div>
+        <div class="finding-byline">Milarna · Missing Data Analyst (confirmed by Flo)</div>
+      </div>
+    </div>
+    <div class="badges">
+      <span class="badge critical">Critical</span>
+      <span class="badge principle">F — Features</span>
+      <span class="badge conf">Confidence 9</span>
+    </div>
+    <div class="finding-body">
+      <p>Step 4 appears in the framework heading but contains zero specification — no inputs, transformation logic, output schema, or relationship to analyst findings. It is a black box that blocks Step 5 implementation.</p>
+      <div class="rec">→ Fully specify Step 4: inputs (which analyst outputs), transformation rules, Business Story artefact schema, and how output feeds into the three Step 5 reports.</div>
+    </div>
+  </div>
+
+  <div class="finding major" data-sev="major" data-principle="F">
+    <div class="finding-header">
+      <img class="finding-avatar" src="https://openrequirements.ai/assets/Flo-DGeH8NKE.png" alt="Flo" onerror="this.style.display='none'">
+      <div class="finding-meta">
+        <div class="finding-title">Seven Analyst Agents Described at Inconsistent Levels of Granularity</div>
+        <div class="finding-byline">Flo · Features Analyst</div>
+      </div>
+    </div>
+    <div class="badges">
+      <span class="badge major">Major</span>
+      <span class="badge principle">F — Features</span>
+      <span class="badge conf">Confidence 8</span>
+    </div>
+    <div class="finding-body">
+      <p>Alexa has specific weasel words listed; Olivia has four named outcome classifications. Paul has only "checks that every scenario has a predictable outcome" (no algorithm); Milarna has "systematic completeness check" (no checklist). Non-uniform specification depth will lead to non-uniform implementation quality.</p>
+      <div class="rec">→ Standardise specification depth: each analyst needs defined input, enumerated detection rules, defined output schema, and at least one example finding.</div>
+    </div>
+  </div>
+
+  <!-- O - Outcomes -->
+  <h2><div class="section-header"><div class="principle-badge O">O</div>&nbsp;Outcomes — Olivia</div></h2>
+
+  <div class="finding critical" data-sev="critical" data-principle="O">
+    <div class="finding-header">
+      <img class="finding-avatar" src="https://openrequirements.ai/assets/Olivia-cqB1MEAg.png" alt="Olivia" onerror="this.style.display='none'">
+      <div class="finding-meta">
+        <div class="finding-title">Pipeline Mode Directly Contradicts 'THREE Required Outputs' Rule</div>
+        <div class="finding-byline">Olivia · Outcomes Analyst (confirmed by Paul, confidence 10)</div>
+      </div>
+    </div>
+    <div class="badges">
+      <span class="badge critical">Critical</span>
+      <span class="badge principle">O — Outcomes</span>
+      <span class="badge conf">Confidence 10</span>
+    </div>
+    <div class="finding-body">
+      <p>Step 5 declares "THREE required outputs" (chat, .md, .html) with no conditionality. Pipeline/CI-CD Mode states "JSON only, no chat/md/html" — a direct contradiction with no reconciliation statement and no override hierarchy.</p>
+      <div class="rec">→ State that "THREE required outputs applies to Default Mode only." Define Pipeline mode as an explicit override. Specify the JSON schema, write target (stdout vs file), and whether any files are created on disk.</div>
+    </div>
+  </div>
+
+  <div class="finding major" data-sev="major" data-principle="O">
+    <div class="finding-header">
+      <img class="finding-avatar" src="https://openrequirements.ai/assets/Olivia-cqB1MEAg.png" alt="Olivia" onerror="this.style.display='none'">
+      <div class="finding-meta">
+        <div class="finding-title">Finding Deduplication Is a Silent State Change</div>
+        <div class="finding-byline">Olivia · Outcomes Analyst</div>
+      </div>
+    </div>
+    <div class="badges">
+      <span class="badge major">Major</span>
+      <span class="badge principle">O — Outcomes</span>
+      <span class="badge conf">Confidence 9</span>
+    </div>
+    <div class="finding-body">
+      <p>Deduplication silently removes findings with no requirement to log which findings were removed. Valid multi-perspective findings from different analysts could be permanently lost.</p>
+      <div class="rec">→ Surface a deduplication log or count in the report. Specify that findings with the same text excerpt but different finding_types are NOT duplicates and must both be retained.</div>
+    </div>
+  </div>
+
+  <div class="finding major" data-sev="major" data-principle="O">
+    <div class="finding-header">
+      <img class="finding-avatar" src="https://openrequirements.ai/assets/Olivia-cqB1MEAg.png" alt="Olivia" onerror="this.style.display='none'">
+      <div class="finding-meta">
+        <div class="finding-title">Subagent Spawning Has No Error Handling</div>
+        <div class="finding-byline">Olivia · Outcomes Analyst (confirmed by Paul, Sophia)</div>
+      </div>
+    </div>
+    <div class="badges">
+      <span class="badge major">Major</span>
+      <span class="badge principle">O — Outcomes</span>
+      <span class="badge conf">Confidence 9</span>
+    </div>
+    <div class="finding-body">
+      <p>No fallback is defined for when a subagent fails to return results. A Phase 1 failure could cascade silently into Phase 2, producing incomplete analysis with no user notification.</p>
+      <div class="rec">→ Define: retry once on failure, skip the failing analyst and note it in the report, or abort the run. Define what constitutes a retryable vs terminal failure.</div>
+    </div>
+  </div>
+
+  <!-- P - Prediction -->
+  <h2><div class="section-header"><div class="principle-badge P">P</div>&nbsp;Prediction — Paul</div></h2>
+
+  <div class="finding critical" data-sev="critical" data-principle="P">
+    <div class="finding-header">
+      <img class="finding-avatar" src="https://openrequirements.ai/assets/Paul-BbsKxv1a.png" alt="Paul" onerror="this.style.display='none'">
+      <div class="finding-meta">
+        <div class="finding-title">Pre-commit Hook Exit Code Contract Entirely Undefined</div>
+        <div class="finding-byline">Paul · Prediction Analyst (confirmed by Olivia, Sophia)</div>
+      </div>
+    </div>
+    <div class="badges">
+      <span class="badge critical">Critical</span>
+      <span class="badge principle">P — Prediction</span>
+      <span class="badge conf">Confidence 10</span>
+    </div>
+    <div class="finding-body">
+      <p>The entire pre-commit hook behaviour is described in four words: <em>"Pre-commit hook: exit code based."</em> No exit code values, severity thresholds, output format, or relationship to Pipeline mode are specified.</p>
+      <div class="provocation">
+        <strong>Realistic:</strong> Exit 1 on Critical findings, exit 0 otherwise — matching pre-commit hook conventions.<br>
+        <strong>Absurd:</strong> Exit code equals the total number of findings found, causing commits to always fail once any requirements exist.
+      </div>
+      <div class="rec">→ Define the full exit code contract: pass condition (e.g., no Critical findings → exit 0), block condition with severity threshold explicitly stated, output behaviour, and relationship to Pipeline mode.</div>
+    </div>
+  </div>
+
+  <div class="finding critical" data-sev="critical" data-principle="P">
+    <div class="finding-header">
+      <img class="finding-avatar" src="https://openrequirements.ai/assets/Paul-BbsKxv1a.png" alt="Paul" onerror="this.style.display='none'">
+      <div class="finding-meta">
+        <div class="finding-title">Deduplication Identity Criteria Produce Unpredictable Merging</div>
+        <div class="finding-byline">Paul · Prediction Analyst (confirmed by Alexa confidence 10, Sophia confidence 9)</div>
+      </div>
+    </div>
+    <div class="badges">
+      <span class="badge critical">Critical</span>
+      <span class="badge principle">P — Prediction</span>
+      <span class="badge conf">Confidence 9</span>
+    </div>
+    <div class="finding-body">
+      <p>Dorothy flags "term X is undefined" (confidence 8). Alexa flags "term X is vague" (confidence 9). Are these the same issue? The "keep highest confidence" rule has no identity criteria. Deduplication is non-deterministic.</p>
+      <div class="provocation">
+        <strong>Realistic:</strong> Aggregator uses semantic similarity, keeps Alexa's finding, discards Dorothy's specific "undefined_term" classification.<br>
+        <strong>Absurd:</strong> All findings mentioning the same word token are merged into a single finding attributed to the analyst with the alphabetically first name.
+      </div>
+      <div class="rec">→ Define deduplication identity: two findings are the same issue if they reference the same text excerpt AND share the same finding_type. Different finding types on the same term are distinct findings.</div>
+    </div>
+  </div>
+
+  <div class="finding critical" data-sev="critical" data-principle="P">
+    <div class="finding-header">
+      <img class="finding-avatar" src="https://openrequirements.ai/assets/Paul-BbsKxv1a.png" alt="Paul" onerror="this.style.display='none'">
+      <div class="finding-meta">
+        <div class="finding-title">Subagent Failure Has No Defined Fallback in Phase Execution</div>
+        <div class="finding-byline">Paul · Prediction Analyst</div>
+      </div>
+    </div>
+    <div class="badges">
+      <span class="badge critical">Critical</span>
+      <span class="badge principle">P — Prediction</span>
+      <span class="badge conf">Confidence 9</span>
+    </div>
+    <div class="finding-body">
+      <p>If Dorothy's subagent fails in Phase 1, Phase 2 analysts (who depend on Dorothy's glossary) have no defined fallback. The phased execution model has no error handling at any level.</p>
+      <div class="provocation">
+        <strong>Realistic:</strong> Phase 2 starts with whatever Phase 1 produced; Dorothy's findings are absent; report notes the analyst did not complete.<br>
+        <strong>Absurd:</strong> The pipeline retries Dorothy indefinitely, blocking all subsequent phases forever.
+      </div>
+      <div class="rec">→ Define the failure contract: does failure abort the pipeline or produce partial results? Maximum retry count? Do failed analysts appear in the report?</div>
+    </div>
+  </div>
+
+  <div class="finding major" data-sev="major" data-principle="P">
+    <div class="finding-header">
+      <img class="finding-avatar" src="https://openrequirements.ai/assets/Paul-BbsKxv1a.png" alt="Paul" onerror="this.style.display='none'">
+      <div class="finding-meta">
+        <div class="finding-title">Diff Mode 'Changed' vs 'Recurring' Classification Criteria Undefined</div>
+        <div class="finding-byline">Paul · Prediction Analyst (confirmed by Sophia)</div>
+      </div>
+    </div>
+    <div class="badges">
+      <span class="badge major">Major</span>
+      <span class="badge principle">P — Prediction</span>
+      <span class="badge conf">Confidence 9</span>
+    </div>
+    <div class="finding-body">
+      <p>Four diff tags are defined (New, Resolved, Recurring, Changed) but no criteria specify which finding attributes must change to trigger 'Changed' vs 'Recurring'. Same finding, higher confidence = Changed or Recurring?</p>
+      <div class="rec">→ Define the comparison key for diff identity and enumerate which field changes trigger 'Changed' vs 'Recurring' (e.g., confidence change = Changed, wording change only = Recurring, or any field change = Changed).</div>
+    </div>
+  </div>
+
+  <div class="finding major" data-sev="major" data-principle="P">
+    <div class="finding-header">
+      <img class="finding-avatar" src="https://openrequirements.ai/assets/Paul-BbsKxv1a.png" alt="Paul" onerror="this.style.display='none'">
+      <div class="finding-meta">
+        <div class="finding-title">HTML Report 'Filter by Principle' References Undefined Term</div>
+        <div class="finding-byline">Paul · Prediction Analyst (confirmed by Sophia)</div>
+      </div>
+    </div>
+    <div class="badges">
+      <span class="badge major">Major</span>
+      <span class="badge principle">P — Prediction</span>
+      <span class="badge conf">Confidence 8</span>
+    </div>
+    <div class="finding-body">
+      <p>The HTML report specification mentions "filter by principle" but 'principle' is never defined anywhere in the data model, finding schema, or analyst descriptions. This feature cannot be implemented as written.</p>
+      <div class="rec">→ Define 'principle' as a finding property with values D/F/O/S/P/A/M (the DeFOSPAM letters). Add a <code>principle</code> field to the finding schema. Specify which analyst maps to which principle.</div>
+    </div>
+  </div>
+
+  <!-- A - Ambiguity -->
+  <h2><div class="section-header"><div class="principle-badge A">A</div>&nbsp;Ambiguity — Alexa</div></h2>
+
+  <div class="finding critical" data-sev="critical" data-principle="A">
+    <div class="finding-header">
+      <img class="finding-avatar" src="https://openrequirements.ai/assets/Alexa-D5l2vG1u.png" alt="Alexa" onerror="this.style.display='none'">
+      <div class="finding-meta">
+        <div class="finding-title">Direct Contradiction: 'All 7 Analysts Always Run' vs. Targeted Analysis Mode</div>
+        <div class="finding-byline">Alexa · Ambiguity Analyst</div>
+      </div>
+    </div>
+    <div class="badges">
+      <span class="badge critical">Critical</span>
+      <span class="badge principle">A — Ambiguity</span>
+      <span class="badge conf">Confidence 10</span>
+    </div>
+    <div class="finding-body">
+      <p>Step 3 states: <em>"All 7 analysts always run — there is no selection logic since requirements validation needs all perspectives."</em> The same section then states: <em>"The user can request specific analysts instead of running all 7."</em> These are irreconcilable.</p>
+      <div class="rec">→ Rewrite to: "By default, all 7 analysts run. The user may optionally specify a subset using Targeted Analysis Mode." Remove the absolute "no selection logic" statement.</div>
+    </div>
+  </div>
+
+  <div class="finding critical" data-sev="critical" data-principle="A">
+    <div class="finding-header">
+      <img class="finding-avatar" src="https://openrequirements.ai/assets/Alexa-D5l2vG1u.png" alt="Alexa" onerror="this.style.display='none'">
+      <div class="finding-meta">
+        <div class="finding-title">Undefined Term: 'Same Issue' in Deduplication Rule</div>
+        <div class="finding-byline">Alexa · Ambiguity Analyst</div>
+      </div>
+    </div>
+    <div class="badges">
+      <span class="badge critical">Critical</span>
+      <span class="badge principle">A — Ambiguity</span>
+      <span class="badge conf">Confidence 10</span>
+    </div>
+    <div class="finding-body">
+      <p>"Keep highest confidence" as the deduplication rule requires a definition of 'same issue'. Without it, deduplication is non-deterministic and cannot be implemented consistently. See Paul's Prediction finding for scenario analysis.</p>
+      <div class="rec">→ Define 'same issue': two findings are the same issue if they reference the same text excerpt AND share the same finding_type.</div>
+    </div>
+  </div>
+
+  <div class="finding major" data-sev="major" data-principle="A">
+    <div class="finding-header">
+      <img class="finding-avatar" src="https://openrequirements.ai/assets/Alexa-D5l2vG1u.png" alt="Alexa" onerror="this.style.display='none'">
+      <div class="finding-meta">
+        <div class="finding-title">Weasel Word: 'Briefly Confirm the Scope'</div>
+        <div class="finding-byline">Alexa · Ambiguity Analyst (confirmed by Olivia, Paul)</div>
+      </div>
+    </div>
+    <div class="badges">
+      <span class="badge major">Major</span>
+      <span class="badge principle">A — Ambiguity</span>
+      <span class="badge conf">Confidence 9</span>
+    </div>
+    <div class="finding-body">
+      <p>'Briefly' is undefined. Two implementations satisfying this requirement could produce anything from a single word to a multi-paragraph summary. No content, interaction type, or failure path is specified.</p>
+      <div class="rec">→ Replace "briefly confirm the scope" with a specific scope confirmation specification including required content, interaction type (blocking vs informational per execution mode), and rejection handling.</div>
+    </div>
+  </div>
+
+  <div class="finding major" data-sev="major" data-principle="A">
+    <div class="finding-header">
+      <img class="finding-avatar" src="https://openrequirements.ai/assets/Alexa-D5l2vG1u.png" alt="Alexa" onerror="this.style.display='none'">
+      <div class="finding-meta">
+        <div class="finding-title">Execution Mode Detection Trigger Is Undefined</div>
+        <div class="finding-byline">Alexa · Ambiguity Analyst (confirmed by Olivia)</div>
+      </div>
+    </div>
+    <div class="badges">
+      <span class="badge major">Major</span>
+      <span class="badge principle">A — Ambiguity</span>
+      <span class="badge conf">Confidence 8</span>
+    </div>
+    <div class="finding-body">
+      <p>The mechanism for detecting 'Agent tool available' is not defined. If detection fails or produces a false positive, the wrong execution path is taken silently with no fallback specified for ambiguous environments.</p>
+      <div class="rec">→ Define the detection mechanism (e.g., capability probe). Specify default fallback (sequential). Notify the user when fallback is used.</div>
+    </div>
+  </div>
+
+  <!-- M - Missing -->
+  <h2><div class="section-header"><div class="principle-badge M">M</div>&nbsp;Missing — Milarna</div></h2>
+
+  <div class="finding critical" data-sev="critical" data-principle="M">
+    <div class="finding-header">
+      <img class="finding-avatar" src="https://openrequirements.ai/assets/Milarna-5ik1yEqx.png" alt="Milarna" onerror="this.style.display='none'">
+      <div class="finding-meta">
+        <div class="finding-title">No Authentication or Authorisation Requirements</div>
+        <div class="finding-byline">Milarna · Missing Data Analyst</div>
+      </div>
+    </div>
+    <div class="badges">
+      <span class="badge critical">Critical</span>
+      <span class="badge principle">M — Missing</span>
+      <span class="badge conf">Confidence 9</span>
+    </div>
+    <div class="finding-body">
+      <p>Zero mention of credentials, permissions, roles, or access control. Any process could submit arbitrary documents for analysis, potentially exfiltrating sensitive requirements content to a third-party AI provider without organisational approval.</p>
+      <div class="rec">→ Add a Security section: permitted invokers (roles or CI service accounts), API credential storage and rotation policy, output access control, and data-handling obligations for confidential requirements.</div>
+    </div>
+  </div>
+
+  <div class="finding critical" data-sev="critical" data-principle="M">
+    <div class="finding-header">
+      <img class="finding-avatar" src="https://openrequirements.ai/assets/Milarna-5ik1yEqx.png" alt="Milarna" onerror="this.style.display='none'">
+      <div class="finding-meta">
+        <div class="finding-title">No Error Handling Strategy for AI Model Failures</div>
+        <div class="finding-byline">Milarna · Missing Data Analyst</div>
+      </div>
+    </div>
+    <div class="badges">
+      <span class="badge critical">Critical</span>
+      <span class="badge principle">M — Missing</span>
+      <span class="badge conf">Confidence 9</span>
+    </div>
+    <div class="finding-body">
+      <p>No specification for: API unavailability, model refusal, token limit exceeded, malformed model response. In a pre-commit hook, silent failure could block commits indefinitely or silently pass with incomplete validation — both dangerous.</p>
+      <div class="rec">→ Define: retry policy for transient failures, behaviour on malformed response, whether partial runs produce output or abort, and how user is notified of analyst failures.</div>
+    </div>
+  </div>
+
+  <div class="finding major" data-sev="major" data-principle="M">
+    <div class="finding-header">
+      <img class="finding-avatar" src="https://openrequirements.ai/assets/Milarna-5ik1yEqx.png" alt="Milarna" onerror="this.style.display='none'">
+      <div class="finding-meta">
+        <div class="finding-title">No Performance Requirements (Latency, Throughput, Timeout)</div>
+        <div class="finding-byline">Milarna · Missing Data Analyst</div>
+      </div>
+    </div>
+    <div class="badges">
+      <span class="badge major">Major</span>
+      <span class="badge principle">M — Missing</span>
+      <span class="badge conf">Confidence 9</span>
+    </div>
+    <div class="finding-body">
+      <p>No acceptable execution time, maximum document size, or API timeout handling. DeFOSPAM runs as a synchronous pre-commit gate — unbounded latency directly hurts developer productivity.</p>
+      <div class="rec">→ Define: maximum wall-clock time per full run, per-analyst timeout, retry behaviour on transient API failures, maximum input document size, and behaviour when time budget is exceeded.</div>
+    </div>
+  </div>
+
+  <div class="finding major" data-sev="major" data-principle="M">
+    <div class="finding-header">
+      <img class="finding-avatar" src="https://openrequirements.ai/assets/Milarna-5ik1yEqx.png" alt="Milarna" onerror="this.style.display='none'">
+      <div class="finding-meta">
+        <div class="finding-title">No Data Retention or Archiving Policy for Report Artefacts</div>
+        <div class="finding-byline">Milarna · Missing Data Analyst</div>
+      </div>
+    </div>
+    <div class="badges">
+      <span class="badge major">Major</span>
+      <span class="badge principle">M — Missing</span>
+      <span class="badge conf">Confidence 9</span>
+    </div>
+    <div class="finding-body">
+      <p>Report files (.md, .html) and previous run data (required by Diff mode) have no retention policy, storage location, version history depth, or deletion trigger. Data protection obligations may be violated.</p>
+      <div class="rec">→ Define: storage location, retention period, version history depth for Diff mode, deletion trigger, and encryption requirements for sensitive content.</div>
+    </div>
+  </div>
+
+  <div class="finding major" data-sev="major" data-principle="M">
+    <div class="finding-header">
+      <img class="finding-avatar" src="https://openrequirements.ai/assets/Milarna-5ik1yEqx.png" alt="Milarna" onerror="this.style.display='none'">
+      <div class="finding-meta">
+        <div class="finding-title">Missing CRUD — No Update or Delete Operations for Findings</div>
+        <div class="finding-byline">Milarna · Missing Data Analyst</div>
+      </div>
+    </div>
+    <div class="badges">
+      <span class="badge major">Major</span>
+      <span class="badge principle">M — Missing</span>
+      <span class="badge conf">Confidence 8</span>
+    </div>
+    <div class="finding-body">
+      <p>Findings are created (by analysts) and read (via reports). No mechanism exists for updating (acknowledge, suppress, false-positive) or deleting findings. Diff mode's 'Resolved' tag implies state transitions that have no implementation path.</p>
+      <div class="rec">→ Define CRUD for the Finding entity: Create (analyst output), Read (report), Update (triage/suppress), Delete (purge). Specify who can perform each operation.</div>
+    </div>
+  </div>
+
+  <div class="finding minor" data-sev="minor" data-principle="M">
+    <div class="finding-header">
+      <img class="finding-avatar" src="https://openrequirements.ai/assets/Milarna-5ik1yEqx.png" alt="Milarna" onerror="this.style.display='none'">
+      <div class="finding-meta">
+        <div class="finding-title">No Accessibility Requirements for HTML Report Output</div>
+        <div class="finding-byline">Milarna · Missing Data Analyst</div>
+      </div>
+    </div>
+    <div class="badges">
+      <span class="badge minor">Minor</span>
+      <span class="badge principle">M — Missing</span>
+      <span class="badge conf">Confidence 8</span>
+    </div>
+    <div class="finding-body">
+      <p>No WCAG conformance level, keyboard navigation, screen-reader compatibility, or colour contrast requirements for the interactive HTML report.</p>
+      <div class="rec">→ Add: WCAG 2.1 AA conformance, keyboard-navigable filters, ARIA roles for dynamic content, sufficient colour contrast for severity indicators.</div>
+    </div>
+  </div>
+
+  <!-- Glossary Section -->
+  <h2>Proposed Glossary</h2>
+  <div class="glossary-grid">
+    <div class="glossary-item"><div class="glossary-term">DeFOSPAM</div><div class="glossary-def">7-step mnemonic framework: Definitions, Features, Outcomes, Scenarios, Predictions, Ambiguity, Missing. Acronym never explicitly decoded in document.</div><span class="glossary-status unverified">⚠ Acronym undecoded</span></div>
+    <div class="glossary-item"><div class="glossary-term">Feature</div><div class="glossary-def">A distinct, user-observable capability delivering business value, described by exactly one business story and one or more Given/When/Then scenarios.</div><span class="glossary-status unverified">⚠ Never formally defined</span></div>
+    <div class="glossary-item"><div class="glossary-term">Finding</div><div class="glossary-def">A reported issue, gap, or observation produced by an analyst agent, characterised by confidence, severity, finding_type, and recommendation.</div><span class="glossary-status unverified">⚠ Never formally defined</span></div>
+    <div class="glossary-item"><div class="glossary-term">Analyst</div><div class="glossary-def">The logical role/persona examining requirements from one DeFOSPAM perspective. Distinct from 'Agent' (execution unit). Conflated throughout document.</div><span class="glossary-status unverified">⚠ Conflated with Agent</span></div>
+    <div class="glossary-item"><div class="glossary-term">Business Story</div><div class="glossary-def">Output artefact: "As a [role] I want [action] So that [benefit]" enriched with Given/When/Then scenarios. Identical syntax to User Story (input).</div><span class="glossary-status unverified">⚠ Input/output distinction absent</span></div>
+    <div class="glossary-item"><div class="glossary-term">Severity</div><div class="glossary-def">Should measure business impact independently of confidence. Currently incorrectly defined as a direct function of confidence score ranges.</div><span class="glossary-status unverified">⚠ Definition is incorrect</span></div>
+    <div class="glossary-item"><div class="glossary-term">Confidence Level</div><div class="glossary-def">Numeric score 1–10 for analyst certainty. Only scores >= 7 are reported. Values 1–6 are suppressed but undefined.</div><span class="glossary-status verified">✓ Verified</span></div>
+    <div class="glossary-item"><div class="glossary-term">Outcome</div><div class="glossary-def">System result classified as Output | State Change | Communication | Null Outcome. All four types are listed but none is defined.</div><span class="glossary-status unverified">⚠ Types undefined</span></div>
+    <div class="glossary-item"><div class="glossary-term">CRUD</div><div class="glossary-def">Create, Read, Update, Delete — fundamental data lifecycle operations. Used without expansion.</div><span class="glossary-status unverified">⚠ Acronym never expanded</span></div>
+    <div class="glossary-item"><div class="glossary-term">NFR</div><div class="glossary-def">Non-Functional Requirement — quality attributes such as performance, security, scalability. Used without expansion.</div><span class="glossary-status unverified">⚠ Abbreviation never expanded</span></div>
+    <div class="glossary-item"><div class="glossary-term">Deduplication</div><div class="glossary-def">Keep highest-confidence finding when multiple analysts flag the same issue. "Same issue" is never defined, making this non-deterministic.</div><span class="glossary-status unverified">⚠ Identity criteria missing</span></div>
+    <div class="glossary-item"><div class="glossary-term">Provocation Technique</div><div class="glossary-def">Paul's method: propose one realistic and one deliberately absurd alternative outcome to force stakeholder clarification when an outcome cannot be predicted.</div><span class="glossary-status verified">✓ Verified</span></div>
+  </div>
+
+  <!-- Features Section -->
+  <h2>Features Identified (24)</h2>
+  <div class="feature-list">
+    <div class="feature-item"><div class="feature-name">Requirements Ingestion</div><div class="feature-story">As a requirements analyst I want to provide requirements in any supported format so that I can validate regardless of how they were authored</div></div>
+    <div class="feature-item"><div class="feature-name">Dorothy — Definitions Analysis</div><div class="feature-story">As a requirements analyst I want all significant terminology identified and validated so that ambiguous terms are flagged and a glossary is established</div></div>
+    <div class="feature-item"><div class="feature-name">Flo — Features Analysis</div><div class="feature-story">As a requirements analyst I want all distinct features identified with business stories so that every capability is understood and traceable to a user need</div></div>
+    <div class="feature-item"><div class="feature-name">Olivia — Outcomes Analysis</div><div class="feature-story">As a requirements analyst I want all outcome statements identified and classified so that every system output, state change, and communication is captured</div></div>
+    <div class="feature-item"><div class="feature-name">Sophia — Scenarios Analysis</div><div class="feature-story">As a requirements analyst I want Given/When/Then scenarios and decision tables generated so that all use cases and edge cases are testable</div></div>
+    <div class="feature-item"><div class="feature-name">Paul — Prediction Analysis</div><div class="feature-story">As a requirements analyst I want every scenario verified to have a predictable outcome so that untestable requirements are surfaced before development begins</div></div>
+    <div class="feature-item"><div class="feature-name">Alexa — Ambiguity Analysis</div><div class="feature-story">As a requirements analyst I want vague, inconsistent, and undefined language detected so that all ambiguities are resolved before development begins</div></div>
+    <div class="feature-item"><div class="feature-name">Milarna — Missing Data Analysis</div><div class="feature-story">As a requirements analyst I want a systematic completeness check performed so that missing CRUD operations, NFRs, and error handling gaps are identified</div></div>
+    <div class="feature-item"><div class="feature-name">Execution Mode Detection</div><div class="feature-story">As DeFOSPAM I want to automatically detect whether the Agent tool is available so that the optimal execution strategy is chosen without user intervention</div></div>
+    <div class="feature-item"><div class="feature-name">Parallel Agent Execution</div><div class="feature-story">As a Claude Code user I want the 7 analysts to execute in optimised parallel phases so that the full analysis completes as quickly as possible</div></div>
+    <div class="feature-item"><div class="feature-name">Sequential Inline Execution</div><div class="feature-story">As a Claude.ai user I want all 7 analysts to run sequentially so that I receive the full analysis without access to parallel agent tools</div></div>
+    <div class="feature-item"><div class="feature-name">Business Story Compilation</div><div class="feature-story">As a requirements analyst I want features and scenarios compiled into a unified set of business stories so that the full system value is coherently expressed</div></div>
+    <div class="feature-item"><div class="feature-name">Chat Summary Report</div><div class="feature-story">As a requirements analyst I want a summary of all findings displayed in the chat so that I can quickly review key issues without opening a separate file</div></div>
+    <div class="feature-item"><div class="feature-name">Markdown Report Generation</div><div class="feature-story">As a requirements analyst I want a structured Markdown report so that I can store, share, and version-control findings alongside the requirements</div></div>
+    <div class="feature-item"><div class="feature-name">HTML Report Generation</div><div class="feature-story">As a requirements analyst I want a dark-mode styled HTML report so that I can present findings in a visually accessible format to stakeholders</div></div>
+    <div class="feature-item"><div class="feature-name">Finding Deduplication</div><div class="feature-story">As a requirements analyst I want duplicate findings automatically deduplicated so that the final report is concise and the highest-confidence version is preserved</div></div>
+    <div class="feature-item"><div class="feature-name">Confidence-Based Filtering</div><div class="feature-story">As a requirements analyst I want findings below confidence 7 suppressed so that the report focuses only on actionable, well-supported findings</div></div>
+    <div class="feature-item"><div class="feature-name">Severity Classification</div><div class="feature-story">As a requirements analyst I want each finding assigned a severity level so that teams can prioritise which gaps to address first</div></div>
+    <div class="feature-item"><div class="feature-name">Targeted Analysis Mode</div><div class="feature-story">As a requirements analyst I want to request only a subset of the 7 analysts so that I can focus on a specific concern without the full analysis</div></div>
+    <div class="feature-item"><div class="feature-name">Diff / Comparison Mode</div><div class="feature-story">As a requirements analyst I want to compare the current analysis against a previous run so that I can track which findings are new, resolved, recurring, or changed</div></div>
+    <div class="feature-item"><div class="feature-name">Pipeline / CI-CD Mode</div><div class="feature-story">As a DevOps engineer I want DeFOSPAM to output structured JSON with exit codes so that analysis can be integrated into automated CI/CD pipelines</div></div>
+    <div class="feature-item"><div class="feature-name">Pre-commit Hook Mode</div><div class="feature-story">As a developer I want DeFOSPAM to run as a pre-commit hook so that requirements quality is enforced automatically before code is committed</div></div>
+    <div class="feature-item"><div class="feature-name">Previous Run Storage ⚠</div><div class="feature-story">As a requirements analyst I want previous analysis runs stored and retrievable so that Diff mode has a baseline to compare against (IMPLIED — never specified)</div></div>
+    <div class="feature-item"><div class="feature-name">Analyst Persona Presentation</div><div class="feature-story">As a requirements analyst I want each analyst's findings attributed under their named persona with an image so that findings are clearly attributed</div></div>
+  </div>
+
+  <footer>
+    Generated by <strong>OpenRequirements.ai DeFOSPAM</strong> v1.0 &nbsp;·&nbsp; 2026-03-16 &nbsp;·&nbsp;
+    Analysts: Dorothy · Flo · Olivia · Sophia · Paul · Alexa · Milarna &nbsp;·&nbsp;
+    <a href="https://openrequirements.ai" style="color: var(--accent)">openrequirements.ai</a>
+  </footer>
+</div>
+
+<script>
+  let activeFilters = { sev: null, principle: null };
+
+  function filterAll() {
+    activeFilters = { sev: null, principle: null };
+    document.querySelectorAll('.finding').forEach(f => f.classList.remove('hidden'));
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.filter-btn')[0].classList.add('active');
+  }
+
+  function filterSev(sev) {
+    activeFilters.sev = activeFilters.sev === sev ? null : sev;
+    applyFilters();
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.filter-btn')[0].classList.remove('active');
+    if (activeFilters.sev) document.querySelector('.filter-btn.sev-' + sev).classList.add('active');
+  }
+
+  function filterPrinciple(p) {
+    activeFilters.principle = activeFilters.principle === p ? null : p;
+    applyFilters();
+    if (!activeFilters.sev && !activeFilters.principle) {
+      document.querySelectorAll('.filter-btn')[0].classList.add('active');
+    }
+  }
+
+  function applyFilters() {
+    document.querySelectorAll('.finding').forEach(f => {
+      const sevMatch = !activeFilters.sev || f.dataset.sev === activeFilters.sev;
+      const principleMatch = !activeFilters.principle || f.dataset.principle === activeFilters.principle;
+      f.classList.toggle('hidden', !(sevMatch && principleMatch));
+    });
+  }
+</script>
+</body>
+</html>
