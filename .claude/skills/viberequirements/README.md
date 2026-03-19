@@ -134,22 +134,22 @@ Same installation patterns as the other OpenRequirements.ai skills.
 
 ```
 # Step 1: Validate requirements
-/openrequirements docs/PRD.md
+/openrequirements-input/openrequirements-output.md
 
 # Step 2: Quantify values
-/viberequirements defospam-output/openrequirements-results.json
+/openrequirements-input/openrequirements-output.json
 ```
 
 ### From User Stories
 
 ```
-/viberequirements "As an expert user I want shortcuts to save me time"
+/vibeequirements "As an expert user I want shortcuts to save me time"
 ```
 
 ### CLI / Pipeline Mode
 
 ```bash
-claude -p "Use /viberequirements to quantify values from ./requirements.md. Save to ./vibe-output/"
+claude -p "Use /viberequirements to quantify values from ./openrequirements-output.json. Save to ./openrequirements-output/"
 ```
 
 ---
@@ -174,12 +174,12 @@ Phase 5 (Aggregate):     Main agent compiles Planguage specs
 
 ---
 
-## Output Schema (`vibe-results.json`)
+## Output Schema (`openrequirements-vibe-results.json`)
 
 ```json
 {
   "metadata": {
-    "tool": "OpenRequirements.ai VibeR",
+    "tool": "OpenRequirements.ai Vibe",
     "version": "1.0",
     "methodology": "Vibe Requirements / Planguage (Tom Gilb)",
     "agents_run": ["alexa", "ray", "brook", "isaac", "tom", "raj", "alan", "lovelace"]

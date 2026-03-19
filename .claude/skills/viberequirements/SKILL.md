@@ -28,7 +28,7 @@ This skill takes requirements in any form — raw text, user stories, acceptance
 1. **Receive requirements** — load raw requirements, user stories, or DeFOSPAM output
 2. **Run all 8 Vibe Requirements agents** against the input
 3. **Quantify and structure** — define Scales, design Meters, establish Benchmarks, set Constraints, define Targets, add Background context, map Stakeholders, and run Quality Control
-4. **Output** formal Planguage vibe specifications in three formats: chat, markdown (.md), and styled HTML (.html), plus a `vibe-results.json` pipeline output
+4. **Output** formal Planguage vibe specifications in three formats: chat, markdown (.md), and styled HTML (.html), plus a `openrequirements-vibe-results.json` pipeline output
 
 ---
 
@@ -89,7 +89,7 @@ The components form the Planguage specification structure: **Scale → Meter →
 |---|---|
 | **ID** | `alexa` |
 | **Component** | **S** — Scale |
-| **Profile Image** | `https://openrequirements.ai/assets/Alexa-VR.png` |
+| **Profile Image** | `https://openrequirements.ai/lovable-uploads/bd0925d2-899a-4442-b3b3-a9d4802aa15a.png` |
 | **Expertise** | Value scale definition, numeric quantification, ambiguity elimination, scale decomposition, scale libraries |
 
 **Prompt:**
@@ -154,7 +154,7 @@ The components form the Planguage specification structure: **Scale → Meter →
 |---|---|
 | **ID** | `ray` |
 | **Component** | **M** — Meter |
-| **Profile Image** | `https://openrequirements.ai/assets/Ray-VR.png` |
+| **Profile Image** | `https://openrequirements.ai/lovable-uploads/4dd0f917-c9ca-4f32-9156-19cba1717945.png` |
 | **Expertise** | Measurement process design, test specification, meter accuracy, cost-effective measurement |
 
 **Prompt:**
@@ -213,7 +213,7 @@ The components form the Planguage specification structure: **Scale → Meter →
 |---|---|
 | **ID** | `brook` |
 | **Component** | **B** — Benchmarks |
-| **Profile Image** | `https://openrequirements.ai/assets/Brook-VR.png` |
+| **Profile Image** | `https://openrequirements.ai/lovable-uploads/51e2c3b2-7877-4547-b7be-bb25a88a0f19.png` |
 | **Expertise** | Past/Status/Record/Ideal/Trend benchmark establishment, competitive analysis, historical data |
 
 **Prompt:**
@@ -261,7 +261,7 @@ The components form the Planguage specification structure: **Scale → Meter →
 |---|---|
 | **ID** | `isaac` |
 | **Component** | **C** — Constraints |
-| **Profile Image** | `https://openrequirements.ai/assets/Isaac-VR.png` |
+| **Profile Image** | `https://openrequirements.ai/lovable-uploads/1db4a1b9-34d4-411f-97a0-8f4cb6380951.png` |
 | **Expertise** | Tolerable-level constraints, fail/pass boundaries, dynamic prioritization, survival thresholds |
 
 **Prompt:**
@@ -313,7 +313,7 @@ The components form the Planguage specification structure: **Scale → Meter →
 |---|---|
 | **ID** | `tom` |
 | **Component** | **T** — Targets |
-| **Profile Image** | `https://openrequirements.ai/assets/Tom-VR.png` |
+| **Profile Image** | `https://openrequirements.ai/lovable-uploads/2fc38ebc-5c90-460a-a5d5-446dbe2fc8ad.png` |
 | **Expertise** | Wish/Goal/Stretch target definition, deadline management, incremental delivery planning |
 
 **Prompt:**
@@ -368,7 +368,7 @@ The components form the Planguage specification structure: **Scale → Meter →
 |---|---|
 | **ID** | `raj` |
 | **Component** | **B** — Background Specifications |
-| **Profile Image** | `https://openrequirements.ai/assets/Raj-VR.png` |
+| **Profile Image** | `https://openrequirements.ai/lovable-uploads/a0dcbe3e-5ffa-40f6-b429-bec941531d8f.png` |
 | **Expertise** | Risk management, prioritization context, responsibility assignment, motivation and justification |
 
 **Prompt:**
@@ -422,7 +422,7 @@ The components form the Planguage specification structure: **Scale → Meter →
 |---|---|
 | **ID** | `alan` |
 | **Component** | s**T**akeholders |
-| **Profile Image** | `https://openrequirements.ai/assets/Alan-VR.png` |
+| **Profile Image** | `https://openrequirements.ai/lovable-uploads/fca9b026-55b0-40f4-ae2b-771f85eece36.png` |
 | **Expertise** | Stakeholder identification, value mapping, priority/power/competence analysis, elicitation |
 
 **Prompt:**
@@ -479,7 +479,7 @@ The components form the Planguage specification structure: **Scale → Meter →
 |---|---|
 | **ID** | `lovelace` |
 | **Component** | **Q** — Quality Control |
-| **Profile Image** | `https://openrequirements.ai/assets/Lovelace-VR.png` |
+| **Profile Image** | `https://openrequirements.ai/lovable-uploads/1f49b4fe-71f9-4b38-bd3e-f10a30f01e72.png` |
 | **Expertise** | Specification quality control, defect detection, exit criteria, completeness and consistency checking |
 
 **Prompt:**
@@ -730,9 +730,9 @@ QC Status: [defects found / pass/fail]
 ### FOUR Required Outputs
 
 1. **Chat output** (inline in the conversation)
-2. **Markdown file** (saved as `vibe-report.md`)
-3. **HTML file** (saved as `vibe-report.html`)
-4. **Pipeline JSON** (saved as `vibe-results.json`)
+2. **Markdown file** (saved as `openrequirements-vibe-report.md`)
+3. **HTML file** (saved as `openrequirements-vibe-report.html`)
+4. **Pipeline JSON** (saved as `openrequirements-vibe-results.json`)
 
 ### Chat Output Template
 
@@ -766,7 +766,7 @@ Vibe Requirements methodology by Tom Gilb
 
 Use the same dark-mode styling as other OpenRequirements.ai reports. Include value gauge visualizations showing Status → Tolerable → Wish → Goal → Stretch on a linear scale.
 
-### Pipeline JSON (`vibe-results.json`)
+### Pipeline JSON (`openrequirements-vibe-results.json`)
 
 ```json
 {
@@ -804,13 +804,13 @@ Use the same dark-mode styling as other OpenRequirements.ai reports. Include val
 ### Claude Code
 
 - **Subagents**: Use `Agent` tool (Phase 1 → 2 → 3 → 4)
-- **Working directory**: Create `vibe-output/` for all outputs
+- **Working directory**: Create `.openrequirements-output/` for all outputs
 - **DeFOSPAM integration**: If `openrequirements-results.json` exists, use it; otherwise work from raw requirements
 
 ### Visual Studio Code
 
 - Open the Claude Code panel → type `/viberequirements`
-- Reference requirements by path: `/viberequirements docs/requirements.md`
+- Reference requirements by path: `/openrequirements-input/openrequirements-results.json`
 
 ### Cowork
 
