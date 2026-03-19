@@ -1,0 +1,45 @@
+{
+  "metadata": {
+    "tool": "Specification by Example Aggregator",
+    "version": "1.0",
+    "timestamp": "2026-03-19T14:59:00Z",
+    "source": "/sessions/keen-vigilant-knuth/sbe-output/",
+    "agents_run": [
+      "Grace (Goals Analyst)",
+      "Chris (Collaboration Analyst)",
+      "Isabel (Examples Analyst)",
+      "Rex (Refinement Analyst)",
+      "Angie (Automation Analyst)",
+      "Victoria (Validation Analyst)",
+      "Laveena (Living Documentation Analyst)"
+    ]
+  },
+  "summary": {
+    "total_findings": 156,
+    "critical": 40,
+    "major": 105,
+    "minor": 11,
+    "goals_derived": 10,
+    "specifications_refined": 9,
+    "examples_created": 6,
+    "gherkin_scenarios": 97,
+    "feature_files": 10,
+    "validation_suites": 3
+  },
+  "gherkin_features": [
+    {"file": "disruption-event-ingestion.feature", "scenarios": 8},
+    {"file": "event-normalization.feature", "scenarios": 9},
+    {"file": "disruption-correlation.feature", "scenarios": 11},
+    {"file": "case-management.feature", "scenarios": 10},
+    {"file": "notification-eligibility.feature", "scenarios": 9},
+    {"file": "notification-composition.feature", "scenarios": 10},
+    {"file": "notification-dispatch.feature", "scenarios": 10},
+    {"file": "notification-deduplication.feature", "scenarios": 9},
+    {"file": "quiet-hours.feature", "scenarios": 9},
+    {"file": "case-timeline.feature", "scenarios": 12}
+  ],
+  "validation_suites": 3,
+  "critical_findings": 40,
+  "major_findings": 105,
+  "minor_findings": 11
+}

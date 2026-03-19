@@ -1,0 +1,245 @@
+{
+  "metadata": {
+    "generated_date": "2026-03-19",
+    "report_title": "OpenRequirements Performance Engineering NFR Assessment",
+    "system": "Airline Disruption Detection, Correlation, and Passenger Notification Platform",
+    "analysts": 8,
+    "analysis_framework": "DeFOSPAM",
+    "disciplines": ["Capacity", "Latency", "Availability", "Scalability", "Security Performance", "Usability", "Monitoring", "Endurance"]
+  },
+  "executive_summary": {
+    "total_nfrs": 137,
+    "critical_findings": 48,
+    "major_findings": 71,
+    "minor_findings": 18,
+    "class_breakdown": {
+      "C_capacity": 10,
+      "L_latency": 12,
+      "A_availability": 11,
+      "S_scalability": 10,
+      "S_security": 9,
+      "U_usability": 10,
+      "M_monitoring": 19,
+      "E_endurance": 8
+    }
+  },
+  "system_profile": {
+    "flights_per_year": 50000,
+    "flights_per_day": 200,
+    "passengers_per_year": 15000000,
+    "disruption_rate_percent": "5-15%",
+    "disruptions_per_day_range": "10-30",
+    "peak_concurrent_flights": 50,
+    "data_retention_years": 7,
+    "yoy_growth_percent": 20
+  },
+  "capacity_model": {
+    "current_infrastructure": {
+      "web_servers": 8,
+      "app_servers": 37,
+      "db_servers": 25,
+      "storage_gb": 11.15
+    },
+    "projected_24_months": {
+      "web_servers": 11,
+      "app_servers": 53,
+      "db_servers": 39,
+      "storage_gb": 28.3
+    },
+    "annual_infrastructure_cost": 394500
+  },
+  "performance_budgets": {
+    "end_to_end_sla": {
+      "p50_ms": 8000,
+      "p90_ms": 15000,
+      "p95_ms": 20000,
+      "p99_ms": 30000,
+      "sla_statement": "95% of disruption notifications delivered within 20 seconds"
+    },
+    "component_breakdown": [
+      {"component": "Event Ingestion", "p95_ms": 400},
+      {"component": "Event Normalization", "p95_ms": 500},
+      {"component": "Correlation Query", "p95_ms": 4000},
+      {"component": "Case Creation & Severity", "p95_ms": 700},
+      {"component": "Consent Evaluation", "p95_ms": 1200},
+      {"component": "Message Composition", "p95_ms": 800},
+      {"component": "Provider Dispatch", "p95_ms": 5000},
+      {"component": "Deduplication & Timeline", "p95_ms": 400}
+    ]
+  },
+  "availability_requirements": {
+    "system_target_percent": 99.95,
+    "annual_downtime_minutes": 262,
+    "rto_minutes": 5,
+    "rpo_minutes": 0,
+    "strategy": "Active-active multi-region with automatic failover",
+    "key_component_targets": {
+      "orchestrator_percent": 99.98,
+      "event_ingestion_percent": 99.99,
+      "notification_dispatch_percent": 99.50
+    }
+  },
+  "scalability_assessment": {
+    "critical_bottlenecks": [
+      {
+        "component": "Booking Correlation Database",
+        "current_capacity": 50,
+        "target_capacity": 200,
+        "unit": "concurrent_disruptions",
+        "breaking_point": 150
+      },
+      {
+        "component": "Provider Rate Limits",
+        "current_capacity": 5400,
+        "target_capacity": 30000,
+        "unit": "notifications_per_hour",
+        "breaking_point": 6000
+      },
+      {
+        "component": "Idempotency Cache",
+        "current_capacity": 1000,
+        "target_capacity": 50000,
+        "unit": "dedup_requests_per_second",
+        "breaking_point": 500
+      }
+    ]
+  },
+  "security_performance": {
+    "control_overhead_ms": 106,
+    "end_to_end_sla_impact_percent": 0.53,
+    "assessment": "GREEN - Security controls add <1% overhead",
+    "critical_controls": [
+      "TLS 1.3 encryption (5ms overhead)",
+      "AES-256 at-rest encryption (8ms overhead)",
+      "JWT deep links with TTL (5ms overhead)",
+      "Real-time GDPR consent verification (50ms overhead)",
+      "Idempotency deduplication (12ms overhead)"
+    ],
+    "dos_resilience": {
+      "rate_limits_rps": {
+        "ingest_endpoint": 1000,
+        "deeplink_endpoint": 5000,
+        "consent_endpoint": 2000,
+        "dispatch_endpoint": 500
+      },
+      "protection_layers": ["CDN DDoS", "WAF rules", "Geographic filtering", "Circuit breakers"]
+    }
+  },
+  "usability_metrics": {
+    "sms_targets": {
+      "max_characters": 160,
+      "recommended_characters": 120,
+      "reading_time_seconds": 5,
+      "readability_score_target": "8/10 (Flesch Reading Ease >60)"
+    },
+    "deep_link_targets": {
+      "ttfb_ms": 1500,
+      "tti_ms": 3000,
+      "page_size_kb": 50,
+      "jwt_ttl_minutes": 120
+    },
+    "error_rates": {
+      "notification_delivery_success_percent": 99.5,
+      "deeplink_load_success_percent": 99.2,
+      "task_completion_rate_percent": 85,
+      "passenger_satisfaction_stars": 4.2
+    }
+  },
+  "monitoring_strategy": {
+    "monitoring_types": ["Synthetic", "RUM", "APM", "Infrastructure", "Logging", "Business Metrics"],
+    "critical_metrics": [
+      {"metric": "end_to_end_latency_p95", "target_ms": 20000, "alert_critical_ms": 18000},
+      {"metric": "dispatch_success_rate", "target_percent": 99.5, "alert_critical": 95.0},
+      {"metric": "duplicate_rate", "target_percent": 0.0, "alert_critical": 1.0},
+      {"metric": "opt_out_enforcement_rate", "target_percent": 100.0, "alert_critical": 99.0}
+    ],
+    "key_dashboards": ["System Health", "Performance SLA", "Capacity", "Provider Health", "Security", "Business Metrics"]
+  },
+  "test_strategy": {
+    "test_types": [
+      {"type": "load", "duration_hours": 2, "pass_criteria": "p95 < 20s, p99 < 30s"},
+      {"type": "stress", "duration_hours": 1, "pass_criteria": "Graceful degradation"},
+      {"type": "soak", "duration_hours": 48, "pass_criteria": "Memory < 50MB/hour growth"},
+      {"type": "spike", "duration_hours": 1, "pass_criteria": "Zero loss, p95 < 30s"},
+      {"type": "breakpoint", "duration_hours": 5, "pass_criteria": "Capacity >= 4000 TPS"},
+      {"type": "volume", "duration_hours": 8, "pass_criteria": "28GB data, latency stable"}
+    ],
+    "performance_gates": [
+      {"gate": "P95 SLA Compliance", "threshold": "< 20s", "blocking": true},
+      {"gate": "P99 Latency", "threshold": "< 30s", "blocking": true},
+      {"gate": "Idempotency Enforcement", "threshold": "0% duplicates", "blocking": true},
+      {"gate": "Memory Stability", "threshold": "< 50MB/hr", "blocking": true},
+      {"gate": "No Connection Exhaustion", "threshold": "> 20% available", "blocking": true}
+    ],
+    "pre_release_total_hours": 70,
+    "continuous_cadence": "Weekly load + Monthly soak + Bi-weekly spike"
+  },
+  "nfr_register_summary": {
+    "total_requirements": 137,
+    "capacity": 10,
+    "latency": 12,
+    "availability": 11,
+    "scalability": 10,
+    "security": 9,
+    "usability": 10,
+    "monitoring": 19,
+    "endurance": 8
+  },
+  "findings_by_discipline": {
+    "capacity": [
+      "NFR-CAP-001: Database Sizing for Booking Correlation (CRITICAL)",
+      "NFR-CAP-002: Immutable Event Storage for 7-Year Retention (CRITICAL)",
+      "NFR-CAP-003: Notification Throughput for Peak Load (CRITICAL)"
+    ],
+    "latency": [
+      "NFR-LAT-001: End-to-end SLA Definition (CRITICAL)",
+      "NFR-LAT-004: Correlation Query Bottleneck (CRITICAL)",
+      "NFR-LAT-006: Consent Cache Strategy (CRITICAL)"
+    ],
+    "availability": [
+      "NFR-AVL-001: Orchestrator Failure Recovery (CRITICAL)",
+      "NFR-AVL-002: Provider Retry Strategy (CRITICAL)",
+      "NFR-AVL-011: System Availability Target 99.95% (CRITICAL)"
+    ],
+    "scalability": [
+      "NFR-SCL-001: Booking Correlation Bottleneck (CRITICAL)",
+      "NFR-SCL-002: Provider Rate Limit Bottleneck (CRITICAL)",
+      "NFR-SCL-003: Idempotency Key Scaling (CRITICAL)"
+    ],
+    "security": [
+      "NFR-SEC-001: JWT Deep Links with Revocation (CRITICAL)",
+      "NFR-SEC-002: Real-time GDPR Consent (CRITICAL)",
+      "NFR-SEC-005: PII Encryption (CRITICAL)"
+    ],
+    "usability": [
+      "NFR-USE-001: SMS Content Clarity (CRITICAL)",
+      "NFR-USE-002: Deep Link Page Load (CRITICAL)",
+      "NFR-USE-008: Notification Delivery Perception (CRITICAL)"
+    ],
+    "monitoring": [
+      "NFR-MON-001: Timeline Immutability Violations",
+      "NFR-MON-006: End-to-End Latency SLA",
+      "NFR-MON-007: Consent Enforcement (GDPR)"
+    ],
+    "endurance": [
+      "NFR-END-001: Event Storage Growth (CRITICAL)",
+      "NFR-END-002: Cache Eviction (CRITICAL)",
+      "NFR-END-006: Sustained Peak Load (CRITICAL)"
+    ]
+  },
+  "top_risk_areas": [
+    "Correlation query performance under 50M+ booking records",
+    "Provider rate limit bottleneck (100-150 msg/sec vs 1000+ peak)",
+    "Idempotency enforcement at scale (cache accuracy, eviction)",
+    "Multi-region failover RTO/RPO targets tight (5 min / 0 min)",
+    "GDPR real-time consent evaluation (latency + cache staleness)"
+  ],
+  "immediate_actions": [
+    "Implement JWT-based deep link auth with revocation",
+    "Enforce real-time consent evaluation before dispatch",
+    "Define idempotency key composition formally",
+    "Implement append-only immutable event log",
+    "Deploy WAF + rate limiting at CDN edge"
+  ],
+  "report_footer": "Report by OpenRequirements.ai | Based on Effective Performance Engineering by DeCapua & Evans"
+}

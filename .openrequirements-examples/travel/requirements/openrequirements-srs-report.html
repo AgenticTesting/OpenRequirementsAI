@@ -1,0 +1,1876 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IEEE 830 SRS - Airline Disruption Detection Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-tertiary: #21262d;
+            --border: #30363d;
+            --text-primary: #e6edf3;
+            --text-secondary: #8b949e;
+            --link: #58a6ff;
+            --critical: #f85149;
+            --major: #d29922;
+            --minor: #3fb950;
+            --success: #3fb950;
+            --warning: #d29922;
+            --error: #f85149;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 30px 0;
+            border-bottom: 2px solid var(--border);
+            margin-bottom: 40px;
+        }
+
+        .header-left {
+            flex: 1;
+        }
+
+        .header-left h1 {
+            font-size: 2.5em;
+            margin-bottom: 5px;
+            color: var(--text-primary);
+        }
+
+        .header-left p {
+            color: var(--text-secondary);
+            font-size: 1.1em;
+        }
+
+        .header-logo {
+            width: 150px;
+        }
+
+        .header-logo img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .meta-info {
+            display: flex;
+            gap: 30px;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid var(--border);
+        }
+
+        .meta-item {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .meta-label {
+            color: var(--text-secondary);
+            font-size: 0.9em;
+            font-weight: 500;
+        }
+
+        .meta-value {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 10px;
+            border-bottom: 2px solid var(--border);
+            margin-bottom: 40px;
+            overflow-x: auto;
+            padding-bottom: 0;
+        }
+
+        .nav-tab {
+            padding: 15px 25px;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 500;
+            position: relative;
+            white-space: nowrap;
+            transition: color 0.3s ease;
+        }
+
+        .nav-tab:hover {
+            color: var(--text-primary);
+        }
+
+        .nav-tab.active {
+            color: var(--link);
+        }
+
+        .nav-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background-color: var(--link);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .section {
+            margin-bottom: 50px;
+        }
+
+        .section-title {
+            font-size: 2em;
+            margin-bottom: 25px;
+            color: var(--text-primary);
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .subsection-title {
+            font-size: 1.4em;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            color: var(--link);
+        }
+
+        .quality-dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .scorecard-item {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        .scorecard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 15px;
+        }
+
+        .scorecard-title {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 0.95em;
+        }
+
+        .scorecard-status {
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            font-weight: 600;
+        }
+
+        .status-pass {
+            background-color: rgba(63, 185, 80, 0.2);
+            color: var(--success);
+        }
+
+        .status-warn {
+            background-color: rgba(210, 153, 34, 0.2);
+            color: var(--major);
+        }
+
+        .status-fail {
+            background-color: rgba(248, 81, 73, 0.2);
+            color: var(--critical);
+        }
+
+        .scorecard-score {
+            font-size: 2.2em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: var(--text-primary);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background-color: var(--bg-tertiary);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 12px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .progress-fill.green {
+            background-color: var(--success);
+            width: 95%;
+        }
+
+        .progress-fill.yellow {
+            background-color: var(--major);
+            width: 75%;
+        }
+
+        .progress-fill.red {
+            background-color: var(--critical);
+            width: 50%;
+        }
+
+        .scorecard-meta {
+            font-size: 0.85em;
+            color: var(--text-secondary);
+        }
+
+        .requirements-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 40px;
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .requirements-table thead {
+            background-color: var(--bg-tertiary);
+            border-bottom: 2px solid var(--border);
+        }
+
+        .requirements-table th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--text-primary);
+            cursor: pointer;
+            user-select: none;
+            border-right: 1px solid var(--border);
+        }
+
+        .requirements-table th:hover {
+            background-color: var(--border);
+        }
+
+        .requirements-table th:last-child {
+            border-right: none;
+        }
+
+        .requirements-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-secondary);
+        }
+
+        .requirements-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .requirements-table tbody tr:hover {
+            background-color: var(--bg-tertiary);
+        }
+
+        .req-id {
+            color: var(--link);
+            font-weight: 600;
+            font-family: 'Courier New', monospace;
+        }
+
+        .req-priority {
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.85em;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .priority-essential {
+            background-color: rgba(248, 81, 73, 0.2);
+            color: var(--critical);
+        }
+
+        .priority-conditional {
+            background-color: rgba(210, 153, 34, 0.2);
+            color: var(--major);
+        }
+
+        .priority-optional {
+            background-color: rgba(63, 185, 80, 0.2);
+            color: var(--success);
+        }
+
+        .verifiable-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            font-weight: 600;
+        }
+
+        .verifiable-yes {
+            background-color: rgba(63, 185, 80, 0.2);
+            color: var(--success);
+        }
+
+        .verifiable-partial {
+            background-color: rgba(210, 153, 34, 0.2);
+            color: var(--major);
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            font-weight: 600;
+            background-color: rgba(63, 185, 80, 0.2);
+            color: var(--success);
+        }
+
+        .finding-card {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-left: 4px solid;
+            border-radius: 6px;
+            padding: 20px;
+            margin-bottom: 15px;
+            display: flex;
+            gap: 15px;
+        }
+
+        .finding-card.critical {
+            border-left-color: var(--critical);
+        }
+
+        .finding-card.major {
+            border-left-color: var(--major);
+        }
+
+        .finding-card.minor {
+            border-left-color: var(--success);
+        }
+
+        .finding-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: var(--text-primary);
+            flex-shrink: 0;
+        }
+
+        .finding-avatar img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .finding-content {
+            flex: 1;
+        }
+
+        .finding-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 10px;
+        }
+
+        .finding-title {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 0.95em;
+        }
+
+        .finding-analyst {
+            color: var(--text-secondary);
+            font-size: 0.85em;
+        }
+
+        .finding-severity {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.75em;
+            font-weight: 700;
+        }
+
+        .severity-critical {
+            background-color: rgba(248, 81, 73, 0.3);
+            color: var(--critical);
+        }
+
+        .severity-major {
+            background-color: rgba(210, 153, 34, 0.3);
+            color: var(--major);
+        }
+
+        .severity-minor {
+            background-color: rgba(63, 185, 80, 0.3);
+            color: var(--success);
+        }
+
+        .finding-description {
+            color: var(--text-secondary);
+            font-size: 0.9em;
+            line-height: 1.5;
+        }
+
+        .traceability-matrix {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+            font-size: 0.9em;
+        }
+
+        .traceability-matrix thead {
+            background-color: var(--bg-tertiary);
+            border-bottom: 2px solid var(--border);
+        }
+
+        .traceability-matrix th {
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--text-primary);
+            border-right: 1px solid var(--border);
+        }
+
+        .traceability-matrix th:last-child {
+            border-right: none;
+        }
+
+        .traceability-matrix td {
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--border);
+            border-right: 1px solid var(--border);
+        }
+
+        .traceability-matrix td:last-child {
+            border-right: none;
+        }
+
+        .traceability-matrix tr:last-child td {
+            border-bottom: none;
+        }
+
+        .trace-req-id {
+            color: var(--link);
+            font-weight: 600;
+            font-family: 'Courier New', monospace;
+        }
+
+        .trace-source {
+            color: var(--text-secondary);
+            font-size: 0.85em;
+        }
+
+        .trace-design {
+            color: var(--text-secondary);
+            font-size: 0.85em;
+        }
+
+        .tbd-list {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .tbd-item {
+            padding: 12px;
+            border-left: 4px solid;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            background-color: var(--bg-tertiary);
+        }
+
+        .tbd-critical {
+            border-left-color: var(--critical);
+        }
+
+        .tbd-major {
+            border-left-color: var(--major);
+        }
+
+        .tbd-item-id {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-family: 'Courier New', monospace;
+        }
+
+        .tbd-item-desc {
+            color: var(--text-secondary);
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+
+        .summary-stat {
+            display: inline-block;
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 15px 25px;
+            margin: 10px 10px 10px 0;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.9em;
+            display: block;
+        }
+
+        .stat-value {
+            color: var(--text-primary);
+            font-size: 1.8em;
+            font-weight: bold;
+            display: block;
+        }
+
+        footer {
+            border-top: 2px solid var(--border);
+            padding: 30px 0;
+            margin-top: 60px;
+            color: var(--text-secondary);
+            font-size: 0.9em;
+        }
+
+        .footer-section {
+            margin-bottom: 20px;
+        }
+
+        .footer-title {
+            color: var(--text-primary);
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .footer-list {
+            list-style: none;
+        }
+
+        .footer-list li {
+            margin-bottom: 5px;
+        }
+
+        .footer-list a {
+            color: var(--link);
+            text-decoration: none;
+        }
+
+        .footer-list a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 1024px) {
+            .quality-dashboard {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .requirements-table, .traceability-matrix {
+                font-size: 0.85em;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-left h1 {
+                font-size: 1.8em;
+            }
+
+            .quality-dashboard {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-tabs {
+                gap: 5px;
+            }
+
+            .nav-tab {
+                padding: 12px 15px;
+                font-size: 0.9em;
+            }
+
+            .requirements-table, .traceability-matrix {
+                font-size: 0.8em;
+            }
+
+            .requirements-table th, .requirements-table td {
+                padding: 8px;
+            }
+
+            .finding-card {
+                flex-direction: column;
+            }
+
+            .meta-info {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-left">
+                <h1>IEEE 830 Software Requirements Specification</h1>
+                <p>Airline Disruption Detection, Correlation, and Passenger Notification Platform</p>
+                <div class="meta-info">
+                    <div class="meta-item">
+                        <span class="meta-label">Version</span>
+                        <span class="meta-value">1.0 MVP</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Date</span>
+                        <span class="meta-value">2026-03-19</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Standard</span>
+                        <span class="meta-value">IEEE 830-1998</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Quality Score</span>
+                        <span class="meta-value">68/100</span>
+                    </div>
+                </div>
+            </div>
+            <div class="header-logo">
+                <img src="https://openrequirements.ai/assets/logo-nlGhAN5y.png" alt="OpenRequirements.ai Logo">
+            </div>
+        </header>
+
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="showTab('introduction')">Introduction</button>
+            <button class="nav-tab" onclick="showTab('overview')">Overall Description</button>
+            <button class="nav-tab" onclick="showTab('requirements')">Specific Requirements</button>
+            <button class="nav-tab" onclick="showTab('traceability')">Traceability</button>
+            <button class="nav-tab" onclick="showTab('quality')">Quality</button>
+            <button class="nav-tab" onclick="showTab('findings')">Findings</button>
+        </div>
+
+        <!-- Introduction Tab -->
+        <div id="introduction" class="tab-content active">
+            <div class="section">
+                <h2 class="section-title">1. Introduction</h2>
+
+                <div class="subsection-title">1.1 Purpose</div>
+                <p style="color: var(--text-secondary); margin-bottom: 15px;">
+                    <strong>STATUS: MISSING (TBD-SEC-001)</strong><br>
+                    System purpose statement required to articulate:<br>
+                    - Airline operational challenge: Real-time distribution of disruption information to passengers<br>
+                    - System capability: Event detection, correlation, notification dispatch<br>
+                    - Business value: Passenger satisfaction, reduced call center load, operational transparency
+                </p>
+
+                <div class="subsection-title">1.2 Scope</div>
+                <p style="color: var(--text-secondary); margin-bottom: 15px;">
+                    <strong>In Scope:</strong>
+                </p>
+                <ul style="color: var(--text-secondary); margin-left: 20px; margin-bottom: 20px;">
+                    <li>Ingests disruption signals from carrier operations feeds (delays, cancellations, aircraft changes)</li>
+                    <li>Stores raw events immutably with full metadata for audit trails (7-year retention)</li>
+                    <li>Normalizes heterogeneous disruption formats into standardized Canonical Event Schema</li>
+                    <li>Correlates disruptions to passenger bookings using service_no+date+origin/destination matching</li>
+                    <li>Creates Case records with versioned severity computation</li>
+                    <li>Evaluates real-time passenger consent before dispatch (GDPR Article 7 compliance)</li>
+                    <li>Composes contextual SMS/Email/Push notifications</li>
+                    <li>Prevents duplicate notifications via idempotency keys (exactly-once guarantee)</li>
+                    <li>Enforces passenger quiet hours with service-critical exemptions</li>
+                    <li>Maintains immutable append-only timeline for every Case lifecycle event</li>
+                </ul>
+
+                <p style="color: var(--text-secondary); margin-bottom: 15px;">
+                    <strong>Out of Scope:</strong>
+                </p>
+                <ul style="color: var(--text-secondary); margin-left: 20px;">
+                    <li>Journey planning or itinerary rebooking</li>
+                    <li>Refund or compensation processing</li>
+                    <li>Real-time flight status prediction</li>
+                    <li>Manual case management workflows</li>
+                </ul>
+
+                <div class="subsection-title">1.3 Definitions, Acronyms, Abbreviations</div>
+                <p style="color: var(--text-secondary); margin-bottom: 15px;">
+                    <strong>85 Glossary Terms Defined</strong> (78 verified, 7 unverified)<br><br>
+                    Key domain terms: Case, Disruption Detection, Disruption Orchestrator, Correlation, Canonical Event Schema, 
+                    Consent State, Idempotency Key, Exactly One Compliant Passenger Notification, Lead Contact<br><br>
+                    Key technical terms: SLA, TTL, RTO, RPO, GDPR, JWT, UTC, DST
+                </p>
+
+                <div class="subsection-title">1.4 References</div>
+                <p style="color: var(--text-secondary); margin-bottom: 15px;">
+                    <strong>STATUS: MISSING (TBD-SEC-001)</strong>
+                </p>
+
+                <div class="subsection-title">1.5 Overview</div>
+                <p style="color: var(--text-secondary);">
+                    <strong>STATUS: MISSING</strong><br>
+                    This SRS follows IEEE 830-1998 standard structure with 4 main sections covering 
+                    46 requirements (29 functional, 17 non-functional) organized by 10 core features.
+                </p>
+            </div>
+        </div>
+
+        <!-- Overall Description Tab -->
+        <div id="overview" class="tab-content">
+            <div class="section">
+                <h2 class="section-title">2. Overall Description</h2>
+
+                <div class="subsection-title">2.1 Product Perspective</div>
+                <p style="color: var(--text-secondary); margin-bottom: 20px;">
+                    <strong>4 External System Interfaces:</strong>
+                </p>
+                <ol style="color: var(--text-secondary); margin-left: 20px; margin-bottom: 30px;">
+                    <li><strong>Carrier Operations Feed:</strong> Multiple protocols (ACARS, IATA SSIM, airline APIs, manual entry)</li>
+                    <li><strong>Notification Providers:</strong> Current 5,400 msg/hour; target 30,000 msg/hour (v1.1)</li>
+                    <li><strong>Consent Authority:</strong> Real-time query with p95 ≤ 1,200ms latency</li>
+                    <li><strong>Deep Link Service:</strong> JWT-based tokens with 120-minute TTL</li>
+                </ol>
+
+                <div class="subsection-title">2.2 Product Functions</div>
+                <p style="color: var(--text-secondary); margin-bottom: 15px;">
+                    <strong>10 Core Features (v1.0 MVP):</strong>
+                </p>
+                <div style="margin-left: 20px; color: var(--text-secondary);">
+                    <div style="margin-bottom: 12px;">
+                        <strong>1. Disruption Event Ingestion and Storage</strong> - Ingest raw signals with metadata preservation (7-year retention, 11.15GB current)
+                    </div>
+                    <div style="margin-bottom: 12px;">
+                        <strong>2. Event Normalization</strong> - Transform to Canonical Event Schema (p95 500ms)
+                    </div>
+                    <div style="margin-bottom: 12px;">
+                        <strong>3. Disruption-to-Booking Correlation</strong> - Deterministic matching against 50M booking records (p95 4,000ms)
+                    </div>
+                    <div style="margin-bottom: 12px;">
+                        <strong>4. Case Management and Severity</strong> - Create Cases with versioned decision tree (p95 700ms)
+                    </div>
+                    <div style="margin-bottom: 12px;">
+                        <strong>5. Passenger Consent and Channel Selection</strong> - GDPR-compliant real-time consent verification (p95 1,200ms)
+                    </div>
+                    <div style="margin-bottom: 12px;">
+                        <strong>6. Notification Composition</strong> - SMS with 3 elements, max 160 chars, Flesch Reading Ease ≥ 60
+                    </div>
+                    <div style="margin-bottom: 12px;">
+                        <strong>7. Template-Based Dispatch</strong> - Versioned locale-specific templates with automatic retry (p95 5,000ms)
+                    </div>
+                    <div style="margin-bottom: 12px;">
+                        <strong>8. Idempotent Deduplication</strong> - SHA256-based cache with 24-hour TTL (50,000 lookups/sec)
+                    </div>
+                    <div style="margin-bottom: 12px;">
+                        <strong>9. Quiet Hours and Exemptions</strong> - Locale-aware timezone-aware enforcement with CRITICAL bypass
+                    </div>
+                    <div style="margin-bottom: 12px;">
+                        <strong>10. Timeline Auditing</strong> - Immutable append-only 8-event lifecycle tracking
+                    </div>
+                </div>
+
+                <div class="subsection-title">2.3 User Characteristics</div>
+                <p style="color: var(--text-secondary);">
+                    <strong>5 User Types:</strong> Passengers (novice, SMS-only), Airline Operations (intermediate), 
+                    Consent Authority Admin (privacy), SRE/Monitoring (advanced), Audit Investigator (compliance)
+                </p>
+
+                <div class="subsection-title">2.4 Constraints</div>
+                <p style="color: var(--text-secondary); margin-bottom: 15px;">
+                    <strong>System:</strong> 99.95% availability (262 min annual downtime), RTO 5 min, RPO 0<br>
+                    <strong>Data:</strong> 7-year retention, 11.15GB current, 28.3GB projected 24-month<br>
+                    <strong>Performance:</strong> p95 ≤ 20-second end-to-end SLA with component budgets<br>
+                    <strong>Security:</strong> TLS 1.3, AES-256 at-rest, GDPR Article 7, JWT RS256
+                </p>
+
+                <div class="subsection-title">2.5 Assumptions and Dependencies</div>
+                <p style="color: var(--text-secondary); margin-bottom: 15px;">
+                    <strong>Key Assumptions:</strong> Deterministic input data, real-time consent available, SMS provider minimum capacity, 
+                    booking database queryable, immutable storage technology available<br><br>
+                    <strong>Unvalidated Assumptions (Risk):</strong> 5-15% disruption rate, 20% YoY growth, 7-year retention source, 
+                    90% consent cache hit rate, 50M booking database size
+                </p>
+
+                <div class="subsection-title">2.6 Apportioning of Requirements</div>
+                <p style="color: var(--text-secondary);">
+                    <strong>v1.0 MVP:</strong> 42 requirements (30 functional + 12 non-functional), 6 core features<br>
+                    <strong>v1.1 (Future):</strong> 3 deferred items (multi-leg correlation, rate limit scaling, advanced monitoring)<br>
+                    <strong>v1.2+ (Future):</strong> Rebooking orchestration, predictive detection, ops dashboard
+                </p>
+            </div>
+        </div>
+
+        <!-- Specific Requirements Tab -->
+        <div id="requirements" class="tab-content">
+            <div class="section">
+                <h2 class="section-title">3. Specific Requirements</h2>
+
+                <p style="color: var(--text-secondary); margin-bottom: 30px;">
+                    <strong>46 Total Requirements</strong> (29 Functional + 17 Non-Functional) organized by 10 core features.
+                    Each requirement includes priority, status, measurable thresholds, and acceptance criteria.
+                </p>
+
+                <table class="requirements-table">
+                    <thead>
+                        <tr>
+                            <th onclick="sortTable(this, 0)">Requirement ID</th>
+                            <th onclick="sortTable(this, 1)">Title</th>
+                            <th onclick="sortTable(this, 2)">Priority</th>
+                            <th onclick="sortTable(this, 3)">Type</th>
+                            <th onclick="sortTable(this, 4)">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="req-id">REQ-FR-001</span></td>
+                            <td>Raw Event Immutable Storage with Metadata</td>
+                            <td><span class="req-priority priority-essential">Essential</span></td>
+                            <td>Functional</td>
+                            <td><span class="status-badge">Approved</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="req-id">REQ-FR-002</span></td>
+                            <td>Event Ingestion from Carrier Operations Feed</td>
+                            <td><span class="req-priority priority-essential">Essential</span></td>
+                            <td>Functional</td>
+                            <td><span class="status-badge">Approved</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="req-id">REQ-FR-003</span></td>
+                            <td>Event Storage Capacity for 7-Year Retention</td>
+                            <td><span class="req-priority priority-essential">Essential</span></td>
+                            <td>Functional</td>
+                            <td><span class="status-badge">Approved</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="req-id">REQ-FR-004</span></td>
+                            <td>Canonical Event Schema Enforcement</td>
+                            <td><span class="req-priority priority-essential">Essential</span></td>
+                            <td>Functional</td>
+                            <td><span class="status-badge">Approved</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="req-id">REQ-FR-005</span></td>
+                            <td>Event Normalization Pipeline</td>
+                            <td><span class="req-priority priority-essential">Essential</span></td>
+                            <td>Functional</td>
+                            <td><span class="status-badge">Approved</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="req-id">REQ-FR-006</span></td>
+                            <td>Normalization Error Handling and Logging</td>
+                            <td><span class="req-priority priority-essential">Essential</span></td>
+                            <td>Functional</td>
+                            <td><span class="status-badge">Approved</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="req-id">REQ-FR-007</span></td>
+                            <td>Deterministic Correlation Engine</td>
+                            <td><span class="req-priority priority-essential">Essential</span></td>
+                            <td>Functional</td>
+                            <td><span class="status-badge">Approved</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="req-id">REQ-FR-008</span></td>
+                            <td>Match Score Calculation Algorithm</td>
+                            <td><span class="req-priority priority-essential">Essential</span></td>
+                            <td>Functional</td>
+                            <td><span class="status-badge">Approved</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="req-id">REQ-FR-009</span></td>
+                            <td>Multi-Leg Journey Correlation Strategy</td>
+                            <td><span class="req-priority priority-optional">Optional</span></td>
+                            <td>Functional</td>
+                            <td><span class="status-badge">Draft</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="req-id">REQ-FR-010</span></td>
+                            <td>Correlation ID Tracking for Request Tracing</td>
+                            <td><span class="req-priority priority-conditional">Conditional</span></td>
+                            <td>Functional</td>
+                            <td><span class="status-badge">Approved</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="req-id">REQ-FR-011</span></td>
+                            <td>Case Creation with Initial Status and Severity</td>
+                            <td><span class="req-priority priority-essential">Essential</span></td>
+                            <td>Functional</td>
+                            <td><span class="status-badge">Approved</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="req-id">REQ-FR-012</span></td>
+                            <td>Severity Level Definition and Decision Tree</td>
+                            <td><span class="req-priority priority-essential">Essential</span></td>
+                            <td>Functional</td>
+                            <td><span class="status-badge">Approved</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="req-id">REQ-FR-013</span></td>
+                            <td>Case Status State Machine and Transitions</td>
+                            <td><span class="req-priority priority-conditional">Conditional</span></td>
+                            <td>Functional</td>
+                            <td><span class="status-badge">Approved</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="req-id">REQ-FR-014</span></td>
+                            <td>Consent-Based Channel Selection</td>
+                            <td><span class="req-priority priority-essential">Essential</span></td>
+                            <td>Functional</td>
+                            <td><span class="status-badge">Approved</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="req-id">REQ-FR-015</span></td>
+                            <td>Real-Time GDPR Consent Verification</td>
+                            <td><span class="req-priority priority-essential">Essential</span></td>
+                            <td>Functional</td>
+                            <td><span class="status-badge">Approved</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="req-id">REQ-FR-016</span></td>
+                            <td>Lead Contact Selection for Multi-Passenger Bookings</td>
+                            <td><span class="req-priority priority-essential">Essential</span></td>
+                            <td>Functional</td>
+                            <td><span class="status-badge">Approved</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="req-id">REQ-FR-017</span></td>
+                            <td>Passenger-Facing Notification Content Composition</td>
+                            <td><span class="req-priority priority-essential">Essential</span></td>
+                            <td>Functional</td>
+                            <td><span class="status-badge">Approved</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="req-id">REQ-FR-018</span></td>
+                            <td>Summary Element Specification</td>
+                            <td><span class="req-priority priority-essential">Essential</span></td>
+                            <td>Functional</td>
+                            <td><span class="status-badge">Approved</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="req-id">REQ-FR-019</span></td>
+                            <td>New Expected Departure Time Calculation</td>
+                            <td><span class="req-priority priority-essential">Essential</span></td>
+                            <td>Functional</td>
+                            <td><span class="status-badge">Approved</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="req-id">REQ-FR-020</span></td>
+                            <td>Template-Based Notification Dispatch with Versioning</td>
+                            <td><span class="req-priority priority-essential">Essential</span></td>
+                            <td>Functional</td>
+                            <td><span class="status-badge">Approved</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="req-id">REQ-FR-021</span></td>
+                            <td>Notification Provider Integration and Dispatch</td>
+                            <td><span class="req-priority priority-essential">Essential</span></td>
+                            <td>Functional</td>
+                            <td><span class="status-badge">Approved</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="req-id">REQ-FR-022</span></td>
+                            <td>Notification Provider Retry and Recovery Strategy</td>
+                            <td><span class="req-priority priority-essential">Essential</span></td>
+                            <td>Functional</td>
+                            <td><span class="status-badge">Approved</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="req-id">REQ-FR-023</span></td>
+                            <td>Idempotency Key Composition Algorithm</td>
+                            <td><span class="req-priority priority-essential">Essential</span></td>
+                            <td>Functional</td>
+                            <td><span class="status-badge">Approved</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="req-id">REQ-FR-024</span></td>
+                            <td>Exactly-Once Delivery Guarantee</td>
+                            <td><span class="req-priority priority-essential">Essential</span></td>
+                            <td>Functional</td>
+                            <td><span class="status-badge">Approved</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="req-id">REQ-FR-025</span></td>
+                            <td>Duplicate Detection Strategy for Disruption Signals</td>
+                            <td><span class="req-priority priority-essential">Essential</span></td>
+                            <td>Functional</td>
+                            <td><span class="status-badge">Approved</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="req-id">REQ-FR-026</span></td>
+                            <td>Locale-Specific Quiet Hours Configuration</td>
+                            <td><span class="req-priority priority-essential">Essential</span></td>
+                            <td>Functional</td>
+                            <td><span class="status-badge">Approved</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="req-id">REQ-FR-027</span></td>
+                            <td>Service-Critical Message Classification and Exemption</td>
+                            <td><span class="req-priority priority-essential">Essential</span></td>
+                            <td>Functional</td>
+                            <td><span class="status-badge">Approved</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="req-id">REQ-FR-028</span></td>
+                            <td>Append-Only Case Timeline Enforcement</td>
+                            <td><span class="req-priority priority-essential">Essential</span></td>
+                            <td>Functional</td>
+                            <td><span class="status-badge">Approved</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="req-id">REQ-FR-029</span></td>
+                            <td>Timeline Event Tracking for Case Lifecycle</td>
+                            <td><span class="req-priority priority-essential">Essential</span></td>
+                            <td>Functional</td>
+                            <td><span class="status-badge">Approved</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="req-id">REQ-NFR-001</span></td>
+                            <td>End-to-End SLA 20 Seconds</td>
+                            <td><span class="req-priority priority-essential">Essential</span></td>
+                            <td>Non-Functional</td>
+                            <td><span class="status-badge">Approved</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="req-id">REQ-NFR-002</span></td>
+                            <td>Correlation Query Latency p95 4000ms</td>
+                            <td><span class="req-priority priority-essential">Essential</span></td>
+                            <td>Non-Functional</td>
+                            <td><span class="status-badge">Approved</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="req-id">REQ-NFR-003</span></td>
+                            <td>Component Latency Budgets</td>
+                            <td><span class="req-priority priority-essential">Essential</span></td>
+                            <td>Non-Functional</td>
+                            <td><span class="status-badge">Approved</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="req-id">REQ-NFR-004</span></td>
+                            <td>System Availability 99.95%</td>
+                            <td><span class="req-priority priority-essential">Essential</span></td>
+                            <td>Non-Functional</td>
+                            <td><span class="status-badge">Approved</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="req-id">REQ-NFR-005</span></td>
+                            <td>Concurrent Disruptions 200 with Breaking Point 150</td>
+                            <td><span class="req-priority priority-essential">Essential</span></td>
+                            <td>Non-Functional</td>
+                            <td><span class="status-badge">Approved</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="req-id">REQ-NFR-006</span></td>
+                            <td>Provider Rate Limit Scaling 5,400 to 30,000 msg/hour</td>
+                            <td><span class="req-priority priority-optional">Optional</span></td>
+                            <td>Non-Functional</td>
+                            <td><span class="status-badge">Approved</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="req-id">REQ-NFR-007</span></td>
+                            <td>Notification Deduplication Cache 50,000 ops/sec</td>
+                            <td><span class="req-priority priority-essential">Essential</span></td>
+                            <td>Non-Functional</td>
+                            <td><span class="status-badge">Approved</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="req-id">REQ-NFR-008</span></td>
+                            <td>Consent Cache 90% Hit Rate with 5-min TTL</td>
+                            <td><span class="req-priority priority-conditional">Conditional</span></td>
+                            <td>Non-Functional</td>
+                            <td><span class="status-badge">Approved</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="req-id">REQ-NFR-009</span></td>
+                            <td>7-Year Data Retention 28.3GB at 24 months</td>
+                            <td><span class="req-priority priority-essential">Essential</span></td>
+                            <td>Non-Functional</td>
+                            <td><span class="status-badge">Approved</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="req-id">REQ-NFR-010</span></td>
+                            <td>Recovery Time Objective 5 minutes</td>
+                            <td><span class="req-priority priority-essential">Essential</span></td>
+                            <td>Non-Functional</td>
+                            <td><span class="status-badge">Approved</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="req-id">REQ-NFR-011</span></td>
+                            <td>Recovery Point Objective 0 (no data loss)</td>
+                            <td><span class="req-priority priority-essential">Essential</span></td>
+                            <td>Non-Functional</td>
+                            <td><span class="status-badge">Approved</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="req-id">REQ-NFR-012</span></td>
+                            <td>Transport Security TLS 1.3 Mandatory</td>
+                            <td><span class="req-priority priority-essential">Essential</span></td>
+                            <td>Non-Functional</td>
+                            <td><span class="status-badge">Approved</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="req-id">REQ-NFR-013</span></td>
+                            <td>At-Rest Encryption AES-256 for PII</td>
+                            <td><span class="req-priority priority-essential">Essential</span></td>
+                            <td>Non-Functional</td>
+                            <td><span class="status-badge">Approved</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="req-id">REQ-NFR-014</span></td>
+                            <td>GDPR Compliance Real-Time Consent Verification</td>
+                            <td><span class="req-priority priority-essential">Essential</span></td>
+                            <td>Non-Functional</td>
+                            <td><span class="status-badge">Approved</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="req-id">REQ-NFR-015</span></td>
+                            <td>JWT Deep Links RS256 Signed with 120-min TTL</td>
+                            <td><span class="req-priority priority-essential">Essential</span></td>
+                            <td>Non-Functional</td>
+                            <td><span class="status-badge">Approved</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="req-id">REQ-NFR-016</span></td>
+                            <td>Rate Limiting per Endpoint at CDN Edge</td>
+                            <td><span class="req-priority priority-essential">Essential</span></td>
+                            <td>Non-Functional</td>
+                            <td><span class="status-badge">Approved</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="req-id">REQ-NFR-017</span></td>
+                            <td>Immutable Event Checksums SHA-256</td>
+                            <td><span class="req-priority priority-essential">Essential</span></td>
+                            <td>Non-Functional</td>
+                            <td><span class="status-badge">Approved</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div style="margin-top: 30px;">
+                    <div class="summary-stat">
+                        <span class="stat-label">Total Requirements</span>
+                        <span class="stat-value">46</span>
+                    </div>
+                    <div class="summary-stat">
+                        <span class="stat-label">Functional</span>
+                        <span class="stat-value">29</span>
+                    </div>
+                    <div class="summary-stat">
+                        <span class="stat-label">Non-Functional</span>
+                        <span class="stat-value">17</span>
+                    </div>
+                    <div class="summary-stat">
+                        <span class="stat-label">Essential</span>
+                        <span class="stat-value">34</span>
+                    </div>
+                    <div class="summary-stat">
+                        <span class="stat-label">Conditional</span>
+                        <span class="stat-value">10</span>
+                    </div>
+                    <div class="summary-stat">
+                        <span class="stat-label">Optional</span>
+                        <span class="stat-value">2</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Traceability Tab -->
+        <div id="traceability" class="tab-content">
+            <div class="section">
+                <h2 class="section-title">4.1 Traceability Matrix</h2>
+
+                <p style="color: var(--text-secondary); margin-bottom: 30px;">
+                    <strong>Backward Traceability: 100%</strong> (all 46 requirements cite source findings)<br>
+                    <strong>Forward Traceability: 85%</strong> (39 of 46 requirements mapped to design/test)
+                </p>
+
+                <p style="color: var(--text-secondary); margin-bottom: 20px;">
+                    <strong>Critical Dependencies:</strong>
+                </p>
+                <ul style="color: var(--text-secondary); margin-left: 20px; margin-bottom: 30px;">
+                    <li>REQ-FR-007 (Correlation) → REQ-NFR-002 (4000ms latency) & REQ-NFR-005 (200 concurrent disruptions)</li>
+                    <li>REQ-NFR-001 (20s SLA) → REQ-FR-007 & REQ-NFR-003 & consent_cache_hit_assumption (90% unvalidated)</li>
+                    <li>REQ-FR-021 (Provider dispatch) → Single-point-failure (no provider failover defined)</li>
+                </ul>
+
+                <table class="traceability-matrix">
+                    <thead>
+                        <tr>
+                            <th>Requirement ID</th>
+                            <th>Title</th>
+                            <th>Source Finding</th>
+                            <th>Design Component</th>
+                            <th>Test/SBE Scenario</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="trace-req-id">REQ-FR-001</span></td>
+                            <td>Raw Event Immutable Storage</td>
+                            <td><span class="trace-source">Chelcie-38</span></td>
+                            <td><span class="trace-design">ImmutableEventStore</span></td>
+                            <td><span class="trace-design">Test-001, SBE-001</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="trace-req-id">REQ-FR-002</span></td>
+                            <td>Event Ingestion Feed</td>
+                            <td><span class="trace-source">Chelcie-08</span></td>
+                            <td><span class="trace-design">EventIngestionService</span></td>
+                            <td><span class="trace-design">Test-002</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="trace-req-id">REQ-FR-003</span></td>
+                            <td>7-Year Event Retention</td>
+                            <td><span class="trace-source">Lucy-34</span></td>
+                            <td><span class="trace-design">StorageArchitecture</span></td>
+                            <td><span class="trace-design">Inspection-003</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="trace-req-id">REQ-FR-004</span></td>
+                            <td>Canonical Event Schema</td>
+                            <td><span class="trace-source">Odin-12</span></td>
+                            <td><span class="trace-design">SchemaValidator</span></td>
+                            <td><span class="trace-design">Test-004, SBE-002</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="trace-req-id">REQ-FR-005</span></td>
+                            <td>Normalization Pipeline</td>
+                            <td><span class="trace-source">Odin-14</span></td>
+                            <td><span class="trace-design">NormalizationEngine</span></td>
+                            <td><span class="trace-design">Test-005, SBE-003</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="trace-req-id">REQ-FR-006</span></td>
+                            <td>Normalization Error Handling</td>
+                            <td><span class="trace-source">Lucy-26</span></td>
+                            <td><span class="trace-design">ErrorHandler</span></td>
+                            <td><span class="trace-design">Test-006</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="trace-req-id">REQ-FR-007</span></td>
+                            <td>Deterministic Correlation</td>
+                            <td><span class="trace-source">Natasha-28</span></td>
+                            <td><span class="trace-design">CorrelationEngine</span></td>
+                            <td><span class="trace-design">Test-007, SBE-004</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="trace-req-id">REQ-FR-008</span></td>
+                            <td>Match Score Algorithm</td>
+                            <td><span class="trace-source">Iris-07</span></td>
+                            <td><span class="trace-design">MatchScoreLogic</span></td>
+                            <td><span class="trace-design">Test-008</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="trace-req-id">REQ-FR-009</span></td>
+                            <td>Multi-Leg Correlation</td>
+                            <td><span class="trace-source">Natasha-34 (Deferred v1.1)</span></td>
+                            <td><span class="trace-design">Deferred</span></td>
+                            <td><span class="trace-design">Deferred</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="trace-req-id">REQ-FR-010</span></td>
+                            <td>Correlation ID Tracking</td>
+                            <td><span class="trace-source">Lewis-09</span></td>
+                            <td><span class="trace-design">RequestTracer</span></td>
+                            <td><span class="trace-design">Test-010</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="trace-req-id">REQ-FR-011</span></td>
+                            <td>Case Creation</td>
+                            <td><span class="trace-source">Amelia-05</span></td>
+                            <td><span class="trace-design">CaseFactory</span></td>
+                            <td><span class="trace-design">Test-011, SBE-005</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="trace-req-id">REQ-FR-012</span></td>
+                            <td>Severity Decision Tree</td>
+                            <td><span class="trace-source">Natasha-12</span></td>
+                            <td><span class="trace-design">SeverityDecisionTree</span></td>
+                            <td><span class="trace-design">Test-012, Appendix-4.6</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="trace-req-id">REQ-FR-013</span></td>
+                            <td>Case Status State Machine</td>
+                            <td><span class="trace-source">Odin-08</span></td>
+                            <td><span class="trace-design">CaseStateManager</span></td>
+                            <td><span class="trace-design">Test-013</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="trace-req-id">REQ-FR-014</span></td>
+                            <td>Consent-Based Channel Selection</td>
+                            <td><span class="trace-source">Iris-04</span></td>
+                            <td><span class="trace-design">ConsentEvaluator</span></td>
+                            <td><span class="trace-design">Test-014, SBE-006</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="trace-req-id">REQ-FR-015</span></td>
+                            <td>Real-Time GDPR Consent</td>
+                            <td><span class="trace-source">Iris-06</span></td>
+                            <td><span class="trace-design">ConsentCache</span></td>
+                            <td><span class="trace-design">Test-015</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="trace-req-id">REQ-FR-016</span></td>
+                            <td>Lead Contact Selection</td>
+                            <td><span class="trace-source">Chelcie-18</span></td>
+                            <td><span class="trace-design">LeadContactSelector</span></td>
+                            <td><span class="trace-design">Test-016</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="trace-req-id">REQ-FR-017</span></td>
+                            <td>Notification Composition</td>
+                            <td><span class="trace-source">Odin-15</span></td>
+                            <td><span class="trace-design">MessageComposer</span></td>
+                            <td><span class="trace-design">Test-017, SBE-007</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="trace-req-id">REQ-FR-018</span></td>
+                            <td>Summary Element Spec</td>
+                            <td><span class="trace-source">Iris-12</span></td>
+                            <td><span class="trace-design">SummaryFormatter</span></td>
+                            <td><span class="trace-design">Demo-018</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="trace-req-id">REQ-FR-019</span></td>
+                            <td>Departure Time Calculation</td>
+                            <td><span class="trace-source">Lucy-28</span></td>
+                            <td><span class="trace-design">TimeFormatter</span></td>
+                            <td><span class="trace-design">Test-019</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="trace-req-id">REQ-FR-020</span></td>
+                            <td>Template-Based Dispatch</td>
+                            <td><span class="trace-source">Amelia-08</span></td>
+                            <td><span class="trace-design">TemplateEngine</span></td>
+                            <td><span class="trace-design">Test-020</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="trace-req-id">REQ-NFR-001</span></td>
+                            <td>End-to-End SLA 20s</td>
+                            <td><span class="trace-source">PE-137 (OpenPerformance)</span></td>
+                            <td><span class="trace-design">LatencyMonitor</span></td>
+                            <td><span class="trace-design">Analysis-001</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="trace-req-id">REQ-NFR-002</span></td>
+                            <td>Correlation p95 4000ms</td>
+                            <td><span class="trace-source">PE-098 (OpenPerformance)</span></td>
+                            <td><span class="trace-design">CorrelationOptimizer</span></td>
+                            <td><span class="trace-design">Analysis-002</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="trace-req-id">REQ-NFR-004</span></td>
+                            <td>99.95% Availability</td>
+                            <td><span class="trace-source">PE-112 (OpenPerformance)</span></td>
+                            <td><span class="trace-design">AvailabilityMonitor</span></td>
+                            <td><span class="trace-design">Analysis-004</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="trace-req-id">REQ-NFR-005</span></td>
+                            <td>200 Concurrent Disruptions</td>
+                            <td><span class="trace-source">PE-107 (OpenPerformance)</span></td>
+                            <td><span class="trace-design">LoadBalancer</span></td>
+                            <td><span class="trace-design">Analysis-005</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Quality Tab -->
+        <div id="quality" class="tab-content">
+            <div class="section">
+                <h2 class="section-title">Quality Scorecard Dashboard</h2>
+
+                <p style="color: var(--text-secondary); margin-bottom: 30px;">
+                    <strong>Overall Quality Score: 68/100 (WARN)</strong><br>
+                    Assessment based on 8 IEEE 830 characteristics. Green: >90, Yellow: 70-89, Red: <70
+                </p>
+
+                <div class="quality-dashboard">
+                    <div class="scorecard-item">
+                        <div class="scorecard-header">
+                            <span class="scorecard-title">Correctness</span>
+                            <span class="scorecard-status status-fail">FAIL</span>
+                        </div>
+                        <div class="scorecard-score">42</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill red"></div>
+                        </div>
+                        <div class="scorecard-meta">
+                            38 findings. Issue: Unverified scope additions; 7-year retention source unclear; 
+                            Disruption Orchestrator unverified
+                        </div>
+                    </div>
+
+                    <div class="scorecard-item">
+                        <div class="scorecard-header">
+                            <span class="scorecard-title">Unambiguous</span>
+                            <span class="scorecard-status status-warn">WARN</span>
+                        </div>
+                        <div class="scorecard-score">68</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill yellow" style="width: 68%;"></div>
+                        </div>
+                        <div class="scorecard-meta">
+                            17 findings. Issue: Critical ambiguities resolved by Odin; 
+                            error handling gaps remain
+                        </div>
+                    </div>
+
+                    <div class="scorecard-item">
+                        <div class="scorecard-header">
+                            <span class="scorecard-title">Completeness</span>
+                            <span class="scorecard-status status-warn">WARN</span>
+                        </div>
+                        <div class="scorecard-score">62</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill red" style="width: 62%;"></div>
+                        </div>
+                        <div class="scorecard-meta">
+                            34 findings. Issue: Sections 1.1, 1.4, 1.5 missing; 
+                            multi-leg journey undefined; 17 TBDs
+                        </div>
+                    </div>
+
+                    <div class="scorecard-item">
+                        <div class="scorecard-header">
+                            <span class="scorecard-title">Consistency</span>
+                            <span class="scorecard-status status-fail">FAIL</span>
+                        </div>
+                        <div class="scorecard-score">54</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill red" style="width: 54%;"></div>
+                        </div>
+                        <div class="scorecard-meta">
+                            10 findings. Issue: 10 DeFOSPAM/PE conflicts resolved; 
+                            circular dependencies remain
+                        </div>
+                    </div>
+
+                    <div class="scorecard-item">
+                        <div class="scorecard-header">
+                            <span class="scorecard-title">Relevance</span>
+                            <span class="scorecard-status status-pass">PASS</span>
+                        </div>
+                        <div class="scorecard-score">88</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill yellow" style="width: 88%;"></div>
+                        </div>
+                        <div class="scorecard-meta">
+                            2 findings. Status: 100% of requirements support stated purpose
+                        </div>
+                    </div>
+
+                    <div class="scorecard-item">
+                        <div class="scorecard-header">
+                            <span class="scorecard-title">Verifiable</span>
+                            <span class="scorecard-status status-pass">PASS</span>
+                        </div>
+                        <div class="scorecard-score">81</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill yellow" style="width: 81%;"></div>
+                        </div>
+                        <div class="scorecard-meta">
+                            14 findings. Status: 46 requirements with acceptance criteria; 
+                            SLA measurement point ambiguous
+                        </div>
+                    </div>
+
+                    <div class="scorecard-item">
+                        <div class="scorecard-header">
+                            <span class="scorecard-title">Modifiable</span>
+                            <span class="scorecard-status status-warn">WARN</span>
+                        </div>
+                        <div class="scorecard-score">76</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill yellow" style="width: 76%;"></div>
+                        </div>
+                        <div class="scorecard-meta">
+                            12 findings. Status: Zero redundancy, simple ID scheme; 
+                            85% forward traceability
+                        </div>
+                    </div>
+
+                    <div class="scorecard-item">
+                        <div class="scorecard-header">
+                            <span class="scorecard-title">Traceable</span>
+                            <span class="scorecard-status status-warn">WARN</span>
+                        </div>
+                        <div class="scorecard-score">71</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill yellow" style="width: 71%;"></div>
+                        </div>
+                        <div class="scorecard-meta">
+                            16 findings. Status: 100% backward trace; 
+                            unvalidated assumptions in performance SLA
+                        </div>
+                    </div>
+                </div>
+
+                <div class="subsection-title">Acceptance Criteria Summary (46 Requirements)</div>
+                <p style="color: var(--text-secondary); margin-bottom: 20px;">
+                    <strong>Test:</strong> 38 requirements (automated/manual testing)<br>
+                    <strong>Inspection:</strong> 4 requirements (code review, architecture audit)<br>
+                    <strong>Analysis:</strong> 3 requirements (data analysis, performance modeling)<br>
+                    <strong>Demonstration:</strong> 1 requirement (A/B testing with real users)
+                </p>
+
+                <div class="subsection-title">Performance Requirements Summary</div>
+                <p style="color: var(--text-secondary);">
+                    <strong>End-to-End SLA:</strong> p95 20 seconds (measured from raw event ingestion start to provider confirmation)<br>
+                    <strong>Component Breakdown:</strong> 8 components totaling ~13.2s mean, allowing ~6.8s buffer<br>
+                    <strong>System Availability:</strong> 99.95% (262 minutes annual downtime)<br>
+                    <strong>Critical Bottleneck:</strong> Correlation query at 4000ms p95 (20% of SLA budget)
+                </p>
+            </div>
+        </div>
+
+        <!-- Findings Tab -->
+        <div id="findings" class="tab-content">
+            <div class="section">
+                <h2 class="section-title">Analysis Findings</h2>
+
+                <p style="color: var(--text-secondary); margin-bottom: 30px;">
+                    <strong>Total Findings: 731</strong> (96 Critical, 456 Major, 179 Minor)<br>
+                    Synthesized from 8 specialized AI analyst agents across 17 source files
+                </p>
+
+                <div class="subsection-title">Known Issues and TBDs (17 Items)</div>
+                <div class="tbd-list">
+                    <div class="tbd-item tbd-critical">
+                        <span class="tbd-item-id">TBD-SEC-001</span>
+                        <div class="tbd-item-desc">Purpose statement, References, Overview sections missing</div>
+                    </div>
+                    <div class="tbd-item tbd-critical">
+                        <span class="tbd-item-id">TBD-PERF-002</span>
+                        <div class="tbd-item-desc">SLA measurement point ambiguous</div>
+                    </div>
+                    <div class="tbd-item tbd-critical">
+                        <span class="tbd-item-id">TBD-FUNC-004</span>
+                        <div class="tbd-item-desc">Provider retry strategy undefined</div>
+                    </div>
+                    <div class="tbd-item tbd-critical">
+                        <span class="tbd-item-id">TBD-DATA-006</span>
+                        <div class="tbd-item-desc">Multi-leg journey handling undefined</div>
+                    </div>
+                    <div class="tbd-item tbd-major">
+                        <span class="tbd-item-id">TBD-FUNC-003</span>
+                        <div class="tbd-item-desc">Unmatched event handling undefined</div>
+                    </div>
+                    <div class="tbd-item tbd-major">
+                        <span class="tbd-item-id">TBD-FUNC-005</span>
+                        <div class="tbd-item-desc">Consent authority timeout fallback undefined</div>
+                    </div>
+                    <div class="tbd-item tbd-major">
+                        <span class="tbd-item-id">TBD-DATA-007</span>
+                        <div class="tbd-item-desc">Immutable event checksum algorithm unspecified</div>
+                    </div>
+                    <div class="tbd-item tbd-major">
+                        <span class="tbd-item-id">TBD-DATA-008</span>
+                        <div class="tbd-item-desc">Distributed cache consistency protocol undefined</div>
+                    </div>
+                    <div class="tbd-item tbd-major">
+                        <span class="tbd-item-id">TBD-DATA-009</span>
+                        <div class="tbd-item-desc">Severity ruleset source verification needed</div>
+                    </div>
+                    <div class="tbd-item tbd-major">
+                        <span class="tbd-item-id">TBD-INTF-010</span>
+                        <div class="tbd-item-desc">Event ingestion protocol specification needed</div>
+                    </div>
+                    <div class="tbd-item tbd-major">
+                        <span class="tbd-item-id">TBD-INTF-011</span>
+                        <div class="tbd-item-desc">Provider rate limit handling undefined</div>
+                    </div>
+                    <div class="tbd-item tbd-major">
+                        <span class="tbd-item-id">TBD-INTF-012</span>
+                        <div class="tbd-item-desc">Deep link JWT authorization scope undefined</div>
+                    </div>
+                    <div class="tbd-item tbd-major">
+                        <span class="tbd-item-id">TBD-EDGE-013</span>
+                        <div class="tbd-item-desc">Timezone handling for quiet hours incomplete</div>
+                    </div>
+                    <div class="tbd-item tbd-major">
+                        <span class="tbd-item-id">TBD-EDGE-014</span>
+                        <div class="tbd-item-desc">Template locale fallback strategy undefined</div>
+                    </div>
+                    <div class="tbd-item tbd-major">
+                        <span class="tbd-item-id">TBD-EDGE-015</span>
+                        <div class="tbd-item-desc">Duplicate ingestion beyond 60-second window undefined</div>
+                    </div>
+                    <div class="tbd-item tbd-major">
+                        <span class="tbd-item-id">TBD-OPS-016</span>
+                        <div class="tbd-item-desc">Audit logging and compliance reporting procedures undefined</div>
+                    </div>
+                    <div class="tbd-item tbd-major">
+                        <span class="tbd-item-id">TBD-ARCH-017</span>
+                        <div class="tbd-item-desc">Multi-region consistency model undefined</div>
+                    </div>
+                </div>
+
+                <div class="subsection-title">Critical Findings by Analyst</div>
+
+                <div class="finding-card critical">
+                    <div class="finding-avatar">C</div>
+                    <div class="finding-content">
+                        <div class="finding-header">
+                            <div>
+                                <div class="finding-title">Chelcie - Correctness Analysis</div>
+                                <div class="finding-analyst">38 findings on scope additions and unverified assumptions</div>
+                            </div>
+                            <span class="finding-severity severity-critical">CRITICAL</span>
+                        </div>
+                        <div class="finding-description">
+                            Identified unverified scope additions (Disruption Orchestrator), unclear data retention source 
+                            (7-year retention), and source conflicts between DeFOSPAM outputs. Correctness score: 42/100 FAIL.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="finding-card major">
+                    <div class="finding-avatar">O</div>
+                    <div class="finding-content">
+                        <div class="finding-header">
+                            <div>
+                                <div class="finding-title">Odin - Ambiguity Resolution</div>
+                                <div class="finding-analyst">17 critical ambiguities resolved with formal rewrite specs</div>
+                            </div>
+                            <span class="finding-severity severity-major">MAJOR</span>
+                        </div>
+                        <div class="finding-description">
+                            Resolved 17 ambiguous requirements with formal rewrite specifications covering error handling, 
+                            state machines, correlation thresholds, and message composition. Unambiguity score: 68/100 WARN.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="finding-card critical">
+                    <div class="finding-avatar">O</div>
+                    <div class="finding-content">
+                        <div class="finding-header">
+                            <div>
+                                <div class="finding-title">Ophellia - Consistency Analysis</div>
+                                <div class="finding-analyst">10 conflicts between DeFOSPAM and Performance Engineering outputs</div>
+                            </div>
+                            <span class="finding-severity severity-critical">CRITICAL</span>
+                        </div>
+                        <div class="finding-description">
+                            Identified conflicts on immutability constraints, severity computation, consent snapshot vs real-time, 
+                            and multiple-attempt retry logic. Consistency score: 54/100 FAIL.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="finding-card major">
+                    <div class="finding-avatar">L</div>
+                    <div class="finding-content">
+                        <div class="finding-header">
+                            <div>
+                                <div class="finding-title">Lucy - Completeness Assessment</div>
+                                <div class="finding-analyst">34 findings on missing sections and 17 TBDs identified</div>
+                            </div>
+                            <span class="finding-severity severity-major">MAJOR</span>
+                        </div>
+                        <div class="finding-description">
+                            Identified critical missing sections (1.1 Purpose, 1.4 References, 1.5 Overview), undefined multi-leg 
+                            journey handling, and capability gaps. Completeness score: 62/100 WARN with 17 TBDs.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="finding-card major">
+                    <div class="finding-avatar">N</div>
+                    <div class="finding-content">
+                        <div class="finding-header">
+                            <div>
+                                <div class="finding-title">Natasha - Ranking and Prioritization</div>
+                                <div class="finding-analyst">38 findings on requirement necessity and critical blocking items</div>
+                            </div>
+                            <span class="finding-severity severity-major">MAJOR</span>
+                        </div>
+                        <div class="finding-description">
+                            Ranked 47 requirements by necessity and MOSCOW prioritization. Identified 8 critical blocking items 
+                            for v1.0 release and 3 deferred to v1.1.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="finding-card major">
+                    <div class="finding-avatar">I</div>
+                    <div class="finding-content">
+                        <div class="finding-header">
+                            <div>
+                                <div class="finding-title">Iris - Verifiability Analysis</div>
+                                <div class="finding-analyst">12 findings on unbounded claims and subjective terms</div>
+                            </div>
+                            <span class="finding-severity severity-major">MAJOR</span>
+                        </div>
+                        <div class="finding-description">
+                            Identified subjective terms ("significant", "appropriate", "suitable") and unbounded performance claims. 
+                            Provided 14 formal acceptance criteria with measurable thresholds. Verifiable score: 81/100 PASS.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="finding-card minor">
+                    <div class="finding-avatar">A</div>
+                    <div class="finding-content">
+                        <div class="finding-header">
+                            <div>
+                                <div class="finding-title">Amelia - Modifiability Analysis</div>
+                                <div class="finding-analyst">12 findings on structural organization and redundancy</div>
+                            </div>
+                            <span class="finding-severity severity-minor">MINOR</span>
+                        </div>
+                        <div class="finding-description">
+                            Recommended feature-based organization (10 features, 46 requirements), zero redundancy design, 
+                            and consistent ID scheme (REQ-FR-001 through REQ-NFR-017). Modifiable score: 76/100 WARN.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="finding-card major">
+                    <div class="finding-avatar">L</div>
+                    <div class="finding-content">
+                        <div class="finding-header">
+                            <div>
+                                <div class="finding-title">Lewis - Traceability Analysis</div>
+                                <div class="finding-analyst">16 findings on forward/backward trace gaps and dependencies</div>
+                            </div>
+                            <span class="finding-severity severity-major">MAJOR</span>
+                        </div>
+                        <div class="finding-description">
+                            Achieved 100% backward traceability (all requirements trace to source findings) and 85% forward 
+                            traceability. Identified critical dependencies and unvalidated assumptions in performance SLA.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-section">
+            <div class="footer-title">Document Authority</div>
+            <ul class="footer-list">
+                <li>Generated by OpenRequirements.ai SRS Aggregator v1.0</li>
+                <li>Follows IEEE 830-1998 Software Requirements Specification standard</li>
+                <li>Analyzed by 8 specialized AI agents: Chelcie, Odin, Ophellia, Lucy, Natasha, Iris, Amelia, Lewis</li>
+            </ul>
+        </div>
+        <div class="footer-section">
+            <div class="footer-title">Quality Assessment</div>
+            <ul class="footer-list">
+                <li>Overall Score: 68/100 (WARN)</li>
+                <li>Pass: Relevance (88), Verifiability (81)</li>
+                <li>Warn: Unambiguity (68), Completeness (62), Modifiability (76), Traceability (71)</li>
+                <li>Fail: Correctness (42), Consistency (54)</li>
+            </ul>
+        </div>
+        <div class="footer-section">
+            <div class="footer-title">Recommended Actions Before Production</div>
+            <ul class="footer-list">
+                <li>Resolve all 17 TBDs with responsible owners and target dates</li>
+                <li>Validate performance assumptions (cache hit rate, database cardinality)</li>
+                <li>Implement comprehensive error handling and failover strategies</li>
+                <li>Maintain traceability during development; update forward trace artifacts</li>
+            </ul>
+        </div>
+        <div class="footer-section">
+            <div class="footer-title">Metadata</div>
+            <ul class="footer-list">
+                <li>Version: 1.0 MVP</li>
+                <li>Date: 2026-03-19</li>
+                <li>Standard: IEEE Std 830-1998</li>
+                <li>Total Requirements: 46 (29 FR + 17 NFR)</li>
+                <li>Total Findings: 731 (96 Critical + 456 Major + 179 Minor)</li>
+            </ul>
+        </div>
+    </footer>
+
+    <script>
+        function showTab(tabName) {
+            // Hide all tab contents
+            const contents = document.querySelectorAll('.tab-content');
+            contents.forEach(content => content.classList.remove('active'));
+            
+            // Remove active class from all tabs
+            const tabs = document.querySelectorAll('.nav-tab');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            
+            // Show selected tab content
+            document.getElementById(tabName).classList.add('active');
+            
+            // Add active class to clicked tab
+            event.target.classList.add('active');
+        }
+
+        function sortTable(header, columnIndex) {
+            const table = header.closest('table');
+            const tbody = table.querySelector('tbody');
+            const rows = Array.from(tbody.querySelectorAll('tr'));
+            
+            const isAscending = header.classList.toggle('ascending');
+            
+            rows.sort((rowA, rowB) => {
+                const cellA = rowA.children[columnIndex].textContent.trim().toLowerCase();
+                const cellB = rowB.children[columnIndex].textContent.trim().toLowerCase();
+                
+                if (cellA < cellB) {
+                    return isAscending ? -1 : 1;
+                } else if (cellA > cellB) {
+                    return isAscending ? 1 : -1;
+                }
+                return 0;
+            });
+            
+            tbody.innerHTML = '';
+            rows.forEach(row => tbody.appendChild(row));
+        }
+    </script>
+</body>
+</html>

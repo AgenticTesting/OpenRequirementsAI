@@ -1,0 +1,1423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenRequirements.ai - Performance Engineering NFR Assessment</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background-color: #0d1117;
+            color: #e6edf3;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            padding: 40px 20px;
+            border-bottom: 1px solid #30363d;
+            margin-bottom: 40px;
+        }
+        
+        .logo {
+            height: 60px;
+            margin-bottom: 20px;
+            display: inline-block;
+        }
+        
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            color: #58a6ff;
+        }
+        
+        .subtitle {
+            color: #8b949e;
+            font-size: 1.1em;
+            margin-bottom: 20px;
+        }
+        
+        .nav-pills {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 30px;
+        }
+        
+        .pill {
+            background-color: #161b22;
+            border: 1px solid #30363d;
+            color: #e6edf3;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        
+        .pill:hover, .pill.active {
+            background-color: #58a6ff;
+            color: #0d1117;
+            border-color: #58a6ff;
+        }
+        
+        .discipline-label {
+            font-size: 0.85em;
+            font-weight: 700;
+            margin-right: 5px;
+        }
+        
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        
+        .card {
+            background-color: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 20px;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+        
+        .card:hover {
+            transform: translateY(-2px);
+            border-color: #58a6ff;
+        }
+        
+        .card-title {
+            color: #8b949e;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+        }
+        
+        .card-value {
+            font-size: 2.5em;
+            font-weight: 700;
+            color: #58a6ff;
+            margin-bottom: 5px;
+        }
+        
+        .card-subtitle {
+            color: #8b949e;
+            font-size: 0.85em;
+        }
+        
+        .critical { color: #f85149; }
+        .major { color: #d29922; }
+        .minor { color: #3fb950; }
+        
+        section {
+            margin-bottom: 50px;
+            background-color: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 30px;
+        }
+        
+        h2 {
+            font-size: 1.8em;
+            color: #58a6ff;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #30363d;
+        }
+        
+        h3 {
+            font-size: 1.3em;
+            color: #79c0ff;
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background-color: #0d1117;
+        }
+        
+        th {
+            background-color: #161b22;
+            border: 1px solid #30363d;
+            padding: 12px;
+            text-align: left;
+            color: #79c0ff;
+            font-weight: 600;
+        }
+        
+        td {
+            border: 1px solid #30363d;
+            padding: 12px;
+        }
+        
+        tr:hover {
+            background-color: #0d1117;
+        }
+        
+        .bar-chart {
+            display: flex;
+            gap: 20px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        
+        .bar {
+            flex: 1;
+            min-width: 100px;
+        }
+        
+        .bar-label {
+            font-size: 0.9em;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        .bar-fill {
+            height: 30px;
+            background: linear-gradient(90deg, #58a6ff, #79c0ff);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85em;
+            color: #0d1117;
+            font-weight: 600;
+        }
+        
+        .finding-card {
+            background-color: #0d1117;
+            border-left: 4px solid #30363d;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        
+        .finding-card.critical {
+            border-left-color: #f85149;
+        }
+        
+        .finding-card.major {
+            border-left-color: #d29922;
+        }
+        
+        .finding-card.minor {
+            border-left-color: #3fb950;
+        }
+        
+        .finding-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 10px;
+        }
+        
+        .finding-id {
+            font-family: 'Courier New', monospace;
+            font-weight: 700;
+            color: #58a6ff;
+        }
+        
+        .severity-badge {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .badge-critical {
+            background-color: #f8514922;
+            color: #f85149;
+        }
+        
+        .badge-major {
+            background-color: #d2992222;
+            color: #d29922;
+        }
+        
+        .badge-minor {
+            background-color: #3fb95022;
+            color: #3fb950;
+        }
+        
+        .finding-title {
+            font-weight: 600;
+            color: #e6edf3;
+            margin-bottom: 8px;
+        }
+        
+        .finding-description {
+            font-size: 0.95em;
+            color: #8b949e;
+            margin-bottom: 10px;
+        }
+        
+        .analyst-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+            font-size: 0.85em;
+            color: #8b949e;
+        }
+        
+        .analyst-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1px solid #30363d;
+        }
+        
+        .content-section {
+            display: grid;
+            gap: 20px;
+        }
+        
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .alert {
+            background-color: #0d1117;
+            border-left: 4px solid #d29922;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 20px 0;
+        }
+        
+        .alert-title {
+            font-weight: 600;
+            color: #d29922;
+            margin-bottom: 5px;
+        }
+        
+        .metric-table {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .metric {
+            background-color: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            padding: 15px;
+        }
+        
+        .metric-label {
+            color: #8b949e;
+            font-size: 0.85em;
+            margin-bottom: 8px;
+        }
+        
+        .metric-value {
+            font-size: 1.8em;
+            font-weight: 700;
+            color: #58a6ff;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 30px 20px;
+            border-top: 1px solid #30363d;
+            color: #8b949e;
+            margin-top: 50px;
+        }
+        
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .feature-item {
+            background-color: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 4px;
+            padding: 15px;
+        }
+        
+        .feature-name {
+            font-weight: 600;
+            color: #79c0ff;
+            margin-bottom: 5px;
+        }
+        
+        .feature-desc {
+            font-size: 0.85em;
+            color: #8b949e;
+        }
+        
+        @media (max-width: 768px) {
+            .nav-pills {
+                gap: 5px;
+            }
+            
+            .pill {
+                padding: 6px 12px;
+                font-size: 0.85em;
+            }
+            
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            .summary-cards {
+                grid-template-columns: 1fr;
+            }
+            
+            section {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <img src="https://openrequirements.ai/assets/logo-nlGhAN5y.png" alt="OpenRequirements.ai" class="logo">
+            <h1>Performance Engineering NFR Assessment</h1>
+            <p class="subtitle">Airline Disruption Detection, Correlation, and Passenger Notification Platform</p>
+            <p style="color: #8b949e; font-size: 0.95em;">Generated March 19, 2026 • 137 NFRs • 8 Analysts</p>
+            
+            <div class="nav-pills">
+                <button class="pill active" onclick="filterByDiscipline('all')">All NFRs</button>
+                <button class="pill" onclick="filterByDiscipline('C')"><span class="discipline-label">C</span>Capacity</button>
+                <button class="pill" onclick="filterByDiscipline('L')"><span class="discipline-label">L</span>Latency</button>
+                <button class="pill" onclick="filterByDiscipline('A')"><span class="discipline-label">A</span>Availability</button>
+                <button class="pill" onclick="filterByDiscipline('S')"><span class="discipline-label">S</span>Scalability</button>
+                <button class="pill" onclick="filterByDiscipline('SEC')"><span class="discipline-label">S</span>Security</button>
+                <button class="pill" onclick="filterByDiscipline('U')"><span class="discipline-label">U</span>Usability</button>
+                <button class="pill" onclick="filterByDiscipline('M')"><span class="discipline-label">M</span>Monitoring</button>
+                <button class="pill" onclick="filterByDiscipline('E')"><span class="discipline-label">E</span>Endurance</button>
+            </div>
+        </header>
+
+        <!-- SUMMARY SECTION -->
+        <section id="summary-section">
+            <h2>Executive Summary</h2>
+            <div class="summary-cards">
+                <div class="card">
+                    <div class="card-title">Total NFRs</div>
+                    <div class="card-value">137</div>
+                    <div class="card-subtitle">Requirements assessed</div>
+                </div>
+                <div class="card">
+                    <div class="card-title">Critical Findings</div>
+                    <div class="card-value critical">48</div>
+                    <div class="card-subtitle">Must resolve before release</div>
+                </div>
+                <div class="card">
+                    <div class="card-title">Major Findings</div>
+                    <div class="card-value major">71</div>
+                    <div class="card-subtitle">Recommend mitigation</div>
+                </div>
+                <div class="card">
+                    <div class="card-title">Minor Findings</div>
+                    <div class="card-value minor">18</div>
+                    <div class="card-subtitle">Lower priority</div>
+                </div>
+                <div class="card">
+                    <div class="card-title">Analysts</div>
+                    <div class="card-value">8</div>
+                    <div class="card-subtitle">Expert reviewers</div>
+                </div>
+                <div class="card">
+                    <div class="card-title">Features</div>
+                    <div class="card-value">10</div>
+                    <div class="card-subtitle">System components</div>
+                </div>
+            </div>
+
+            <h3>Findings by Discipline</h3>
+            <table>
+                <tr>
+                    <th>Discipline</th>
+                    <th style="text-align: center;">Critical</th>
+                    <th style="text-align: center;">Major</th>
+                    <th style="text-align: center;">Minor</th>
+                    <th style="text-align: center;">Total</th>
+                </tr>
+                <tr>
+                    <td><span class="discipline-label">C</span> Capacity</td>
+                    <td style="text-align: center;"><span class="critical">3</span></td>
+                    <td style="text-align: center;"><span class="major">5</span></td>
+                    <td style="text-align: center;"><span class="minor">2</span></td>
+                    <td style="text-align: center;"><strong>10</strong></td>
+                </tr>
+                <tr>
+                    <td><span class="discipline-label">L</span> Latency</td>
+                    <td style="text-align: center;"><span class="critical">3</span></td>
+                    <td style="text-align: center;"><span class="major">7</span></td>
+                    <td style="text-align: center;"><span class="minor">2</span></td>
+                    <td style="text-align: center;"><strong>12</strong></td>
+                </tr>
+                <tr>
+                    <td><span class="discipline-label">A</span> Availability</td>
+                    <td style="text-align: center;"><span class="critical">5</span></td>
+                    <td style="text-align: center;"><span class="major">5</span></td>
+                    <td style="text-align: center;"><span class="minor">1</span></td>
+                    <td style="text-align: center;"><strong>11</strong></td>
+                </tr>
+                <tr>
+                    <td><span class="discipline-label">S</span> Scalability</td>
+                    <td style="text-align: center;"><span class="critical">3</span></td>
+                    <td style="text-align: center;"><span class="major">7</span></td>
+                    <td style="text-align: center;"><span class="minor">0</span></td>
+                    <td style="text-align: center;"><strong>10</strong></td>
+                </tr>
+                <tr>
+                    <td><span class="discipline-label">S</span> Security</td>
+                    <td style="text-align: center;"><span class="critical">5</span></td>
+                    <td style="text-align: center;"><span class="major">4</span></td>
+                    <td style="text-align: center;"><span class="minor">0</span></td>
+                    <td style="text-align: center;"><strong>9</strong></td>
+                </tr>
+                <tr>
+                    <td><span class="discipline-label">U</span> Usability</td>
+                    <td style="text-align: center;"><span class="critical">2</span></td>
+                    <td style="text-align: center;"><span class="major">7</span></td>
+                    <td style="text-align: center;"><span class="minor">1</span></td>
+                    <td style="text-align: center;"><strong>10</strong></td>
+                </tr>
+                <tr>
+                    <td><span class="discipline-label">M</span> Monitoring</td>
+                    <td style="text-align: center;"><span class="critical">7</span></td>
+                    <td style="text-align: center;"><span class="major">12</span></td>
+                    <td style="text-align: center;"><span class="minor">0</span></td>
+                    <td style="text-align: center;"><strong>19</strong></td>
+                </tr>
+                <tr>
+                    <td><span class="discipline-label">E</span> Endurance</td>
+                    <td style="text-align: center;"><span class="critical">4</span></td>
+                    <td style="text-align: center;"><span class="major">4</span></td>
+                    <td style="text-align: center;"><span class="minor">0</span></td>
+                    <td style="text-align: center;"><strong>8</strong></td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- CAPACITY MODEL SECTION -->
+        <section id="capacity-section">
+            <h2>Capacity Model</h2>
+            <h3>System Profile</h3>
+            <div class="metric-table">
+                <div class="metric">
+                    <div class="metric-label">Flights/Year</div>
+                    <div class="metric-value">50,000</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Passengers/Year</div>
+                    <div class="metric-value">15M</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Disruptions/Day</div>
+                    <div class="metric-value">10-30</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Peak Concurrent Flights</div>
+                    <div class="metric-value">50</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Data Retention</div>
+                    <div class="metric-value">7 Years</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">YoY Growth</div>
+                    <div class="metric-value">20%</div>
+                </div>
+            </div>
+
+            <h3>Current Infrastructure</h3>
+            <table>
+                <tr>
+                    <th>Component</th>
+                    <th>Count</th>
+                    <th>Instance Type</th>
+                    <th>Specification</th>
+                </tr>
+                <tr>
+                    <td>Web Servers</td>
+                    <td style="text-align: center;">8</td>
+                    <td>m5.xlarge</td>
+                    <td>2 vCPU, 16GB RAM</td>
+                </tr>
+                <tr>
+                    <td>App Servers</td>
+                    <td style="text-align: center;">37</td>
+                    <td>m5.2xlarge</td>
+                    <td>8 vCPU, 32GB RAM</td>
+                </tr>
+                <tr>
+                    <td>Database Servers</td>
+                    <td style="text-align: center;">25</td>
+                    <td>r5.2xlarge</td>
+                    <td>8 vCPU, 64GB RAM (optimized)</td>
+                </tr>
+                <tr>
+                    <td>Storage</td>
+                    <td style="text-align: center;">11.15 GB</td>
+                    <td>SSD (AWS EBS gp3)</td>
+                    <td>Daily snapshots</td>
+                </tr>
+            </table>
+
+            <h3>Growth Projections (20% YoY)</h3>
+            <table>
+                <tr>
+                    <th>Timeframe</th>
+                    <th>Web Servers</th>
+                    <th>App Servers</th>
+                    <th>DB Servers</th>
+                    <th>Storage</th>
+                </tr>
+                <tr>
+                    <td>Current</td>
+                    <td>8</td>
+                    <td>37</td>
+                    <td>25</td>
+                    <td>11.15 GB</td>
+                </tr>
+                <tr>
+                    <td>12 Months</td>
+                    <td>9</td>
+                    <td>44</td>
+                    <td>31</td>
+                    <td>20.2 GB</td>
+                </tr>
+                <tr>
+                    <td>24 Months</td>
+                    <td>11</td>
+                    <td>53</td>
+                    <td>39</td>
+                    <td>28.3 GB</td>
+                </tr>
+            </table>
+
+            <p style="margin-top: 20px; color: #8b949e;"><strong>Annual Infrastructure Cost:</strong> $394,500 (current)</p>
+        </section>
+
+        <!-- PERFORMANCE BUDGETS SECTION -->
+        <section id="budgets-section">
+            <h2>Performance Budgets</h2>
+            <h3>End-to-End SLA: 20 Seconds (P95)</h3>
+            <div class="alert">
+                <div class="alert-title">SLA Commitment</div>
+                <p>95% of disruption notifications delivered within 20 seconds of signal ingestion (p95).</p>
+            </div>
+
+            <h3>Component Latency Budgets (P95)</h3>
+            <div class="bar-chart">
+                <div class="bar">
+                    <div class="bar-label">Ingestion</div>
+                    <div class="bar-fill" style="width: 100%; max-width: 20%; background-color: #3fb950;">400ms</div>
+                </div>
+                <div class="bar">
+                    <div class="bar-label">Normalization</div>
+                    <div class="bar-fill" style="width: 100%; max-width: 25%; background-color: #3fb950;">500ms</div>
+                </div>
+                <div class="bar">
+                    <div class="bar-label">Correlation</div>
+                    <div class="bar-fill" style="width: 100%; max-width: 200%; background-color: #d29922;">4000ms</div>
+                </div>
+                <div class="bar">
+                    <div class="bar-label">Case+Severity</div>
+                    <div class="bar-fill" style="width: 100%; max-width: 35%; background-color: #3fb950;">700ms</div>
+                </div>
+                <div class="bar">
+                    <div class="bar-label">Consent</div>
+                    <div class="bar-fill" style="width: 100%; max-width: 60%; background-color: #d29922;">1200ms</div>
+                </div>
+                <div class="bar">
+                    <div class="bar-label">Composition</div>
+                    <div class="bar-fill" style="width: 100%; max-width: 40%; background-color: #3fb950;">800ms</div>
+                </div>
+                <div class="bar">
+                    <div class="bar-label">Dispatch</div>
+                    <div class="bar-fill" style="width: 100%; max-width: 250%; background-color: #f85149;">5000ms</div>
+                </div>
+                <div class="bar">
+                    <div class="bar-label">Dedup+Timeline</div>
+                    <div class="bar-fill" style="width: 100%; max-width: 20%; background-color: #3fb950;">400ms</div>
+                </div>
+            </div>
+
+            <h3>Critical Component Budgets</h3>
+            <table>
+                <tr>
+                    <th>Component</th>
+                    <th>P95 Budget (ms)</th>
+                    <th>Notes</th>
+                </tr>
+                <tr>
+                    <td>Event Ingestion</td>
+                    <td style="text-align: center;">400</td>
+                    <td>HTTP POST, JSON parse, schema validation</td>
+                </tr>
+                <tr>
+                    <td>Event Normalization</td>
+                    <td style="text-align: center;">500</td>
+                    <td>Type coercion, timestamp parsing, error handling</td>
+                </tr>
+                <tr>
+                    <td>Correlation Query</td>
+                    <td style="text-align: center;"><span class="critical">4,000</span></td>
+                    <td>Database lookup on 50M+ bookings (highest risk)</td>
+                </tr>
+                <tr>
+                    <td>Case Creation & Severity</td>
+                    <td style="text-align: center;">700</td>
+                    <td>Create Case, apply versioned ruleset</td>
+                </tr>
+                <tr>
+                    <td>Consent Evaluation</td>
+                    <td style="text-align: center;">1,200</td>
+                    <td>Real-time GDPR-compliant consent check</td>
+                </tr>
+                <tr>
+                    <td>Message Composition</td>
+                    <td style="text-align: center;">800</td>
+                    <td>Template selection, variable substitution, JWT generation</td>
+                </tr>
+                <tr>
+                    <td>Provider Dispatch</td>
+                    <td style="text-align: center;"><span class="critical">5,000</span></td>
+                    <td>SMS/Email API call (provider latency dominates)</td>
+                </tr>
+                <tr>
+                    <td>Deduplication & Timeline</td>
+                    <td style="text-align: center;">400</td>
+                    <td>Idempotency check-and-set, audit log append</td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- AVAILABILITY SECTION -->
+        <section id="availability-section">
+            <h2>Availability Requirements</h2>
+            <div class="metric-table">
+                <div class="metric">
+                    <div class="metric-label">System Target</div>
+                    <div class="metric-value">99.95%</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Annual Downtime</div>
+                    <div class="metric-value">262 min</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">RTO (Single AZ)</div>
+                    <div class="metric-value">5 min</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">RTO (Regional)</div>
+                    <div class="metric-value">30 min</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">RPO</div>
+                    <div class="metric-value">0 min</div>
+                </div>
+            </div>
+
+            <h3>Component Availability Targets</h3>
+            <table>
+                <tr>
+                    <th>Component</th>
+                    <th>Target %</th>
+                    <th>RTO</th>
+                    <th>RPO</th>
+                    <th>Failover Strategy</th>
+                </tr>
+                <tr>
+                    <td>Event Ingestion</td>
+                    <td style="text-align: center;">99.99</td>
+                    <td>5 min</td>
+                    <td>0 min</td>
+                    <td>Active-active</td>
+                </tr>
+                <tr>
+                    <td>Orchestrator</td>
+                    <td style="text-align: center;">99.98</td>
+                    <td>2 min</td>
+                    <td>0 min</td>
+                    <td>Leader election</td>
+                </tr>
+                <tr>
+                    <td>Normalization</td>
+                    <td style="text-align: center;">99.90</td>
+                    <td>15 min</td>
+                    <td>1 min</td>
+                    <td>Active-passive + replay</td>
+                </tr>
+                <tr>
+                    <td>Correlation Engine</td>
+                    <td style="text-align: center;">99.90</td>
+                    <td>10 min</td>
+                    <td>2 min</td>
+                    <td>Active-passive</td>
+                </tr>
+                <tr>
+                    <td>Case Management</td>
+                    <td style="text-align: center;">99.85</td>
+                    <td>20 min</td>
+                    <td>5 min</td>
+                    <td>Active-passive</td>
+                </tr>
+                <tr>
+                    <td>Notification Dispatch</td>
+                    <td style="text-align: center;">99.50</td>
+                    <td>30 min</td>
+                    <td>5 min</td>
+                    <td>Dual provider + fallback</td>
+                </tr>
+            </table>
+
+            <h3>Disaster Recovery Strategy</h3>
+            <p><strong>Primary Region (EU-Central):</strong> Active-active with 3x AZ replication, synchronous replication.</p>
+            <p><strong>Secondary Region (US-East):</strong> Hot standby with <100ms replication lag, activate within 30 minutes.</p>
+            <p><strong>Testing Cadence:</strong> Monthly chaos tests (kill instances, block AZs); annual full regional failover.</p>
+        </section>
+
+        <!-- SCALABILITY SECTION -->
+        <section id="scalability-section">
+            <h2>Scalability Assessment</h2>
+            <h3>Critical Bottlenecks & Breaking Points</h3>
+
+            <div class="finding-card critical">
+                <div class="finding-header">
+                    <div class="finding-id">BOTTLENECK-1</div>
+                    <span class="severity-badge badge-critical">Critical</span>
+                </div>
+                <div class="finding-title">Booking Correlation Query (Highest Risk)</div>
+                <div class="finding-description">
+                    <strong>Bottleneck:</strong> Scanning 15M passenger bookings per disruption event<br>
+                    <strong>Current Capacity:</strong> 50 concurrent disruptions<br>
+                    <strong>Target Capacity:</strong> 200 concurrent disruptions<br>
+                    <strong>Breaking Point:</strong> 150 concurrent disruptions (latency: 30+ seconds, exceeds SLA)
+                </div>
+                <p><strong>Mitigation:</strong> Partition bookings by route, implement bloom filter, add read-replica cluster (6+ nodes).</p>
+            </div>
+
+            <div class="finding-card major">
+                <div class="finding-header">
+                    <div class="finding-id">BOTTLENECK-2</div>
+                    <span class="severity-badge badge-major">Major</span>
+                </div>
+                <div class="finding-title">External Provider Rate Limits</div>
+                <div class="finding-description">
+                    <strong>Bottleneck:</strong> SMS 100 msg/sec, Email 50 msg/sec (150 msg/sec combined)<br>
+                    <strong>Current Capacity:</strong> 5,400 notifications/hour<br>
+                    <strong>Target Capacity:</strong> 30,000 notifications/hour<br>
+                    <strong>Breaking Point:</strong> 6,000 notifications/hour
+                </div>
+                <p><strong>Mitigation:</strong> Leaky bucket rate limiter, exponential backoff, batch emails (10x reduction), dual-provider fallover.</p>
+            </div>
+
+            <div class="finding-card critical">
+                <div class="finding-header">
+                    <div class="finding-id">BOTTLENECK-3</div>
+                    <span class="severity-badge badge-critical">Critical</span>
+                </div>
+                <div class="finding-title">Idempotency Key Cache Scaling</div>
+                <div class="finding-description">
+                    <strong>Bottleneck:</strong> Redis lookup on (Case_ID + channel + template_version)<br>
+                    <strong>Current Capacity:</strong> 1,000 dedup requests/sec<br>
+                    <strong>Target Capacity:</strong> 50,000 dedup requests/sec<br>
+                    <strong>Breaking Point:</strong> 500 dedup requests/sec
+                </div>
+                <p><strong>Mitigation:</strong> Redis Cluster with 6+ shards, in-process write-through cache (1min TTL).</p>
+            </div>
+
+            <div class="finding-card major">
+                <div class="finding-header">
+                    <div class="finding-id">BOTTLENECK-4</div>
+                    <span class="severity-badge badge-major">Major</span>
+                </div>
+                <div class="finding-title">Timeline Audit Log Growth</div>
+                <div class="finding-description">
+                    <strong>Bottleneck:</strong> Append-only log for 7-year retention (735M+ entries projected)<br>
+                    <strong>Current Write Rate:</strong> 0.56 entries/sec (normal), 6 entries/sec (peak)<br>
+                    <strong>Risk:</strong> B-tree index fragmentation, sequential scan degradation
+                </div>
+                <p><strong>Mitigation:</strong> Partition by (case_id, date), LSM tree storage, quarterly archive to S3 (Glacier).</p>
+            </div>
+        </section>
+
+        <!-- SECURITY SECTION -->
+        <section id="security-section">
+            <h2>Security Performance</h2>
+            <h3>Control Overhead Analysis</h3>
+            <p>Total security control overhead: <strong>106ms</strong> (0.53% of 20-second SLA). <strong style="color: #3fb950;">Assessment: GREEN</strong></p>
+
+            <table>
+                <tr>
+                    <th>Control</th>
+                    <th>Overhead (ms)</th>
+                    <th>% of SLA</th>
+                    <th>Assessment</th>
+                </tr>
+                <tr>
+                    <td>TLS 1.3 (in transit)</td>
+                    <td style="text-align: center;">5</td>
+                    <td style="text-align: center;">0.025%</td>
+                    <td><span style="color: #3fb950;">GREEN</span></td>
+                </tr>
+                <tr>
+                    <td>AES-256 (at rest)</td>
+                    <td style="text-align: center;">8</td>
+                    <td style="text-align: center;">0.04%</td>
+                    <td><span style="color: #3fb950;">GREEN</span></td>
+                </tr>
+                <tr>
+                    <td>JWT deep links</td>
+                    <td style="text-align: center;">5</td>
+                    <td style="text-align: center;">0.025%</td>
+                    <td><span style="color: #3fb950;">GREEN</span></td>
+                </tr>
+                <tr>
+                    <td>Consent verification</td>
+                    <td style="text-align: center;">50</td>
+                    <td style="text-align: center;">0.25%</td>
+                    <td><span style="color: #3fb950;">GREEN</span></td>
+                </tr>
+                <tr>
+                    <td>Idempotency hashing</td>
+                    <td style="text-align: center;">12</td>
+                    <td style="text-align: center;">0.06%</td>
+                    <td><span style="color: #3fb950;">GREEN</span></td>
+                </tr>
+                <tr>
+                    <td>Checksum validation</td>
+                    <td style="text-align: center;">3</td>
+                    <td style="text-align: center;">0.015%</td>
+                    <td><span style="color: #3fb950;">GREEN</span></td>
+                </tr>
+                <tr>
+                    <td>WAF checks</td>
+                    <td style="text-align: center;">8</td>
+                    <td style="text-align: center;">0.04%</td>
+                    <td><span style="color: #3fb950;">GREEN</span></td>
+                </tr>
+                <tr>
+                    <td>Rate limiting</td>
+                    <td style="text-align: center;">3</td>
+                    <td style="text-align: center;">0.015%</td>
+                    <td><span style="color: #3fb950;">GREEN</span></td>
+                </tr>
+                <tr style="border-top: 2px solid #30363d; font-weight: 600;">
+                    <td>TOTAL</td>
+                    <td style="text-align: center;">106</td>
+                    <td style="text-align: center;">0.53%</td>
+                    <td><span style="color: #3fb950;">ACCEPTABLE</span></td>
+                </tr>
+            </table>
+
+            <h3>DoS Resilience</h3>
+            <p><strong>Rate Limits by Endpoint:</strong></p>
+            <table>
+                <tr>
+                    <th>Endpoint</th>
+                    <th>RPS Limit</th>
+                    <th>Burst</th>
+                    <th>Per-IP Limit</th>
+                </tr>
+                <tr>
+                    <td>/api/disruptions/ingest</td>
+                    <td style="text-align: center;">1,000</td>
+                    <td style="text-align: center;">500</td>
+                    <td style="text-align: center;">100</td>
+                </tr>
+                <tr>
+                    <td>/api/deeplinks/{token}</td>
+                    <td style="text-align: center;">5,000</td>
+                    <td style="text-align: center;">2,000</td>
+                    <td style="text-align: center;">500</td>
+                </tr>
+                <tr>
+                    <td>/api/consent/verify</td>
+                    <td style="text-align: center;">2,000</td>
+                    <td style="text-align: center;">1,000</td>
+                    <td style="text-align: center;">100</td>
+                </tr>
+                <tr>
+                    <td>/api/cases/{id}/dispatch</td>
+                    <td style="text-align: center;">500</td>
+                    <td style="text-align: center;">250</td>
+                    <td style="text-align: center;">50</td>
+                </tr>
+            </table>
+
+            <p><strong>Protection Stack:</strong> CDN-based DDoS · WAF rules · Geographic filtering · Adaptive backoff · Circuit breakers</p>
+        </section>
+
+        <!-- USABILITY SECTION -->
+        <section id="usability-section">
+            <h2>Usability Metrics</h2>
+            <h3>Mobile Performance Targets</h3>
+            <table>
+                <tr>
+                    <th>Network</th>
+                    <th>TTFB Target</th>
+                    <th>TTI Target</th>
+                    <th>Page Size</th>
+                    <th>Notes</th>
+                </tr>
+                <tr>
+                    <td>WiFi (20Mbps)</td>
+                    <td style="text-align: center;">800ms</td>
+                    <td style="text-align: center;">1800ms</td>
+                    <td style="text-align: center;">50KB</td>
+                    <td>Best case</td>
+                </tr>
+                <tr>
+                    <td>4G (10Mbps)</td>
+                    <td style="text-align: center;">1500ms</td>
+                    <td style="text-align: center;">3000ms</td>
+                    <td style="text-align: center;">50KB</td>
+                    <td>Typical airport</td>
+                </tr>
+                <tr>
+                    <td>3G (2Mbps)</td>
+                    <td style="text-align: center;">2500ms</td>
+                    <td style="text-align: center;">5000ms</td>
+                    <td style="text-align: center;">40KB</td>
+                    <td>Worst case</td>
+                </tr>
+            </table>
+
+            <h3>SMS Content Clarity</h3>
+            <p><strong>Constraints:</strong> 160 character maximum, recommended 120 characters</p>
+            <p><strong>Readability Target:</strong> Flesch Reading Ease >60 (grade 8-9, accessible to non-native speakers)</p>
+            <p><strong>Key Info Within:</strong> 5 seconds</p>
+
+            <h3>Example SMS Templates</h3>
+            <div class="feature-grid">
+                <div class="feature-item">
+                    <div class="feature-name">Delay Scenario</div>
+                    <div class="feature-desc">"Flight BA123 delayed +45min. New departure 16:45. Check email for options. Ref: ABC123. [Link]"</div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-name">Cancellation Scenario</div>
+                    <div class="feature-desc">"Flight BA123 cancelled. See email for rebooking options. Ref: ABC123. [Link]"</div>
+                </div>
+            </div>
+
+            <h3>Error Rate Targets</h3>
+            <table>
+                <tr>
+                    <th>Metric</th>
+                    <th>Target</th>
+                    <th>Rationale</th>
+                </tr>
+                <tr>
+                    <td>Notification Delivery Success</td>
+                    <td style="text-align: center;">99.5%</td>
+                    <td>5 per 1000 acceptable; retries within 5min</td>
+                </tr>
+                <tr>
+                    <td>Deep Link Load Success</td>
+                    <td style="text-align: center;">99.2%</td>
+                    <td>8 per 1000 acceptable (network/JWT/outage)</td>
+                </tr>
+                <tr>
+                    <td>Task Completion Rate</td>
+                    <td style="text-align: center;">85%</td>
+                    <td>15% may miss/misunderstand (stress context)</td>
+                </tr>
+                <tr>
+                    <td>Passenger Satisfaction</td>
+                    <td style="text-align: center;">4.2/5 stars</td>
+                    <td>Reflects unavoidable frustration with disruption</td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- MONITORING SECTION -->
+        <section id="monitoring-section">
+            <h2>Monitoring Strategy</h2>
+            <h3>Monitoring Types</h3>
+            <div class="feature-grid">
+                <div class="feature-item">
+                    <div class="feature-name">Synthetic</div>
+                    <div class="feature-desc">Automated boundary testing, deep link TTL, dedup accuracy</div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-name">RUM</div>
+                    <div class="feature-desc">Real User Monitoring - client-side performance metrics</div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-name">APM</div>
+                    <div class="feature-desc">Application Performance Monitoring - distributed tracing</div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-name">Infrastructure</div>
+                    <div class="feature-desc">CPU, memory, disk, network resource utilization</div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-name">Logging</div>
+                    <div class="feature-desc">Structured logs with business context</div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-name">Business Metrics</div>
+                    <div class="feature-desc">Cases created, notifications sent, satisfaction</div>
+                </div>
+            </div>
+
+            <h3>Critical Performance Gates (Release Blocking)</h3>
+            <table>
+                <tr>
+                    <th>Gate</th>
+                    <th>Metric</th>
+                    <th>Threshold</th>
+                    <th>Scope</th>
+                </tr>
+                <tr>
+                    <td><span class="critical">●</span> P95 SLA</td>
+                    <td>End-to-end latency p95</td>
+                    <td>< 20s</td>
+                    <td>Load test</td>
+                </tr>
+                <tr>
+                    <td><span class="critical">●</span> P99 Latency</td>
+                    <td>End-to-end latency p99</td>
+                    <td>< 30s</td>
+                    <td>Load test</td>
+                </tr>
+                <tr>
+                    <td><span class="critical">●</span> Provider Reliability</td>
+                    <td>SMS + Email delivery success</td>
+                    <td>≥ 98%</td>
+                    <td>Load + stress</td>
+                </tr>
+                <tr>
+                    <td><span class="critical">●</span> Idempotency</td>
+                    <td>Duplicate notification rate</td>
+                    <td>0%</td>
+                    <td>All tests</td>
+                </tr>
+                <tr>
+                    <td><span class="critical">●</span> Memory Stability</td>
+                    <td>Heap growth rate</td>
+                    <td>< 50MB/hour</td>
+                    <td>Soak (48h)</td>
+                </tr>
+                <tr>
+                    <td><span class="critical">●</span> Cache Eviction</td>
+                    <td>Idempotency cache growth</td>
+                    <td>LRU effective</td>
+                    <td>Soak test</td>
+                </tr>
+                <tr>
+                    <td><span class="critical">●</span> Index Performance</td>
+                    <td>Query p95 degradation</td>
+                    <td>< 50% increase</td>
+                    <td>Soak (48h)</td>
+                </tr>
+                <tr>
+                    <td><span class="critical">●</span> Timeline Append</td>
+                    <td>Append p95 latency</td>
+                    <td>< 150ms</td>
+                    <td>Soak test</td>
+                </tr>
+                <tr>
+                    <td><span class="critical">●</span> Connection Pool</td>
+                    <td>Available connections</td>
+                    <td>> 20% at peak</td>
+                    <td>Load + stress</td>
+                </tr>
+                <tr>
+                    <td><span class="critical">●</span> Spike Absorption</td>
+                    <td>Event loss during spike</td>
+                    <td>0 events</td>
+                    <td>Spike test</td>
+                </tr>
+                <tr>
+                    <td><span class="critical">●</span> Graceful Degradation</td>
+                    <td>System availability</td>
+                    <td>99%+ uptime</td>
+                    <td>Stress test</td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- TEST STRATEGY SECTION -->
+        <section id="test-section">
+            <h2>Test Strategy</h2>
+            <h3>Test Types & Pre-Release Schedule</h3>
+            <table>
+                <tr>
+                    <th>Type</th>
+                    <th>Duration</th>
+                    <th>Objective</th>
+                    <th>Pass Criteria</th>
+                </tr>
+                <tr>
+                    <td><strong>Load</strong></td>
+                    <td>2 hours</td>
+                    <td>Validate SLA targets at peak load</td>
+                    <td>p95 < 20s, p99 < 30s, zero duplicates</td>
+                </tr>
+                <tr>
+                    <td><strong>Stress</strong></td>
+                    <td>1 hour</td>
+                    <td>Find breaking point, identify failures</td>
+                    <td>Graceful degradation, no cascading failures</td>
+                </tr>
+                <tr>
+                    <td><strong>Soak</strong></td>
+                    <td>48 hours</td>
+                    <td>Detect memory leaks, cache growth</td>
+                    <td>Memory < 50MB/hr, stable latencies</td>
+                </tr>
+                <tr>
+                    <td><strong>Spike</strong></td>
+                    <td>1 hour</td>
+                    <td>Weather event 5x load surge</td>
+                    <td>Zero loss, p95 < 30s during spike</td>
+                </tr>
+                <tr>
+                    <td><strong>Breakpoint</strong></td>
+                    <td>5 hours</td>
+                    <td>Maximum sustainable throughput</td>
+                    <td>Capacity ≥ 4000 TPS (2x peak)</td>
+                </tr>
+                <tr>
+                    <td><strong>Volume</strong></td>
+                    <td>8 hours</td>
+                    <td>7-year retention with 28GB data</td>
+                    <td>Latency stable, index health ok</td>
+                </tr>
+            </table>
+
+            <p style="margin-top: 20px; font-weight: 600;">Pre-Release Testing Timeline: <span style="color: #3fb950;">70 hours total</span> (mostly parallel execution)</p>
+
+            <h3>Continuous Testing Schedule</h3>
+            <ul style="color: #e6edf3; margin-left: 20px;">
+                <li><strong>Weekly:</strong> Load test (Monday 02:00 UTC, off-peak)</li>
+                <li><strong>Bi-weekly:</strong> Spike test (every other Friday)</li>
+                <li><strong>Monthly:</strong> Soak test (first week, 48-hour duration)</li>
+            </ul>
+        </section>
+
+        <!-- FINDINGS SECTION -->
+        <section id="findings-section">
+            <h2>Key Findings by Discipline</h2>
+            
+            <h3><span class="discipline-label">C</span> Capacity Findings</h3>
+            <div class="finding-card critical">
+                <div class="finding-header">
+                    <div class="finding-id">NFR-CAP-001</div>
+                    <span class="severity-badge badge-critical">Critical</span>
+                </div>
+                <div class="finding-title">Database Sizing for Booking Correlation</div>
+                <div class="finding-description">15M bookings must be indexed for sub-100ms lookups. 4 DB servers insufficient for 50+ concurrent disruptions.</div>
+            </div>
+
+            <div class="finding-card critical">
+                <div class="finding-header">
+                    <div class="finding-id">NFR-CAP-002</div>
+                    <span class="severity-badge badge-critical">Critical</span>
+                </div>
+                <div class="finding-title">Immutable Event Storage for 7-Year Retention</div>
+                <div class="finding-description">50K events/year * 5KB each = 0.25GB/year. 7-year total ~1.75GB. Append-only design means no compaction possible.</div>
+            </div>
+
+            <div class="finding-card critical">
+                <div class="finding-header">
+                    <div class="finding-id">NFR-CAP-003</div>
+                    <span class="severity-badge badge-critical">Critical</span>
+                </div>
+                <div class="finding-title">Notification Throughput for Peak Load</div>
+                <div class="finding-description">Peak: 30 disruptions * 150 passengers * 2 channels = 1000 notifications/hour. Requires async queuing with rate limiting.</div>
+            </div>
+
+            <h3><span class="discipline-label">L</span> Latency Findings</h3>
+            <div class="finding-card critical">
+                <div class="finding-header">
+                    <div class="finding-id">NFR-LAT-001</div>
+                    <span class="severity-badge badge-critical">Critical</span>
+                </div>
+                <div class="finding-title">End-to-End SLA: 20 Seconds (P95)</div>
+                <div class="finding-description">Formal SLA commitment required. Measure from ingestion received_timestamp to provider delivery_confirmation. Alert at p95 >= 18s.</div>
+            </div>
+
+            <div class="finding-card critical">
+                <div class="finding-header">
+                    <div class="finding-id">NFR-LAT-004</div>
+                    <span class="severity-badge badge-critical">Critical</span>
+                </div>
+                <div class="finding-title">Correlation Query Bottleneck</div>
+                <div class="finding-description">Booking query on 50M records with (service_no, date, O/D) matching is critical path. Must implement composite index, read replicas, result set limits.</div>
+            </div>
+
+            <div class="finding-card critical">
+                <div class="finding-header">
+                    <div class="finding-id">NFR-LAT-006</div>
+                    <span class="severity-badge badge-critical">Critical</span>
+                </div>
+                <div class="finding-title">Consent Real-Time Evaluation</div>
+                <div class="finding-description">GDPR requires consent checked at dispatch time, not snapshot at Case creation. Implement Redis cache (TTL 60s) with DB fallback.</div>
+            </div>
+
+            <h3><span class="discipline-label">A</span> Availability Findings</h3>
+            <div class="finding-card critical">
+                <div class="finding-header">
+                    <div class="finding-id">NFR-AVL-001</div>
+                    <span class="severity-badge badge-critical">Critical</span>
+                </div>
+                <div class="finding-title">Orchestrator Failure Recovery</div>
+                <div class="finding-description">DeFOSPAM flagged: orchestrator crash leaves events in intermediate state. Implement heartbeat (30s), pending event queue (5min TTL), state reconciliation.</div>
+            </div>
+
+            <div class="finding-card critical">
+                <div class="finding-header">
+                    <div class="finding-id">NFR-AVL-002</div>
+                    <span class="severity-badge badge-critical">Critical</span>
+                </div>
+                <div class="finding-title">Provider Retry Strategy</div>
+                <div class="finding-description">Twilio/SendGrid failures must be retried with exponential backoff (1s, 2s, 4s, 8s, max 5 attempts). Circuit breaker failover to secondary provider.</div>
+            </div>
+
+            <div class="finding-card critical">
+                <div class="finding-header">
+                    <div class="finding-id">NFR-AVL-011</div>
+                    <span class="severity-badge badge-critical">Critical</span>
+                </div>
+                <div class="finding-title">System Availability Target: 99.95%</div>
+                <div class="finding-description">EU Regulation 261/2004 requires timely passenger notification. 99.95% permits 262 minutes unplanned downtime annually (planned maintenance excluded).</div>
+            </div>
+
+            <h3><span class="discipline-label">S</span> Scalability Findings</h3>
+            <div class="finding-card critical">
+                <div class="finding-header">
+                    <div class="finding-id">NFR-SCL-001</div>
+                    <span class="severity-badge badge-critical">Critical</span>
+                </div>
+                <div class="finding-title">Booking Query Scaling</div>
+                <div class="finding-description">Current capacity: 50 concurrent disruptions. Target: 200. Mitigation: partition by route, bloom filters, read replicas (6+ nodes).</div>
+            </div>
+
+            <div class="finding-card critical">
+                <div class="finding-header">
+                    <div class="finding-id">NFR-SCL-002</div>
+                    <span class="severity-badge badge-critical">Critical</span>
+                </div>
+                <div class="finding-title">Provider Rate Limit Bottleneck</div>
+                <div class="finding-description">SMS 100/sec, Email 50/sec = 150 msg/sec hard limit. Current capacity 5,400/hr insufficient for 10x events. Use queue backpressure, leaky bucket.</div>
+            </div>
+
+            <h3 style="margin-top: 30px;"><span class="discipline-label">S</span> Security Findings</h3>
+            <div class="finding-card critical">
+                <div class="finding-header">
+                    <div class="finding-id">NFR-SEC-001</div>
+                    <span class="severity-badge badge-critical">Critical</span>
+                </div>
+                <div class="finding-title">JWT Deep Links with Revocation</div>
+                <div class="finding-description">Deep links vulnerable to enumeration attacks without authentication. Implement RS256 JWT with 120min TTL, revocation blacklist in Redis.</div>
+            </div>
+
+            <div class="finding-card critical">
+                <div class="finding-header">
+                    <div class="finding-id">NFR-SEC-002</div>
+                    <span class="severity-badge badge-critical">Critical</span>
+                </div>
+                <div class="finding-title">Real-Time GDPR Consent Evaluation</div>
+                <div class="finding-description">Consent must be evaluated at dispatch, not Case creation. Real-time check violates SLA unless cached. Use Redis (60s TTL) with DB fallback.</div>
+            </div>
+
+            <div class="finding-card critical">
+                <div class="finding-header">
+                    <div class="finding-id">NFR-SEC-005</div>
+                    <span class="severity-badge badge-critical">Critical</span>
+                </div>
+                <div class="finding-title">PII Encryption</div>
+                <div class="finding-description">Passenger names, phone, email must be encrypted in transit (TLS 1.3) and at rest (AES-256). GDPR Articles 32-34 compliance required.</div>
+            </div>
+
+            <h3><span class="discipline-label">U</span> Usability Findings</h3>
+            <div class="finding-card critical">
+                <div class="finding-header">
+                    <div class="finding-id">NFR-USE-001</div>
+                    <span class="severity-badge badge-critical">Critical</span>
+                </div>
+                <div class="finding-title">SMS Clarity Within 5 Seconds</div>
+                <div class="finding-description">SMS must convey disruption type, impact, new time, booking ref in 160 chars max. Readability target: Flesch Reading Ease > 60.</div>
+            </div>
+
+            <div class="finding-card critical">
+                <div class="finding-header">
+                    <div class="finding-id">NFR-USE-002</div>
+                    <span class="severity-badge badge-critical">Critical</span>
+                </div>
+                <div class="finding-title">Deep Link Page Load on 4G</div>
+                <div class="finding-description">Page must load TTI < 3s on 4G. Passengers at airport with poor connectivity need fast access to case details. Page size < 50KB.</div>
+            </div>
+
+            <h3><span class="discipline-label">M</span> Monitoring Findings</h3>
+            <p style="color: #8b949e;">19 NFRs covering comprehensive observability, synthetic testing, regression detection, and alerting strategy.</p>
+
+            <h3><span class="discipline-label">E</span> Endurance Findings</h3>
+            <div class="finding-card critical">
+                <div class="finding-header">
+                    <div class="finding-id">NFR-END-001</div>
+                    <span class="severity-badge badge-critical">Critical</span>
+                </div>
+                <div class="finding-title">Event Storage Growth</div>
+                <div class="finding-description">7-year immutable event log grows unbounded. Monitor: table size, append latency, disk I/O. Archive strategy required for operational queries.</div>
+            </div>
+
+            <div class="finding-card critical">
+                <div class="finding-header">
+                    <div class="finding-id">NFR-END-002</div>
+                    <span class="severity-badge badge-critical">Critical</span>
+                </div>
+                <div class="finding-title">Idempotency Cache Eviction</div>
+                <div class="finding-description">10M+ cache entries projected over 2 years. Without LRU eviction, cache consumes 2GB+ RAM. Implement explicit TTL (24 hours).</div>
+            </div>
+        </section>
+
+        <!-- FOOTER -->
+        <footer>
+            <p><strong>Report by OpenRequirements.ai</strong></p>
+            <p style="margin-top: 10px; font-size: 0.9em;">Analysis Framework: DeFOSPAM (Distributed Features Operations Safety Process Assessment Matrix)</p>
+            <p style="margin-top: 10px; font-size: 0.85em;">Reference: "Effective Performance Engineering" by DeCapua & Evans</p>
+            <p style="margin-top: 20px; color: #6e7681; border-top: 1px solid #30363d; padding-top: 20px;">
+                This assessment covers 137 Non-Functional Requirements across 8 disciplines. All findings, recommendations, and performance gates are intended to guide development and testing before production release.
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        function filterByDiscipline(discipline) {
+            console.log('Filter by:', discipline);
+            // Update active pill
+            document.querySelectorAll('.pill').forEach(pill => {
+                pill.classList.remove('active');
+            });
+            event.target.classList.add('active');
+        }
+    </script>
+</body>
+</html>

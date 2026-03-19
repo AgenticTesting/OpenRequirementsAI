@@ -1,0 +1,44 @@
+{
+  "metadata": {
+    "tool": "OpenRequirements.ai SRS Aggregator",
+    "version": "1.0",
+    "standard": "IEEE Std 830-1998",
+    "timestamp": "2026-03-19T00:00:00Z",
+    "agents_run": ["Chelcie", "Odin", "Ophellia", "Lucy", "Natasha", "Iris", "Amelia", "Lewis"]
+  },
+  "summary": {
+    "total_findings": 731,
+    "critical_findings": 96,
+    "major_findings": 456,
+    "minor_findings": 179,
+    "total_requirements": 46,
+    "essential_requirements": 34,
+    "conditional_requirements": 10,
+    "srs_sections_populated": 18,
+    "srs_sections_total": 26,
+    "tbds_remaining": 17,
+    "completeness_percent": 62
+  },
+  "quality_scorecard": {
+    "C_correct": {"score": 42, "status": "fail", "findings": 38, "summary": "Unverified scope additions, 7-year retention source unclear"},
+    "U_unambiguous": {"score": 68, "status": "warn", "findings": 17, "summary": "17 ambiguities resolved by Odin, error handling gaps remain"},
+    "C_complete": {"score": 62, "status": "warn", "findings": 34, "summary": "Critical sections missing (Purpose, References), multi-leg undefined"},
+    "C_consistent": {"score": 54, "status": "fail", "findings": 10, "summary": "10 DeFOSPAM/PE conflicts resolved, circular dependencies remain"},
+    "R_relevant": {"score": 88, "status": "pass", "findings": 2, "summary": "100% requirements support stated purpose"},
+    "V_verifiable": {"score": 81, "status": "pass", "findings": 14, "summary": "46 requirements with acceptance criteria, SLA measurement point ambiguous"},
+    "M_modifiable": {"score": 76, "status": "warn", "findings": 12, "summary": "Zero redundancy, 85% forward traceability"},
+    "T_traceable": {"score": 71, "status": "warn", "findings": 16, "summary": "100% backward trace, unvalidated assumptions in performance SLA"}
+  },
+  "requirements": {
+    "total": 46,
+    "functional": 29,
+    "non_functional": 17,
+    "by_version": {"v1.0": 42, "v1.1": 3, "future": 1}
+  },
+  "srs_document_status": {
+    "section_1_introduction": "PARTIAL (47% complete, Purpose/References/Overview missing)",
+    "section_2_overall_description": "PARTIAL (65% complete, Product Perspective/Functions/Constraints populated)",
+    "section_3_specific_requirements": "MOSTLY_COMPLETE (75%, 10 features, 46 requirements mapped)",
+    "section_4_supporting_information": "PARTIAL (68%, traceability/acceptance/performance/TBDs populated, forward trace incomplete)"
+  }
+}

@@ -1,0 +1,1071 @@
+{
+  "metadata": {
+    "tool": "OpenRequirements.ai DeFOSPAM",
+    "version": "1.0",
+    "timestamp": "2026-03-19T00:00:00Z",
+    "source_file": "jira-story.feature",
+    "analysts_run": ["dorothy", "flo", "olivia", "sophia", "paul", "alexa", "milarna"]
+  },
+  "summary": {
+    "total_findings": 247,
+    "critical": 54,
+    "major": 170,
+    "minor": 23,
+    "features_identified": 12,
+    "scenarios_created": 30,
+    "glossary_terms": 85
+  },
+  "glossary": [
+    {
+      "term": "Disruption Detection",
+      "proposed_definition": "The process of identifying and ingesting adverse events affecting transportation services (delays, cancellations, etc.) from operational data sources",
+      "verification_status": "verified",
+      "source": "requirements text"
+    },
+    {
+      "term": "Disruption Orchestrator",
+      "proposed_definition": "A system component responsible for receiving, processing, and coordinating responses to disruption events across multiple channels",
+      "verification_status": "unverified",
+      "source": "requirements text"
+    },
+    {
+      "term": "Correlation",
+      "proposed_definition": "The process of matching a normalized disruption event to a passenger booking/journey using deterministic matching strategies (service_no+date+origin/destination)",
+      "verification_status": "verified",
+      "source": "requirements text"
+    },
+    {
+      "term": "Case",
+      "proposed_definition": "A distinct record representing a specific passenger journey affected by a disruption event, created upon successful event correlation with initial status 'Detected'",
+      "verification_status": "verified",
+      "source": "requirements text"
+    },
+    {
+      "term": "Canonical Event Schema",
+      "proposed_definition": "A standardized data structure for representing disruption events in normalized form with fields including event_type, service_no, service_date, origin, destination, effective_time_utc, and confidence",
+      "verification_status": "verified",
+      "source": "requirements text"
+    },
+    {
+      "term": "Idempotency Key",
+      "proposed_definition": "A unique identifier combining Case, channel, and template that ensures the same notification is never sent twice for the same combination",
+      "verification_status": "verified",
+      "source": "requirements text"
+    },
+    {
+      "term": "Passenger",
+      "proposed_definition": "An individual traveler identified by a unique identifier with stored contact details and consent states across notification channels",
+      "verification_status": "verified",
+      "source": "requirements text"
+    },
+    {
+      "term": "Lead Contact",
+      "proposed_definition": "The passenger designated as the primary contact for a booking reference and recipient of disruption notifications",
+      "verification_status": "verified",
+      "source": "requirements text"
+    },
+    {
+      "term": "Consent State",
+      "proposed_definition": "The current permission level for a passenger on a specific contact channel, with values including 'opt_in' and 'opt_out'",
+      "verification_status": "verified",
+      "source": "requirements text"
+    },
+    {
+      "term": "Exactly One Compliant Passenger Notification",
+      "proposed_definition": "A requirement ensuring that for a specific Case, channel, and template, exactly one outbound message is delivered to the passenger",
+      "verification_status": "verified",
+      "source": "requirements text"
+    }
+  ],
+  "features": [
+    {
+      "feature_name": "Disruption Event Ingestion and Storage",
+      "business_story": "As a disruption management system, I want to ingest raw disruption signals from carrier operations feeds and store them immutably with complete metadata, so that all disruption data is preserved for audit trails and cannot be lost or modified",
+      "description": "System ingests disruption signals (delays, cancellations, etc.) from external sources, stores the raw event with immutable metadata"
+    },
+    {
+      "feature_name": "Event Normalization to Canonical Schema",
+      "business_story": "As a disruption orchestrator, I want to normalize heterogeneous disruption signals into a standardized canonical form, so that downstream systems can process events consistently regardless of their origin",
+      "description": "Transforms raw disruption events into canonical event schema with standardized fields"
+    },
+    {
+      "feature_name": "Disruption-to-Booking Correlation",
+      "business_story": "As a passenger support system, I want to automatically correlate disruption events to passenger bookings using deterministic matching strategies, so that I can identify affected passengers without manual intervention",
+      "description": "Correlates normalized disruption events to booking references using deterministic strategies"
+    },
+    {
+      "feature_name": "Case Management and Severity Computation",
+      "business_story": "As a disruption management system, I want to create Cases for affected bookings and automatically compute their severity using versioned rulesets, so that passenger support can prioritize responses appropriately",
+      "description": "Creates Cases for correlated disruptions with initial status tracking and severity computation"
+    },
+    {
+      "feature_name": "Passenger Contact Consent and Channel Selection",
+      "business_story": "As a compliant notification system, I want to respect passenger contact preferences and consent states when selecting notification channels, so that I only send messages through channels where passengers have opted in",
+      "description": "Evaluates notification eligibility by checking passenger contact consent states"
+    },
+    {
+      "feature_name": "Passenger-Facing Notification Composition",
+      "business_story": "As a passenger notification system, I want to generate clear, actionable, and context-aware notifications for disruptions, so that passengers understand what happened and what they should do",
+      "description": "Generates passenger-facing summary content including what changed, new expected times, and Case reference"
+    },
+    {
+      "feature_name": "Template-Based Notification Dispatch",
+      "business_story": "As a notification platform, I want to dispatch notifications using versioned message templates for specific locales, so that messaging is consistent and can be managed centrally",
+      "description": "Dispatches notifications using pre-defined message templates"
+    },
+    {
+      "feature_name": "Idempotent Notification Deduplication",
+      "business_story": "As a notification system, I want to ensure that duplicate disruption signals never result in duplicate passenger notifications, so that passengers are not spammed with redundant messages",
+      "description": "Implements deduplication using idempotency keys based on Case + channel + template combination"
+    },
+    {
+      "feature_name": "Quiet Hours and Urgent Message Exemptions",
+      "business_story": "As a respectful notification system, I want to honor quiet hours rules for different locales while allowing critical service notifications to bypass these restrictions, so that passengers are not disturbed during quiet hours unless the situation is urgent",
+      "description": "Enforces locale-specific quiet hours rules with exceptions for service-critical messages"
+    },
+    {
+      "feature_name": "Comprehensive Case Timeline Auditing",
+      "business_story": "As an audit and compliance system, I want to maintain an immutable append-only timeline of all Case events, so that I can trace the complete history of how disruptions were detected, processed, and communicated",
+      "description": "Maintains an append-only Case timeline with entries for each major event"
+    }
+  ],
+  "scenarios": [
+    {
+      "scenario_name": "Successful delay detection, correlation, and single compliant SMS notification",
+      "feature": "Disruption Detection, Correlation, and Passenger Notification",
+      "type": "happy_path"
+    },
+    {
+      "scenario_name": "Duplicate signal ingestion suppresses second notification via idempotency",
+      "feature": "Disruption Detection, Correlation, and Passenger Notification",
+      "type": "happy_path"
+    },
+    {
+      "scenario_name": "Passenger with opt_out consent receives no notification",
+      "feature": "Disruption Detection, Correlation, and Passenger Notification",
+      "type": "exception"
+    },
+    {
+      "scenario_name": "CANCELLATION disruption event creates Major severity Case",
+      "feature": "Disruption Detection, Correlation, and Passenger Notification",
+      "type": "happy_path"
+    },
+    {
+      "scenario_name": "Multiple passengers on booking: notification sent only to lead contact",
+      "feature": "Disruption Detection, Correlation, and Passenger Notification",
+      "type": "edge_case"
+    },
+    {
+      "scenario_name": "Service-critical notification bypasses quiet hours restrictions",
+      "feature": "Disruption Detection, Correlation, and Passenger Notification",
+      "type": "exception"
+    },
+    {
+      "scenario_name": "Notification provider failure: system records dispatch attempt and error",
+      "feature": "Disruption Detection, Correlation, and Passenger Notification",
+      "type": "exception"
+    },
+    {
+      "scenario_name": "Delay duration boundary: 1 minute delay",
+      "feature": "Disruption Detection, Correlation, and Passenger Notification",
+      "type": "edge_case"
+    },
+    {
+      "scenario_name": "Confidence score boundary: exactly 0.80 meets correlation threshold",
+      "feature": "Disruption Detection, Correlation, and Passenger Notification",
+      "type": "edge_case"
+    },
+    {
+      "scenario_name": "Deep link expiration: 120 minute deadline enforced",
+      "feature": "Disruption Detection, Correlation, and Passenger Notification",
+      "type": "edge_case"
+    }
+  ],
+  "findings": [
+    {
+      "finding_id": "CRIT_001",
+      "finding_title": "Ambiguous definition of severity computation criteria",
+      "severity": "critical",
+      "confidence": 9,
+      "principle": "D",
+      "analyst": "Dorothy",
+      "detail": "Requirements state 'The Case severity is computed as Major using a versioned ruleset' but do not specify what inputs or conditions trigger 'Major' vs other severity levels",
+      "recommendation": "Define all valid severity levels and the decision tree/rules for each level"
+    },
+    {
+      "finding_id": "CRIT_002",
+      "finding_title": "Missing definition of idempotency key composition algorithm",
+      "severity": "critical",
+      "confidence": 9,
+      "principle": "D",
+      "analyst": "Dorothy",
+      "detail": "Idempotency keys are essential for preventing duplicates but the exact composition algorithm is unspecified",
+      "recommendation": "Define the exact algorithm (e.g., 'SHA256(case_id + ':' + channel + ':' + template_version)')"
+    },
+    {
+      "finding_id": "CRIT_003",
+      "finding_title": "Critical Data Integrity Feature Required",
+      "severity": "critical",
+      "confidence": 9,
+      "principle": "F",
+      "analyst": "Flo",
+      "detail": "Requirements explicitly mandate immutable storage of raw events with checksums and metadata preservation",
+      "recommendation": "Implement immutable event storage using append-only logs"
+    },
+    {
+      "finding_id": "CRIT_004",
+      "finding_title": "Deterministic Correlation Engine Required",
+      "severity": "critical",
+      "confidence": 10,
+      "principle": "F",
+      "analyst": "Flo",
+      "detail": "Correlation must be deterministic and repeatable using service_no+date+origin/destination strategy",
+      "recommendation": "Develop versioned correlation strategies with configurable parameters and match scoring"
+    },
+    {
+      "finding_id": "CRIT_005",
+      "finding_title": "Versioned Severity Computation Required",
+      "severity": "critical",
+      "confidence": 10,
+      "principle": "F",
+      "analyst": "Flo",
+      "detail": "Case severity is computed using versioned rulesets that enable rollback and auditability",
+      "recommendation": "Implement versioned ruleset engine with rule_version storage in Case records"
+    },
+    {
+      "finding_id": "CRIT_006",
+      "finding_title": "Idempotency Key Strategy Essential",
+      "severity": "critical",
+      "confidence": 10,
+      "principle": "F",
+      "analyst": "Flo",
+      "detail": "Deduplication using idempotency keys per Case + channel + template is critical for exactly-once delivery",
+      "recommendation": "Implement composite idempotency key: hash(Case_ID + channel + template_version)"
+    },
+    {
+      "finding_id": "CRIT_007",
+      "finding_title": "Append-Only Timeline Enforcement Critical",
+      "severity": "critical",
+      "confidence": 10,
+      "principle": "F",
+      "analyst": "Flo",
+      "detail": "Immutable append-only timeline is required for compliance and auditability",
+      "recommendation": "Implement append-only timeline with strict ordering and timestamp recording"
+    },
+    {
+      "finding_id": "CRIT_008",
+      "finding_title": "Consent-Based Channel Selection Required",
+      "severity": "critical",
+      "confidence": 10,
+      "principle": "F",
+      "analyst": "Flo",
+      "detail": "Consent-aware channel selection is critical for GDPR/privacy compliance",
+      "recommendation": "Store consent_state per contact per channel and evaluate before dispatch"
+    },
+    {
+      "finding_id": "CRIT_009",
+      "finding_title": "Canonical Event Schema Must Be Enforced",
+      "severity": "critical",
+      "confidence": 9,
+      "principle": "F",
+      "analyst": "Flo",
+      "detail": "Standardized canonical event schema is foundational for system interoperability",
+      "recommendation": "Define canonical schema in versioned specification and implement validation"
+    },
+    {
+      "finding_id": "CRIT_010",
+      "finding_title": "Explicit Exactly-Once Delivery Requirement",
+      "severity": "critical",
+      "confidence": 10,
+      "principle": "F",
+      "analyst": "Flo",
+      "detail": "System must guarantee exactly one notification per disruption per channel per template",
+      "recommendation": "Implement idempotency key-based deduplication with atomic check-and-send"
+    },
+    {
+      "finding_id": "CRIT_011",
+      "finding_title": "Error handling strategy for failed event normalization not specified",
+      "severity": "critical",
+      "confidence": 8,
+      "principle": "M",
+      "analyst": "Milarna",
+      "detail": "Normalization failure behavior is undefined - error handling must be explicit",
+      "recommendation": "Define: raw event stored regardless, error logged, correlation NOT attempted, no Case created"
+    },
+    {
+      "finding_id": "CRIT_012",
+      "finding_title": "Multi-leg journey correlation and notification strategy undefined",
+      "severity": "critical",
+      "confidence": 9,
+      "principle": "M",
+      "analyst": "Milarna",
+      "detail": "All scenarios use single-leg journeys but real bookings have multiple legs",
+      "recommendation": "Add comprehensive multi-leg requirements covering cascading impacts and Case scope"
+    },
+    {
+      "finding_id": "CRIT_013",
+      "finding_title": "Notification retry and recovery strategy not defined",
+      "severity": "critical",
+      "confidence": 9,
+      "principle": "M",
+      "analyst": "Milarna",
+      "detail": "Provider failure retry strategy is completely undefined",
+      "recommendation": "Define automatic retry with exponential backoff, max attempts, and recovery logic"
+    },
+    {
+      "finding_id": "CRIT_014",
+      "finding_title": "Idempotency key composition algorithm not formally specified",
+      "severity": "critical",
+      "confidence": 9,
+      "principle": "M",
+      "analyst": "Milarna",
+      "detail": "Exact composition algorithm is unspecified, creating implementation ambiguity",
+      "recommendation": "Formally specify: hash_algorithm(case_id + channel + template_name + template_version)"
+    },
+    {
+      "finding_id": "CRIT_015",
+      "finding_title": "Duplicate detection strategy for same disruption signal unclear",
+      "severity": "critical",
+      "confidence": 8,
+      "principle": "M",
+      "analyst": "Milarna",
+      "detail": "Contradiction between immutability and duplicate handling - detection criterion undefined",
+      "recommendation": "Clarify: identify by raw_event_id; distinguish same signal vs same notification"
+    },
+    {
+      "finding_id": "CRIT_016",
+      "finding_title": "Match score calculation algorithm for correlation not formally specified",
+      "severity": "critical",
+      "confidence": 9,
+      "principle": "M",
+      "analyst": "Milarna",
+      "detail": "Correlation scoring algorithm is unspecified, threshold is meaningless without it",
+      "recommendation": "Define: score = (sum_of_field_scores) / 4, threshold >= 0.80"
+    },
+    {
+      "finding_id": "MAJ_001",
+      "finding_title": "Undefined context for 'reasons' field in correlation record",
+      "severity": "major",
+      "confidence": 8,
+      "principle": "D",
+      "analyst": "Dorothy",
+      "detail": "Correlation record includes 'reasons' field but no format or content specification",
+      "recommendation": "Define whether structured JSON, free text, or predefined enumeration"
+    },
+    {
+      "finding_id": "MAJ_002",
+      "finding_title": "Missing definition of deep link revocation mechanism",
+      "severity": "major",
+      "confidence": 8,
+      "principle": "D",
+      "analyst": "Dorothy",
+      "detail": "Deep link constraint specifies 'is_revocable: true' but revocation mechanism is undefined",
+      "recommendation": "Define API endpoint, authorization rules, validation logic, and notification behavior"
+    },
+    {
+      "finding_id": "MAJ_003",
+      "finding_title": "Unspecified composition of passenger-facing summary elements",
+      "severity": "major",
+      "confidence": 8,
+      "principle": "D",
+      "analyst": "Dorothy",
+      "detail": "Summary required elements listed but structure, format, and length constraints undefined",
+      "recommendation": "Create specification with element ordering, length limits, formatting, accessibility requirements"
+    },
+    {
+      "finding_id": "MAJ_004",
+      "finding_title": "Missing specification of 'new expected departure time' calculation",
+      "severity": "major",
+      "confidence": 8,
+      "principle": "D",
+      "analyst": "Dorothy",
+      "detail": "Calculation formula not specified - arithmetic addition or operations estimate?",
+      "recommendation": "Explicitly specify: new_expected_time = scheduled_departure_utc + delay_minutes"
+    },
+    {
+      "finding_id": "MAJ_005",
+      "finding_title": "Match strategy notation 'service_no+date+od' lacks definition",
+      "severity": "major",
+      "confidence": 8,
+      "principle": "D",
+      "analyst": "Dorothy",
+      "detail": "'od' abbreviation not expanded, combination logic not specified",
+      "recommendation": "Define formally: 'od' = origin/destination pair, specify exact comparison logic"
+    },
+    {
+      "finding_id": "MAJ_006",
+      "finding_title": "Undefined field 'match_score' threshold interpretation",
+      "severity": "major",
+      "confidence": 7,
+      "principle": "D",
+      "analyst": "Dorothy",
+      "detail": "Threshold >= 0.80 specified but score computation algorithm undefined",
+      "recommendation": "Define algorithm, whether it differs from event confidence, threshold ranges"
+    },
+    {
+      "finding_id": "MAJ_007",
+      "finding_title": "Ambiguous 'Correlation ID' linkage mechanism",
+      "severity": "major",
+      "confidence": 7,
+      "principle": "D",
+      "analyst": "Dorothy",
+      "detail": "Correlation ID required but what events it links and how is undefined",
+      "recommendation": "Define when created, what it links, format, uniqueness guarantees"
+    },
+    {
+      "finding_id": "MAJ_008",
+      "finding_title": "Missing definition of quiet hours exception criteria",
+      "severity": "major",
+      "confidence": 8,
+      "principle": "D",
+      "analyst": "Dorothy",
+      "detail": "Service-critical message classification criteria undefined",
+      "recommendation": "Define explicit criteria for what makes a message service-critical"
+    },
+    {
+      "finding_id": "MAJ_009",
+      "finding_title": "Undefined semantics of Case status transitions",
+      "severity": "major",
+      "confidence": 7,
+      "principle": "D",
+      "analyst": "Dorothy",
+      "detail": "Only initial status 'Detected' defined; state machine undefined",
+      "recommendation": "Define all valid statuses, transition rules, entry/exit actions per status"
+    },
+    {
+      "finding_id": "MAJ_010",
+      "finding_title": "Unspecified handling of multi-leg journeys in correlation",
+      "severity": "major",
+      "confidence": 7,
+      "principle": "D",
+      "analyst": "Dorothy",
+      "detail": "Single-leg correlation documented but multi-leg behavior undefined",
+      "recommendation": "Add requirements for multi-leg matching, Case scope, cascading impacts"
+    },
+    {
+      "finding_id": "MAJ_011",
+      "finding_title": "Unspecified timezone handling in timestamp fields",
+      "severity": "major",
+      "confidence": 7,
+      "principle": "D",
+      "analyst": "Dorothy",
+      "detail": "Requirements mix UTC and unspecified timezone contexts",
+      "recommendation": "Create timestamp spec: internal UTC, external with offset, conversion rules"
+    },
+    {
+      "finding_id": "MAJ_012",
+      "finding_title": "Secure Time-Bounded Deep Links Required",
+      "severity": "major",
+      "confidence": 8,
+      "principle": "F",
+      "analyst": "Flo",
+      "detail": "Deep links with 120-minute expiration and revocability required",
+      "recommendation": "Implement JWT-based links with TTL, revocation endpoint, access validation"
+    },
+    {
+      "finding_id": "MAJ_013",
+      "finding_title": "Template Versioning and Localization Required",
+      "severity": "major",
+      "confidence": 9,
+      "principle": "F",
+      "analyst": "Flo",
+      "detail": "Template-locale pairing ensures consistent, professionally maintained messaging",
+      "recommendation": "Implement template versioning with per-locale support and startup validation"
+    },
+    {
+      "finding_id": "MAJ_014",
+      "finding_title": "Locale-Specific Quiet Hours with Exemptions",
+      "severity": "major",
+      "confidence": 7,
+      "principle": "F",
+      "analyst": "Flo",
+      "detail": "Quiet hours configuration with service-critical bypass required",
+      "recommendation": "Implement per-locale config with timezone awareness and admin interface"
+    },
+    {
+      "finding_id": "MAJ_015",
+      "finding_title": "Correlation ID Tracking for Request Tracing",
+      "severity": "major",
+      "confidence": 7,
+      "principle": "F",
+      "analyst": "Flo",
+      "detail": "Distributed tracing with correlation IDs for debugging",
+      "recommendation": "Generate on ingestion, propagate through stages, include in logs"
+    },
+    {
+      "finding_id": "MAJ_016",
+      "finding_title": "Event Source Tracking with Provenance",
+      "severity": "major",
+      "confidence": 8,
+      "principle": "F",
+      "analyst": "Flo",
+      "detail": "Event source tracking enables source quality analysis",
+      "recommendation": "Store source_id for events, track reliability metrics"
+    },
+    {
+      "finding_id": "MAJ_017",
+      "finding_title": "Unspecified handling when disruption Orchestrator stops mid-scenario",
+      "severity": "major",
+      "confidence": 7,
+      "principle": "P",
+      "analyst": "Paul",
+      "detail": "Failure recovery behavior undefined when orchestrator crashes during processing",
+      "recommendation": "Define watchdog timeout, recovery logic, and pending event handling"
+    },
+    {
+      "finding_id": "MAJ_018",
+      "finding_title": "Handling when required message template does not exist",
+      "severity": "critical",
+      "confidence": 8,
+      "principle": "P",
+      "analyst": "Paul",
+      "detail": "Template absence recovery outcome not specified",
+      "recommendation": "Define failure handling, retry window, escalation to support"
+    },
+    {
+      "finding_id": "MAJ_019",
+      "finding_title": "Ambiguous computation of 'new expected departure time' from 95-minute delay",
+      "severity": "major",
+      "confidence": 8,
+      "principle": "A",
+      "analyst": "Alexa",
+      "detail": "Calculation formula ambiguous - arithmetic addition vs operations estimate?",
+      "recommendation": "Explicitly state calculation method"
+    },
+    {
+      "finding_id": "MAJ_020",
+      "finding_title": "Vague phrase 'what changed' lacks specificity for multi-leg journeys",
+      "severity": "major",
+      "confidence": 8,
+      "principle": "A",
+      "analyst": "Alexa",
+      "detail": "Unclear whether summary applies per-leg or to entire booking",
+      "recommendation": "Clarify handling for multi-leg disruptions"
+    },
+    {
+      "finding_id": "MAJ_021",
+      "finding_title": "Vague quantifier 'next steps' lacks specificity for delay vs. cancellation",
+      "severity": "major",
+      "confidence": 7,
+      "principle": "A",
+      "analyst": "Alexa",
+      "detail": "'Next steps' content differs by disruption type but not specified",
+      "recommendation": "Specify template-driven content based on disruption type"
+    },
+    {
+      "finding_id": "MAJ_022",
+      "finding_title": "Contradiction between immutable raw event storage and duplicate ingestion handling",
+      "severity": "critical",
+      "confidence": 8,
+      "principle": "A",
+      "analyst": "Alexa",
+      "detail": "Contradiction: each ingestion creates distinct record, but also immutable",
+      "recommendation": "Clarify deduplication strategy for duplicate raw_event_id"
+    },
+    {
+      "finding_id": "MAJ_023",
+      "finding_title": "Ambiguous idempotency key composition: does it include raw_event_id?",
+      "severity": "critical",
+      "confidence": 8,
+      "principle": "A",
+      "analyst": "Alexa",
+      "detail": "Key definition gap - how does duplicate detection work across reingest?",
+      "recommendation": "Explicitly define idempotency key and its relationship to raw_event_id"
+    },
+    {
+      "finding_id": "MAJ_024",
+      "finding_title": "Undefined 'service-critical' classification for quiet hours exemption",
+      "severity": "major",
+      "confidence": 7,
+      "principle": "A",
+      "analyst": "Alexa",
+      "detail": "Service-critical criteria undefined - event_type? severity? flag?",
+      "recommendation": "Define service-critical classification rules"
+    },
+    {
+      "finding_id": "MAJ_025",
+      "finding_title": "Inconsistency: 'exactly 1 outbound message' vs. multi-leg journey consideration",
+      "severity": "major",
+      "confidence": 7,
+      "principle": "A",
+      "analyst": "Alexa",
+      "detail": "Ambiguous whether 'exactly 1' applies per Case or per leg",
+      "recommendation": "Clarify scope for multi-leg journeys"
+    },
+    {
+      "finding_id": "MAJ_026",
+      "finding_title": "Ambiguous timing of 'Case severity computed' relative to notification dispatch",
+      "severity": "major",
+      "confidence": 7,
+      "principle": "A",
+      "analyst": "Alexa",
+      "detail": "Unclear whether severity is immutable or recomputed for duplicates",
+      "recommendation": "Specify: severity computed once upon correlation, immutable thereafter"
+    },
+    {
+      "finding_id": "MAJ_027",
+      "finding_title": "Channel selection priority when both email and SMS are opt_in",
+      "severity": "major",
+      "confidence": 8,
+      "principle": "P",
+      "analyst": "Paul",
+      "detail": "Channel selection logic unpredictable when multiple channels available",
+      "recommendation": "Explicitly specify channel priority order"
+    },
+    {
+      "finding_id": "MAJ_028",
+      "finding_title": "Match score calculation method for service_no+date+OD matching",
+      "severity": "critical",
+      "confidence": 9,
+      "principle": "P",
+      "analyst": "Paul",
+      "detail": "Scoring algorithm unpredictable - affects correlation determinism",
+      "recommendation": "Define scoring explicitly: match_score = (matches / total_criteria)"
+    },
+    {
+      "finding_id": "MAJ_029",
+      "finding_title": "Severity level thresholds for delay duration",
+      "severity": "critical",
+      "confidence": 9,
+      "principle": "P",
+      "analyst": "Paul",
+      "detail": "Actual ruleset thresholds unspecified - 1min vs 1440min severity unclear",
+      "recommendation": "Publish active severity ruleset with explicit thresholds"
+    },
+    {
+      "finding_id": "MAJ_030",
+      "finding_title": "Handling of Cases that already exist for same booking+service+date",
+      "severity": "major",
+      "confidence": 8,
+      "principle": "P",
+      "analyst": "Paul",
+      "detail": "Case idempotency rules undefined - create new or update existing?",
+      "recommendation": "Define Case query logic for duplicate detection"
+    },
+    {
+      "finding_id": "MAJ_031",
+      "finding_title": "Definition of 'service-critical' for quiet hours exemption",
+      "severity": "major",
+      "confidence": 8,
+      "principle": "P",
+      "analyst": "Paul",
+      "detail": "Service-critical classification unpredictable",
+      "recommendation": "Define classification matrix with examples"
+    },
+    {
+      "finding_id": "MAJ_032",
+      "finding_title": "Passenger locale preference and template locale matching",
+      "severity": "major",
+      "confidence": 7,
+      "principle": "P",
+      "analyst": "Paul",
+      "detail": "Fallback logic unpredictable when passenger locale template missing",
+      "recommendation": "Define locale resolution and fallback strategy"
+    },
+    {
+      "finding_id": "MAJ_033",
+      "finding_title": "Handling when notification provider is temporarily unavailable",
+      "severity": "major",
+      "confidence": 8,
+      "principle": "P",
+      "analyst": "Paul",
+      "detail": "Retry mechanism undefined - automatic or manual?",
+      "recommendation": "Define retry strategy with backoff and max attempts"
+    },
+    {
+      "finding_id": "MAJ_034",
+      "finding_title": "Consent state update between Case creation and notification dispatch",
+      "severity": "major",
+      "confidence": 7,
+      "principle": "P",
+      "analyst": "Paul",
+      "detail": "Timing of consent evaluation unpredictable - snapshot or real-time?",
+      "recommendation": "Define consent re-evaluation immediately before dispatch"
+    },
+    {
+      "finding_id": "MAJ_035",
+      "finding_title": "Opt-out consent must completely block notification",
+      "severity": "critical",
+      "confidence": 9,
+      "principle": "S",
+      "analyst": "Sophia",
+      "detail": "Opt-out must block all notifications - GDPR compliance critical",
+      "recommendation": "Add explicit scenario: 'Opt-out consent blocks notification'"
+    },
+    {
+      "finding_id": "MAJ_036",
+      "finding_title": "Confidence threshold boundary behavior is critical",
+      "severity": "major",
+      "confidence": 9,
+      "principle": "S",
+      "analyst": "Sophia",
+      "detail": "Boundary conditions (0.79 vs 0.80) must be explicitly tested",
+      "recommendation": "Add boundary test scenarios for >= operator"
+    },
+    {
+      "finding_id": "MAJ_037",
+      "finding_title": "Cancellation events require different notification than delays",
+      "severity": "major",
+      "confidence": 9,
+      "principle": "S",
+      "analyst": "Sophia",
+      "detail": "Different event types require different severity rules and templates",
+      "recommendation": "Add scenarios for CANCELLATION and other disruption types"
+    },
+    {
+      "finding_id": "MAJ_038",
+      "finding_title": "Multiple passengers on booking: notification sent to lead contact only",
+      "severity": "major",
+      "confidence": 8,
+      "principle": "S",
+      "analyst": "Sophia",
+      "detail": "Multi-passenger behavior needs explicit specification",
+      "recommendation": "Add scenario with lead contact definition and secondary passenger handling"
+    },
+    {
+      "finding_id": "MAJ_039",
+      "finding_title": "Quiet hours enforcement requires explicit time boundaries",
+      "severity": "major",
+      "confidence": 8,
+      "principle": "S",
+      "analyst": "Sophia",
+      "detail": "Quiet hours rules undefined - time boundaries and service-critical criteria missing",
+      "recommendation": "Add explicit scenarios with time boundaries and criteria"
+    },
+    {
+      "finding_id": "MAJ_040",
+      "finding_title": "Notification provider failure handling is unspecified",
+      "severity": "major",
+      "confidence": 8,
+      "principle": "S",
+      "analyst": "Sophia",
+      "detail": "Retry logic, idempotency key handling, and failure outcomes undefined",
+      "recommendation": "Add provider failure scenarios with retry and recovery"
+    },
+    {
+      "finding_id": "MAJ_041",
+      "finding_title": "Invalid event schema must be handled gracefully",
+      "severity": "major",
+      "confidence": 8,
+      "principle": "S",
+      "analyst": "Sophia",
+      "detail": "Schema validation failure behavior undefined",
+      "recommendation": "Add scenario: raw event stored, normalization fails, no Case"
+    },
+    {
+      "finding_id": "MAJ_042",
+      "finding_title": "Idempotency key structure must be deterministic and documented",
+      "severity": "major",
+      "confidence": 8,
+      "principle": "S",
+      "analyst": "Sophia",
+      "detail": "Key format and determinism not documented",
+      "recommendation": "Add scenario verifying deterministic key generation"
+    },
+    {
+      "finding_id": "MAJ_043",
+      "finding_title": "Email and SMS both opt-in: channel selection criteria undefined",
+      "severity": "major",
+      "confidence": 7,
+      "principle": "S",
+      "analyst": "Sophia",
+      "detail": "Channel selection logic undefined when both channels available",
+      "recommendation": "Add scenario with channel priority definition"
+    },
+    {
+      "finding_id": "MAJ_044",
+      "finding_title": "Secure deep link expiration enforcement is critical",
+      "severity": "major",
+      "confidence": 7,
+      "principle": "S",
+      "analyst": "Sophia",
+      "detail": "Boundary testing needed for expiration and revocation",
+      "recommendation": "Add boundary test scenarios at T+119/120/121 minutes"
+    },
+    {
+      "finding_id": "MAJ_045",
+      "finding_title": "Template version mismatch causes notification failure",
+      "severity": "major",
+      "confidence": 7,
+      "principle": "S",
+      "analyst": "Sophia",
+      "detail": "Missing template version should fail, not fall back silently",
+      "recommendation": "Add scenario with explicit failure behavior"
+    },
+    {
+      "finding_id": "MAJ_046",
+      "finding_title": "Locale mismatch: no template in passenger's language",
+      "severity": "major",
+      "confidence": 7,
+      "principle": "S",
+      "analyst": "Sophia",
+      "detail": "Should fail, not send wrong language",
+      "recommendation": "Add scenario with locale resolution and fallback rules"
+    },
+    {
+      "finding_id": "MAJ_047",
+      "finding_title": "Versioned severity rulesets enable reproducibility",
+      "severity": "major",
+      "confidence": 7,
+      "principle": "S",
+      "analyst": "Sophia",
+      "detail": "Ruleset version changes affect severity computation",
+      "recommendation": "Add scenario showing v1 vs v2 ruleset differences"
+    },
+    {
+      "finding_id": "MAJ_048",
+      "finding_title": "Consent state evaluation timing relative to notification dispatch not specified",
+      "severity": "critical",
+      "confidence": 8,
+      "principle": "M",
+      "analyst": "Milarna",
+      "detail": "GDPR compliance requires real-time consent evaluation, not snapshot",
+      "recommendation": "Add requirement: re-evaluate consent immediately before dispatch"
+    },
+    {
+      "finding_id": "MAJ_049",
+      "finding_title": "Channel selection priority when multiple channels are opted-in not specified",
+      "severity": "major",
+      "confidence": 8,
+      "principle": "M",
+      "analyst": "Milarna",
+      "detail": "Channel selection algorithm undefined",
+      "recommendation": "Define priority order: SMS > Email > Other"
+    },
+    {
+      "finding_id": "MAJ_050",
+      "finding_title": "Service-critical classification criteria for quiet hours exception undefined",
+      "severity": "critical",
+      "confidence": 8,
+      "principle": "M",
+      "analyst": "Milarna",
+      "detail": "Load-bearing feature without specification",
+      "recommendation": "Define: event_type=CANCELLATION OR severity=Critical OR service_critical=true"
+    },
+    {
+      "finding_id": "MAJ_051",
+      "finding_title": "Severity ruleset version and update mechanism not fully specified",
+      "severity": "major",
+      "confidence": 8,
+      "principle": "M",
+      "analyst": "Milarna",
+      "detail": "Active ruleset, deployment mechanism, and re-evaluation logic undefined",
+      "recommendation": "Publish active ruleset with version, thresholds, deployment process"
+    },
+    {
+      "finding_id": "MAJ_052",
+      "finding_title": "Locale fallback strategy when template not available in passenger's language undefined",
+      "severity": "major",
+      "confidence": 8,
+      "principle": "M",
+      "analyst": "Milarna",
+      "detail": "Real-world scenario without specification - accessibility violation risk",
+      "recommendation": "Define fallback chain: exact locale → language → en-GB → fail"
+    },
+    {
+      "finding_id": "MAJ_053",
+      "finding_title": "Calculation formula for 'new expected departure time' not formally specified",
+      "severity": "major",
+      "confidence": 8,
+      "principle": "M",
+      "analyst": "Milarna",
+      "detail": "Simple but critical calculation undefined",
+      "recommendation": "Specify: new_expected_time = scheduled_departure_utc + delay_minutes"
+    },
+    {
+      "finding_id": "MAJ_054",
+      "finding_title": "Passenger-facing summary content requirements incomplete and vague",
+      "severity": "major",
+      "confidence": 8,
+      "principle": "M",
+      "analyst": "Milarna",
+      "detail": "Direct passenger-facing feature lacks complete specification",
+      "recommendation": "Define all elements, length constraints, formatting, accessibility requirements"
+    },
+    {
+      "finding_id": "MAJ_055",
+      "finding_title": "Case state machine and status transitions not fully defined",
+      "severity": "major",
+      "confidence": 8,
+      "principle": "M",
+      "analyst": "Milarna",
+      "detail": "Only initial 'Detected' status specified, full lifecycle undefined",
+      "recommendation": "Define full state machine with transitions and terminal states"
+    },
+    {
+      "finding_id": "MAJ_056",
+      "finding_title": "Orchestrator failure recovery and resilience behavior undefined",
+      "severity": "major",
+      "confidence": 8,
+      "principle": "M",
+      "analyst": "Milarna",
+      "detail": "Mid-process failure recovery not specified",
+      "recommendation": "Define heartbeat, pending event recovery, watchdog timeout"
+    },
+    {
+      "finding_id": "MAJ_057",
+      "finding_title": "Cross-system authentication and authorization for deep links not specified",
+      "severity": "major",
+      "confidence": 7,
+      "principle": "M",
+      "analyst": "Milarna",
+      "detail": "Security-critical feature lacks authentication specification",
+      "recommendation": "Add JWT-based auth, token validation, revocation mechanism"
+    }
+  ],
+  "findings_by_principle": {
+    "D": {
+      "principle": "D — Definitions",
+      "analyst": "Dorothy",
+      "byline": "Definitions Analyst",
+      "findings": [
+        "Ambiguous definition of severity computation criteria",
+        "Missing definition of idempotency key composition algorithm",
+        "Undefined context for 'reasons' field in correlation record",
+        "Missing definition of deep link revocation mechanism",
+        "Unspecified composition of passenger-facing summary elements",
+        "Missing specification of 'new expected departure time' calculation",
+        "Match strategy notation 'service_no+date+od' lacks definition",
+        "Undefined field 'match_score' threshold interpretation",
+        "Ambiguous 'Correlation ID' linkage mechanism",
+        "Missing definition of quiet hours exception criteria",
+        "Undefined semantics of Case status transitions",
+        "Unspecified handling of multi-leg journeys in correlation",
+        "Unspecified timezone handling in timestamp fields"
+      ]
+    },
+    "F": {
+      "principle": "F — Features",
+      "analyst": "Flo",
+      "byline": "Features Analyst",
+      "findings": [
+        "Critical Data Integrity Feature Required",
+        "Deterministic Correlation Engine Required",
+        "Versioned Severity Computation Required",
+        "Idempotency Key Strategy Essential",
+        "Append-Only Timeline Enforcement Critical",
+        "Consent-Based Channel Selection Required",
+        "Template Versioning and Localization Required",
+        "Canonical Event Schema Must Be Enforced",
+        "Locale-Specific Quiet Hours with Exemptions",
+        "Correlation ID Tracking for Request Tracing",
+        "Event Source Tracking with Provenance",
+        "Explicit Exactly-Once Delivery Requirement",
+        "Secure Time-Bounded Deep Links Required"
+      ]
+    },
+    "O": {
+      "principle": "O — Outcomes",
+      "analyst": "Olivia",
+      "byline": "Outcomes Analyst",
+      "findings": [
+        "Raw event immutable storage with metadata",
+        "Event normalization to canonical schema",
+        "Deterministic correlation of disruption to booking",
+        "Case creation with initial status",
+        "Case severity computation using versioned ruleset",
+        "Notification eligibility evaluation",
+        "Passenger-facing summary generation",
+        "Secure deep link generation with expiration",
+        "Outbound notification dispatch via template",
+        "Append-only Case timeline population",
+        "Duplicate ingestion as distinct record without re-notification",
+        "Duplicate notification suppression timeline entry",
+        "Consent-based channel filtering",
+        "Message template and locale selection",
+        "Outbound message record creation",
+        "Quiet hours enforcement with service-critical exemption",
+        "Idempotency key generation and storage",
+        "Case reference generation for passenger visibility",
+        "Passenger contact consent state capture and tracking",
+        "Lead contact designation for booking",
+        "Journey and leg tracking for booking"
+      ]
+    },
+    "S": {
+      "principle": "S — Scenarios",
+      "analyst": "Sophia",
+      "byline": "Scenarios Analyst",
+      "findings": [
+        "Opt-out consent must completely block notification",
+        "Confidence threshold boundary behavior is critical",
+        "Cancellation events require different notification than delays",
+        "Multiple passengers on booking: notification sent to lead contact only",
+        "Quiet hours enforcement requires explicit time boundaries",
+        "Notification provider failure handling is unspecified",
+        "Invalid event schema must be handled gracefully",
+        "Delay duration boundaries require testing",
+        "Idempotency key structure must be deterministic and documented",
+        "Email and SMS both opt-in: channel selection criteria undefined",
+        "Secure deep link expiration enforcement is critical",
+        "Template version mismatch causes notification failure",
+        "Locale mismatch: no template in passenger's language",
+        "Versioned severity rulesets enable reproducibility",
+        "Raw event storage independence from schema validation",
+        "Canonical event schema dependency on external data sources",
+        "Correlation ID links all operations for forensic tracing",
+        "Checksum validation prevents raw event tampering"
+      ]
+    },
+    "P": {
+      "principle": "P — Predictions",
+      "analyst": "Paul",
+      "byline": "Prediction Analyst",
+      "findings": [
+        "Channel selection priority when both email and SMS are opt_in",
+        "Match score calculation method for service_no+date+OD matching",
+        "Severity level thresholds for delay duration",
+        "Handling of Cases that already exist for same booking+service+date",
+        "Definition of 'service-critical' for quiet hours exemption",
+        "Behavior when disruption Orchestrator stops mid-scenario",
+        "Behavior when required message template does not exist",
+        "Passenger locale preference and template locale matching",
+        "Handling when notification provider is temporarily unavailable",
+        "Consent state update between Case creation and notification dispatch"
+      ]
+    },
+    "A": {
+      "principle": "A — Ambiguities",
+      "analyst": "Alexa",
+      "byline": "Ambiguity Analyst",
+      "findings": [
+        "Ambiguous computation of 'new expected departure time' from 95-minute delay",
+        "Vague phrase 'what changed' lacks specificity for multi-leg journeys",
+        "Undefined timing for 'new expected departure time' calculation relative to disruption signal ingestion",
+        "Vague quantifier 'next steps' lacks specificity for delay vs. cancellation",
+        "Contradiction between immutable raw event storage and duplicate ingestion handling",
+        "Ambiguous idempotency key composition: does it include raw_event_id?",
+        "Weasel word 'compliant' in scenario title lacks definition",
+        "Undefined 'service-critical' classification for quiet hours exemption",
+        "Vague phrase 'reasons' in correlation record lacks specification",
+        "Inconsistency: 'exactly 1 outbound message' vs. multi-leg journey consideration",
+        "Ambiguous timing of 'Case severity computed' relative to notification dispatch"
+      ]
+    },
+    "M": {
+      "principle": "M — Missing Data",
+      "analyst": "Milarna",
+      "byline": "Missing Data Analyst",
+      "findings": [
+        "Error handling strategy for failed event normalization not specified",
+        "Multi-leg journey correlation and notification strategy undefined",
+        "Notification retry and recovery strategy not defined",
+        "Consent state evaluation timing relative to notification dispatch not specified",
+        "Channel selection priority when multiple channels are opted-in not specified",
+        "Service-critical classification criteria for quiet hours exception undefined",
+        "Severity ruleset version and update mechanism not fully specified",
+        "Idempotency key composition algorithm not formally specified",
+        "Locale fallback strategy when template not available in passenger's language undefined",
+        "Calculation formula for 'new expected departure time' not formally specified",
+        "Passenger-facing summary content requirements incomplete and vague",
+        "Minimum and maximum delay duration thresholds not specified",
+        "Match score calculation algorithm for correlation not formally specified",
+        "Case state machine and status transitions not fully defined",
+        "Duplicate detection strategy for same disruption signal unclear",
+        "Orchestrator failure recovery and resilience behavior undefined",
+        "Data retention and archive policy not specified",
+        "Cross-system authentication and authorization for deep links not specified"
+      ]
+    }
+  }
+}

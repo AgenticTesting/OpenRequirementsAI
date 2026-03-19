@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Specification by Example Transformation Report</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background-color: #0d1117;
+            color: #e6edf3;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #161b22 0%, #0d1117 100%);
+            border-bottom: 1px solid #30363d;
+            padding: 40px 20px;
+            text-align: center;
+        }
+        
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        header p {
+            color: #8b949e;
+            font-size: 1.1em;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        nav {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .pill {
+            background-color: #161b22;
+            border: 1px solid #30363d;
+            color: #58a6ff;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .pill:hover, .pill.active {
+            background-color: #30363d;
+            border-color: #58a6ff;
+        }
+        
+        .pill span {
+            background-color: #f85149;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-size: 0.8em;
+            margin-left: 6px;
+        }
+        
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        
+        .card {
+            background-color: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover {
+            border-color: #58a6ff;
+            box-shadow: 0 0 10px rgba(88, 166, 255, 0.1);
+        }
+        
+        .card h3 {
+            color: #58a6ff;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+        
+        .card .value {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #e6edf3;
+        }
+        
+        .card .label {
+            color: #8b949e;
+            font-size: 0.9em;
+        }
+        
+        .critical { border-left: 4px solid #f85149; }
+        .major { border-left: 4px solid #d29922; }
+        .minor { border-left: 4px solid #3fb950; }
+        
+        section {
+            margin-bottom: 40px;
+            display: none;
+        }
+        
+        section.active {
+            display: block;
+        }
+        
+        section h2 {
+            color: #58a6ff;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            border-bottom: 2px solid #30363d;
+            padding-bottom: 10px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #30363d;
+        }
+        
+        th {
+            background-color: #161b22;
+            color: #58a6ff;
+            font-weight: 600;
+        }
+        
+        tr:hover {
+            background-color: #161b22;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+        
+        .badge.critical { background-color: rgba(248, 81, 73, 0.2); color: #f85149; }
+        .badge.major { background-color: rgba(210, 153, 34, 0.2); color: #d29922; }
+        .badge.minor { background-color: rgba(63, 185, 80, 0.2); color: #3fb950; }
+        
+        .finding-card {
+            background-color: #161b22;
+            border: 1px solid #30363d;
+            border-left: 4px solid #f85149;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .finding-card.major { border-left-color: #d29922; }
+        .finding-card.minor { border-left-color: #3fb950; }
+        
+        .finding-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 10px;
+        }
+        
+        .finding-title {
+            color: #e6edf3;
+            font-weight: 600;
+            flex: 1;
+        }
+        
+        .finding-meta {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .finding-recommendation {
+            background-color: rgba(88, 166, 255, 0.1);
+            border-left: 2px solid #58a6ff;
+            padding: 10px;
+            margin-top: 10px;
+            font-size: 0.9em;
+        }
+        
+        .gherkin {
+            background-color: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            padding: 15px;
+            margin: 10px 0;
+            font-family: "Monaco", "Courier New", monospace;
+            font-size: 0.9em;
+            overflow-x: auto;
+        }
+        
+        .keyword { color: #ff7b72; font-weight: bold; }
+        .tag { color: #79c0ff; }
+        .comment { color: #8b949e; }
+        .string { color: #a5d6ff; }
+        
+        footer {
+            border-top: 1px solid #30363d;
+            padding: 20px;
+            text-align: center;
+            color: #8b949e;
+            margin-top: 40px;
+        }
+        
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Specification by Example Transformation Report</h1>
+        <p>OpenRequirements.ai | Disruption Notification System</p>
+    </header>
+    
+    <div class="container">
+        <nav>
+            <button class="pill active" onclick="showSection('overview')">
+                Overview <span>156</span>
+            </button>
+            <button class="pill" onclick="showSection('goals')">
+                Goals <span>10</span>
+            </button>
+            <button class="pill" onclick="showSection('features')">
+                Features <span>10</span>
+            </button>
+            <button class="pill" onclick="showSection('examples')">
+                Examples <span>6</span>
+            </button>
+            <button class="pill" onclick="showSection('findings')">
+                Findings <span>156</span>
+            </button>
+            <button class="pill" onclick="showSection('validation')">
+                Validation <span>3</span>
+            </button>
+        </nav>
+        
+        <!-- Overview Section -->
+        <section id="overview" class="active">
+            <h2>Executive Summary</h2>
+            <div class="summary-grid">
+                <div class="card">
+                    <h3>Findings</h3>
+                    <div class="value">156</div>
+                    <div class="label">40 Critical, 105 Major, 11 Minor</div>
+                </div>
+                <div class="card critical">
+                    <h3>Feature Files</h3>
+                    <div class="value">10</div>
+                    <div class="label">Production-ready specifications</div>
+                </div>
+                <div class="card major">
+                    <h3>Gherkin Scenarios</h3>
+                    <div class="value">97</div>
+                    <div class="label">Executable test cases</div>
+                </div>
+                <div class="card minor">
+                    <h3>Validation Suites</h3>
+                    <div class="value">3</div>
+                    <div class="label">Smoke, Regression, Full</div>
+                </div>
+            </div>
+            
+            <h3>Key Metrics</h3>
+            <table>
+                <tr>
+                    <th>Metric</th>
+                    <th>Value</th>
+                </tr>
+                <tr>
+                    <td>Business Goals Derived</td>
+                    <td>10</td>
+                </tr>
+                <tr>
+                    <td>Specifications Refined</td>
+                    <td>9</td>
+                </tr>
+                <tr>
+                    <td>Ubiquitous Language Terms</td>
+                    <td>10</td>
+                </tr>
+                <tr>
+                    <td>DeFOSPAM Findings Addressed</td>
+                    <td>43 (79.6%)</td>
+                </tr>
+                <tr>
+                    <td>Business Goal Alignment</td>
+                    <td>100%</td>
+                </tr>
+            </table>
+        </section>
+        
+        <!-- Goals Section -->
+        <section id="goals">
+            <h2>Business Goals</h2>
+            <table>
+                <tr>
+                    <th>Feature</th>
+                    <th>Goal</th>
+                    <th>Success Metric</th>
+                </tr>
+                <tr>
+                    <td><strong>Event Ingestion</strong></td>
+                    <td>Preserve disruption data for auditability</td>
+                    <td>All events immutable with metadata</td>
+                </tr>
+                <tr>
+                    <td><strong>Event Normalization</strong></td>
+                    <td>Enable consistent downstream processing</td>
+                    <td>100% conform to canonical schema</td>
+                </tr>
+                <tr>
+                    <td><strong>Correlation</strong></td>
+                    <td>Automatically identify affected passengers</td>
+                    <td>Success rate >= 95%, correlation < 1s</td>
+                </tr>
+                <tr>
+                    <td><strong>Case Management</strong></td>
+                    <td>Prioritize support responses by severity</td>
+                    <td>Deterministic, auditable computation</td>
+                </tr>
+                <tr>
+                    <td><strong>Consent Management</strong></td>
+                    <td>Ensure GDPR compliance</td>
+                    <td>Zero notifications to opt_out contacts</td>
+                </tr>
+                <tr>
+                    <td><strong>Notification Composition</strong></td>
+                    <td>Help passengers understand disruptions</td>
+                    <td>All required elements included</td>
+                </tr>
+                <tr>
+                    <td><strong>Notification Dispatch</strong></td>
+                    <td>Consistent messaging via templates</td>
+                    <td>100% use versioned templates</td>
+                </tr>
+                <tr>
+                    <td><strong>Deduplication</strong></td>
+                    <td>Prevent passenger spam</td>
+                    <td>Exactly-once delivery guaranteed</td>
+                </tr>
+                <tr>
+                    <td><strong>Quiet Hours</strong></td>
+                    <td>Balance passenger experience</td>
+                    <td>Rules enforced; service-critical bypass</td>
+                </tr>
+                <tr>
+                    <td><strong>Case Timeline</strong></td>
+                    <td>Enable regulatory compliance</td>
+                    <td>Immutable append-only audit trail</td>
+                </tr>
+            </table>
+        </section>
+        
+        <!-- Features Section -->
+        <section id="features">
+            <h2>Executable Specifications</h2>
+            <table>
+                <tr>
+                    <th>Feature File</th>
+                    <th>Scenarios</th>
+                    <th>Layer</th>
+                    <th>Key Requirement</th>
+                </tr>
+                <tr>
+                    <td><strong>disruption-event-ingestion.feature</strong></td>
+                    <td><span class="badge critical">8</span></td>
+                    <td>Ingestion</td>
+                    <td>Raw event immutability with checksums</td>
+                </tr>
+                <tr>
+                    <td><strong>event-normalization.feature</strong></td>
+                    <td><span class="badge critical">9</span></td>
+                    <td>Processing</td>
+                    <td>Canonical schema conformance</td>
+                </tr>
+                <tr>
+                    <td><strong>disruption-correlation.feature</strong></td>
+                    <td><span class="badge critical">11</span></td>
+                    <td>Processing</td>
+                    <td>Deterministic match scoring >= 0.80</td>
+                </tr>
+                <tr>
+                    <td><strong>case-management.feature</strong></td>
+                    <td><span class="badge critical">10</span></td>
+                    <td>Processing</td>
+                    <td>Versioned ruleset with immutable severity</td>
+                </tr>
+                <tr>
+                    <td><strong>notification-eligibility.feature</strong></td>
+                    <td><span class="badge major">9</span></td>
+                    <td>Notification</td>
+                    <td>Consent-based per-channel filtering (GDPR)</td>
+                </tr>
+                <tr>
+                    <td><strong>notification-composition.feature</strong></td>
+                    <td><span class="badge major">10</span></td>
+                    <td>Notification</td>
+                    <td>Required elements: what changed, new time, case ref</td>
+                </tr>
+                <tr>
+                    <td><strong>notification-dispatch.feature</strong></td>
+                    <td><span class="badge major">10</span></td>
+                    <td>Notification</td>
+                    <td>Exactly-once delivery guarantee</td>
+                </tr>
+                <tr>
+                    <td><strong>notification-deduplication.feature</strong></td>
+                    <td><span class="badge major">9</span></td>
+                    <td>Notification</td>
+                    <td>Idempotency key suppression</td>
+                </tr>
+                <tr>
+                    <td><strong>quiet-hours.feature</strong></td>
+                    <td><span class="badge major">9</span></td>
+                    <td>Notification</td>
+                    <td>Service-critical bypass (CANCELLATION, Critical)</td>
+                </tr>
+                <tr>
+                    <td><strong>case-timeline.feature</strong></td>
+                    <td><span class="badge minor">12</span></td>
+                    <td>Compliance</td>
+                    <td>Append-only immutable timeline</td>
+                </tr>
+            </table>
+            
+            <h3>Gherkin Example</h3>
+            <div class="gherkin">
+<span class="keyword">Feature:</span> Disruption-to-Booking Correlation<br>
+&nbsp;&nbsp;<span class="comment"># Correlation matches normalized disruption events to passenger bookings</span><br>
+<br>
+&nbsp;&nbsp;<span class="keyword">Scenario:</span> Successfully correlate delay to single-leg booking<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">Given</span> a normalized disruption event with service_no "DL427", date "2026-03-19", origin "ATL", destination "LAX"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">And</span> a passenger booking BK-2026-DL427-0319 with matching service details<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">When</span> the system attempts correlation using deterministic matching<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">Then</span> correlation succeeds with match_score = 0.95<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">And</span> correlation_id is generated linking event to booking<br>
+            </div>
+        </section>
+        
+        <!-- Examples Section -->
+        <section id="examples">
+            <h2>Concrete Examples</h2>
+            <div class="finding-card critical">
+                <div class="finding-header">
+                    <div class="finding-title">Happy Path: Delay → Correlation → Notification</div>
+                </div>
+                <p><strong>Scenario:</strong> Flight DL427 delayed 45 min; passenger Robert Chen notified via SMS</p>
+                <p><strong>Data:</strong> Event DELAY +45 min (confidence 0.92) → Correlation match 0.95 → Case C42891 (Major) → SMS opt_in → Dispatch with deep link</p>
+                <p><strong>Result:</strong> "Your DL427 to LAX is now delayed 45 min, new ETA 3:15 PM (Case: C42891)" delivered exactly once</p>
+            </div>
+            
+            <div class="finding-card critical">
+                <div class="finding-header">
+                    <div class="finding-title">Duplicate Suppression</div>
+                </div>
+                <p><strong>Scenario:</strong> Same event ingested twice; only one SMS sent</p>
+                <p><strong>Idempotency Key:</strong> C42891 + SMS + DELAY_SINGLE_LEG_SMS_v2</p>
+                <p><strong>Result:</strong> Second dispatch suppressed; timeline records "duplicate_suppressed"</p>
+            </div>
+            
+            <div class="finding-card critical">
+                <div class="finding-header">
+                    <div class="finding-title">Consent Enforcement</div>
+                </div>
+                <p><strong>Scenario:</strong> Maria Santos opts out of SMS; no SMS sent despite disruption</p>
+                <p><strong>Result:</strong> Case created but channel blocked; no notification sent</p>
+            </div>
+            
+            <div class="finding-card major">
+                <div class="finding-header">
+                    <div class="finding-title">Service-Critical Exemption</div>
+                </div>
+                <p><strong>Scenario:</strong> CANCELLATION at 23:30 UTC during quiet hours (22:00-06:00)</p>
+                <p><strong>Result:</strong> SMS dispatches immediately (bypasses quiet hours)</p>
+            </div>
+        </section>
+        
+        <!-- Findings Section -->
+        <section id="findings">
+            <h2>Findings by Pattern</h2>
+            
+            <h3>Critical Findings (40)</h3>
+            <div class="finding-card critical">
+                <div class="finding-header">
+                    <div class="finding-title">CRIT_001: Severity Computation Criteria Not Operationalized</div>
+                </div>
+                <div class="finding-meta">
+                    <span class="badge critical">Grace (Goals)</span>
+                    <span class="badge critical">Confidence: 9</span>
+                </div>
+                <p>Business goal claims "appropriate prioritization" but severity ruleset is undefined. Without explicit criteria, success metric is unmeasurable.</p>
+                <div class="finding-recommendation">
+                    <strong>Recommendation:</strong> Publish severity ruleset: all valid levels, decision tree, example scenarios mapping to levels
+                </div>
+            </div>
+            
+            <div class="finding-card critical">
+                <div class="finding-header">
+                    <div class="finding-title">CRIT_002: Idempotency Key Algorithm Missing</div>
+                </div>
+                <div class="finding-meta">
+                    <span class="badge critical">Grace (Goals)</span>
+                    <span class="badge critical">Confidence: 10</span>
+                </div>
+                <p>Feature claims idempotency using "Case + channel + template" but provides no algorithm. Implementation divergence will break exactly-once delivery.</p>
+                <div class="finding-recommendation">
+                    <strong>Recommendation:</strong> Formally specify: SHA256(case_id + ':' + channel + ':' + template_version)
+                </div>
+            </div>
+            
+            <div class="finding-card critical">
+                <div class="finding-header">
+                    <div class="finding-title">CRIT_003: Canonical Schema Definition Missing</div>
+                </div>
+                <div class="finding-meta">
+                    <span class="badge critical">Grace (Goals)</span>
+                    <span class="badge critical">Confidence: 9</span>
+                </div>
+                <p>Normalization requires canonical form but schema is undefined. Field names only, no structure/validation/constraints.</p>
+                <div class="finding-recommendation">
+                    <strong>Recommendation:</strong> Publish formal schema: field list with types, required/optional, constraints, valid enums
+                </div>
+            </div>
+            
+            <p style="text-align: center; color: #8b949e; margin: 20px 0;">
+                ...37 additional critical findings (see sbe-results.json for complete list)
+            </p>
+        </section>
+        
+        <!-- Validation Section -->
+        <section id="validation">
+            <h2>Validation Strategy</h2>
+            
+            <h3>Three-Stage Pipeline</h3>
+            <table>
+                <tr>
+                    <th>Suite</th>
+                    <th>Scenarios</th>
+                    <th>Duration</th>
+                    <th>Trigger</th>
+                    <th>Purpose</th>
+                </tr>
+                <tr>
+                    <td><strong>Smoke</strong></td>
+                    <td>8</td>
+                    <td>&lt; 5 min</td>
+                    <td>Every commit</td>
+                    <td>Critical path on main features</td>
+                </tr>
+                <tr>
+                    <td><strong>Regression</strong></td>
+                    <td>25</td>
+                    <td>&lt; 30 min</td>
+                    <td>Merge to main</td>
+                    <td>All scenarios + edge cases</td>
+                </tr>
+                <tr>
+                    <td><strong>Full</strong></td>
+                    <td>40</td>
+                    <td>&lt; 2 hours</td>
+                    <td>Nightly + release</td>
+                    <td>Comprehensive including multi-leg</td>
+                </tr>
+            </table>
+            
+            <h3>Automation Framework</h3>
+            <ul>
+                <li><strong>Framework:</strong> Cucumber/Gherkin with Java/Spring Boot or Python/pytest</li>
+                <li><strong>Database:</strong> PostgreSQL with append-only audit tables</li>
+                <li><strong>Mocks:</strong> WireMock for Twilio SMS, email service; in-memory cache for deduplication</li>
+                <li><strong>Test Isolation:</strong> Transactional rollback between scenarios</li>
+                <li><strong>CI/CD:</strong> GitHub Actions with parallel execution, HTML reporting, Slack notifications</li>
+            </ul>
+            
+            <h3>Reliability</h3>
+            <ul>
+                <li><strong>High-Confidence:</strong> Core deterministic logic (5 scenarios)</li>
+                <li><strong>Medium-Confidence:</strong> Integration points with controlled mocks (5 scenarios)</li>
+                <li><strong>At-Risk:</strong> Complex state management requiring mocking/timing (3 scenarios)</li>
+            </ul>
+        </section>
+    </div>
+    
+    <footer>
+        <p><strong>Specification by Example Transformation Report</strong></p>
+        <p>Generated 2026-03-19 | OpenRequirements.ai | SBE Methodology by Gojko Adzic</p>
+        <p>Analysts: Grace (Goals) | Chris (Collaboration) | Isabel (Examples) | Rex (Refinement) | Angie (Automation) | Victoria (Validation) | Laveena (Documentation)</p>
+    </footer>
+    
+    <script>
+        function showSection(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
+            
+            // Remove active class from all pills
+            document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+            
+            // Show selected section
+            document.getElementById(sectionId).classList.add('active');
+            
+            // Add active class to clicked pill
+            event.target.classList.add('active');
+        }
+    </script>
+</body>
+</html>
