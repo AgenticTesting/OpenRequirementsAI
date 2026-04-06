@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>nopCommerce Test Coverage Heatmap</title>
+<style>
+body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+h1 { color: #003366; border-bottom: 3px solid #003366; padding-bottom: 10px; }
+h2 { color: #003366; margin-top: 30px; }
+.meta { color: #666; font-size: 0.9em; margin-bottom: 20px; }
+table { border-collapse: collapse; width: 100%; margin: 20px 0; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+th { background: #003366; color: white; padding: 10px 8px; font-size: 0.85em; text-align: center; }
+td { padding: 8px; text-align: center; border: 1px solid #ddd; font-size: 0.85em; }
+td.req { text-align: left; font-weight: bold; background: #f8f9fa; min-width: 200px; }
+.high { background: #27ae60; color: white; }
+.medium { background: #f39c12; color: white; }
+.low { background: #e74c3c; color: white; }
+.none { background: #ecf0f1; color: #999; }
+.legend { display: flex; gap: 20px; margin: 15px 0; }
+.legend-item { display: flex; align-items: center; gap: 6px; }
+.legend-box { width: 20px; height: 20px; border-radius: 3px; }
+.summary { background: white; padding: 20px; border-radius: 8px; margin: 20px 0; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+.summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; }
+.kpi { text-align: center; padding: 15px; background: #f8f9fa; border-radius: 6px; }
+.kpi-value { font-size: 2em; font-weight: bold; color: #003366; }
+.kpi-label { font-size: 0.85em; color: #666; margin-top: 5px; }
+</style>
+</head>
+<body>
+<h1>nopCommerce — Test Coverage Heatmap</h1>
+<div class="meta">Generated: 2026-04-06 | System: nopCommerce E-Commerce Platform | Requirements: 153 | Test Cases: 356</div>
+
+<div class="summary">
+<div class="summary-grid">
+<div class="kpi"><div class="kpi-value">84%</div><div class="kpi-label">Overall Coverage</div></div>
+<div class="kpi"><div class="kpi-value">153</div><div class="kpi-label">Requirements</div></div>
+<div class="kpi"><div class="kpi-value">356</div><div class="kpi-label">Test Cases</div></div>
+<div class="kpi"><div class="kpi-value">25</div><div class="kpi-label">Features</div></div>
+</div>
+</div>
+
+<div class="legend">
+<div class="legend-item"><div class="legend-box high"></div> High Coverage (>75%)</div>
+<div class="legend-item"><div class="legend-box medium"></div> Medium Coverage (40-75%)</div>
+<div class="legend-item"><div class="legend-box low"></div> Low Coverage (<40%)</div>
+<div class="legend-item"><div class="legend-box none"></div> No Coverage</div>
+</div>
+
+<h2>Feature × Test Phase Coverage</h2>
+<table>
+<tr><th>Feature</th><th>Unit</th><th>Component</th><th>Integration</th><th>System</th><th>SIT</th><th>UAT</th><th>Overall</th></tr>
+<tr><td class="req">Product Catalog Management</td><td class="high">High</td><td class="high">High</td><td class="medium">Med</td><td class="high">High</td><td class="medium">Med</td><td class="high">High</td><td class="high">High</td></tr>
+<tr><td class="req">Shopping Cart</td><td class="high">High</td><td class="high">High</td><td class="high">High</td><td class="high">High</td><td class="high">High</td><td class="high">High</td><td class="high">High</td></tr>
+<tr><td class="req">Checkout Process</td><td class="high">High</td><td class="high">High</td><td class="high">High</td><td class="high">High</td><td class="high">High</td><td class="high">High</td><td class="high">High</td></tr>
+<tr><td class="req">Payment Processing</td><td class="high">High</td><td class="high">High</td><td class="high">High</td><td class="high">High</td><td class="high">High</td><td class="high">High</td><td class="high">High</td></tr>
+<tr><td class="req">Order Management</td><td class="high">High</td><td class="high">High</td><td class="medium">Med</td><td class="high">High</td><td class="medium">Med</td><td class="high">High</td><td class="high">High</td></tr>
+<tr><td class="req">Customer Accounts</td><td class="high">High</td><td class="high">High</td><td class="medium">Med</td><td class="high">High</td><td class="medium">Med</td><td class="high">High</td><td class="high">High</td></tr>
+<tr><td class="req">Search & Navigation</td><td class="medium">Med</td><td class="medium">Med</td><td class="medium">Med</td><td class="high">High</td><td class="medium">Med</td><td class="high">High</td><td class="medium">Med</td></tr>
+<tr><td class="req">Inventory Management</td><td class="high">High</td><td class="medium">Med</td><td class="medium">Med</td><td class="medium">Med</td><td class="low">Low</td><td class="medium">Med</td><td class="medium">Med</td></tr>
+<tr><td class="req">Shipping & Delivery</td><td class="medium">Med</td><td class="medium">Med</td><td class="high">High</td><td class="high">High</td><td class="medium">Med</td><td class="high">High</td><td class="high">High</td></tr>
+<tr><td class="req">Tax Calculation</td><td class="high">High</td><td class="high">High</td><td class="high">High</td><td class="high">High</td><td class="medium">Med</td><td class="high">High</td><td class="high">High</td></tr>
+<tr><td class="req">Coupon/Discount Engine</td><td class="high">High</td><td class="high">High</td><td class="medium">Med</td><td class="high">High</td><td class="medium">Med</td><td class="high">High</td><td class="high">High</td></tr>
+<tr><td class="req">Customer Reviews</td><td class="medium">Med</td><td class="medium">Med</td><td class="low">Low</td><td class="medium">Med</td><td class="low">Low</td><td class="medium">Med</td><td class="medium">Med</td></tr>
+<tr><td class="req">Wishlist</td><td class="medium">Med</td><td class="low">Low</td><td class="low">Low</td><td class="medium">Med</td><td class="low">Low</td><td class="medium">Med</td><td class="low">Low</td></tr>
+<tr><td class="req">Email Notifications</td><td class="medium">Med</td><td class="medium">Med</td><td class="medium">Med</td><td class="medium">Med</td><td class="low">Low</td><td class="medium">Med</td><td class="medium">Med</td></tr>
+<tr><td class="req">Admin Dashboard</td><td class="medium">Med</td><td class="medium">Med</td><td class="medium">Med</td><td class="high">High</td><td class="medium">Med</td><td class="high">High</td><td class="medium">Med</td></tr>
+<tr><td class="req">Multi-vendor Support</td><td class="medium">Med</td><td class="medium">Med</td><td class="medium">Med</td><td class="medium">Med</td><td class="low">Low</td><td class="medium">Med</td><td class="medium">Med</td></tr>
+<tr><td class="req">Multi-language</td><td class="low">Low</td><td class="low">Low</td><td class="medium">Med</td><td class="medium">Med</td><td class="medium">Med</td><td class="high">High</td><td class="medium">Med</td></tr>
+<tr><td class="req">Multi-currency</td><td class="medium">Med</td><td class="medium">Med</td><td class="medium">Med</td><td class="high">High</td><td class="medium">Med</td><td class="high">High</td><td class="medium">Med</td></tr>
+<tr><td class="req">SEO Optimization</td><td class="low">Low</td><td class="low">Low</td><td class="low">Low</td><td class="medium">Med</td><td class="low">Low</td><td class="medium">Med</td><td class="low">Low</td></tr>
+<tr><td class="req">Performance/Caching</td><td class="medium">Med</td><td class="high">High</td><td class="medium">Med</td><td class="high">High</td><td class="medium">Med</td><td class="none">—</td><td class="medium">Med</td></tr>
+<tr><td class="req">Security/Auth</td><td class="high">High</td><td class="high">High</td><td class="high">High</td><td class="high">High</td><td class="high">High</td><td class="high">High</td><td class="high">High</td></tr>
+<tr><td class="req">API Integration</td><td class="high">High</td><td class="high">High</td><td class="high">High</td><td class="high">High</td><td class="medium">Med</td><td class="none">—</td><td class="high">High</td></tr>
+<tr><td class="req">Reporting/Analytics</td><td class="medium">Med</td><td class="medium">Med</td><td class="low">Low</td><td class="medium">Med</td><td class="low">Low</td><td class="medium">Med</td><td class="medium">Med</td></tr>
+<tr><td class="req">Content Management</td><td class="low">Low</td><td class="low">Low</td><td class="low">Low</td><td class="medium">Med</td><td class="low">Low</td><td class="medium">Med</td><td class="low">Low</td></tr>
+<tr><td class="req">Plugin Architecture</td><td class="medium">Med</td><td class="medium">Med</td><td class="medium">Med</td><td class="medium">Med</td><td class="low">Low</td><td class="none">—</td><td class="medium">Med</td></tr>
+</table>
+
+<h2>Quality Characteristic × Test Phase Coverage</h2>
+<table>
+<tr><th>Quality Characteristic</th><th>Unit</th><th>Component</th><th>Integration</th><th>System</th><th>SIT</th><th>UAT</th></tr>
+<tr><td class="req">Functional Suitability</td><td class="high">High</td><td class="high">High</td><td class="high">High</td><td class="high">High</td><td class="high">High</td><td class="high">High</td></tr>
+<tr><td class="req">Performance Efficiency</td><td class="medium">Med</td><td class="medium">Med</td><td class="medium">Med</td><td class="high">High</td><td class="medium">Med</td><td class="none">—</td></tr>
+<tr><td class="req">Compatibility</td><td class="none">—</td><td class="low">Low</td><td class="medium">Med</td><td class="high">High</td><td class="medium">Med</td><td class="medium">Med</td></tr>
+<tr><td class="req">Usability</td><td class="none">—</td><td class="low">Low</td><td class="low">Low</td><td class="medium">Med</td><td class="medium">Med</td><td class="high">High</td></tr>
+<tr><td class="req">Reliability</td><td class="medium">Med</td><td class="medium">Med</td><td class="high">High</td><td class="high">High</td><td class="medium">Med</td><td class="low">Low</td></tr>
+<tr><td class="req">Security</td><td class="high">High</td><td class="high">High</td><td class="high">High</td><td class="high">High</td><td class="high">High</td><td class="medium">Med</td></tr>
+<tr><td class="req">Maintainability</td><td class="high">High</td><td class="medium">Med</td><td class="medium">Med</td><td class="low">Low</td><td class="none">—</td><td class="none">—</td></tr>
+<tr><td class="req">Portability</td><td class="low">Low</td><td class="low">Low</td><td class="medium">Med</td><td class="medium">Med</td><td class="low">Low</td><td class="none">—</td></tr>
+</table>
+
+<h2>Compliance Coverage</h2>
+<table>
+<tr><th>Standard</th><th>Total Items</th><th>Covered</th><th>Partial</th><th>Not Covered</th><th>Coverage %</th></tr>
+<tr><td class="req">PCI-DSS v4.0</td><td>12</td><td>10</td><td>2</td><td>0</td><td class="high">92%</td></tr>
+<tr><td class="req">GDPR</td><td>8</td><td>6</td><td>1</td><td>1</td><td class="medium">81%</td></tr>
+<tr><td class="req">WCAG 2.1 AA</td><td>13</td><td>8</td><td>3</td><td>2</td><td class="medium">73%</td></tr>
+<tr><td class="req">OWASP Top 10</td><td>10</td><td>9</td><td>1</td><td>0</td><td class="high">95%</td></tr>
+<tr><td class="req">ISO 25010</td><td>8</td><td>8</td><td>0</td><td>0</td><td class="high">100%</td></tr>
+</table>
+
+<div class="meta" style="margin-top:40px; text-align:center;">
+nopCommerce Test Coverage Heatmap — Generated by TEMPLATE Pipeline (T_traceability Agent)<br>
+Open Testing Ecosystem v1.0 | 2026-04-06
+</div>
+</body>
+</html>
